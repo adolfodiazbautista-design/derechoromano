@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva de Derecho Romano</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.20.0.min.js" charset="utf-8"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Lato:wght@400;700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Lato', sans-serif; color: #1e293b; }
+        h1, h2, h3, .font-heading { font-family: 'Cormorant Garamond', serif; }
+        .bg-primary { background-color: #f5f5f4; }
+        .text-primary { color: #78350f; }
+        .text-secondary { color: #334155; }
+        .infographic-font { font-family: 'Inter', sans-serif; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #C70039; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-primary flex min-h-screen">
+
+    <header class="md:hidden p-4 bg-slate-800 text-white flex items-center justify-between shadow-lg z-30 fixed top-0 left-0 right-0">
+        <h1 class="font-heading text-2xl font-bold text-amber-500">Derecho Romano</h1>
+        <button id="menu-button" class="text-white focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+    </header>
+
+    <aside id="sidebar" class="w-64 bg-slate-800 text-white p-6 shadow-lg fixed md:relative top-0 left-0 h-full transform -translate-x-full transition-transform duration-200 ease-in-out z-20 flex-col md:flex md:translate-x-0 pt-20 overflow-y-auto">
+        <h1 class="font-heading text-3xl font-bold text-amber-500 mb-6 hidden md:block">Derecho Romano</h1>
+        <nav class="flex-grow">
+            <ul class="space-y-2">
+                <li><a href="#home" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Presentación</a></li>
+                <li><a href="#infografia" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Infografía Interactiva</a></li>
+                <li><a href="#caselab" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Laboratorio de Casos</a></li>
+                <li><a href="#ulpiano" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Consulta a UlpianoIA</a></li>
+                <li><a href="#bloque1" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Bloque I: Fundamentos</a></li>
+                <li><a href="#bloque2" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Bloque II: Sujetos de Derecho</a></li>
+                <li><a href="#bloque3" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Bloque III: Negocio Jurídico</a></li>
+                <li><a href="#bloque4" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Bloque IV: Procedimiento</a></li>
+                <li><a href="#bloque5" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Bloque V: Derechos Reales</a></li>
+                <li><a href="#bloque6" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Bloque VI: Obligaciones y Contratos</a></li>
+                <li><a href="#bloque7" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Bloque VII: Sucesiones</a></li>
+                
+                <li><a href="#bibliografia" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Bibliografía</a></li>
+            </ul>
+        </nav>
+        <div class="mt-8 text-sm text-slate-400">
+            <p>© 2025. <a href="https://webs.um.es/adiaz-bautista/" target="_blank" class="hover:underline text-amber-500">Adolfo A. Díaz-Bautista Cremades</a>. Universidad de Murcia</p>
+        </div>
+    </aside>
+
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden"></div>
+
+    <main id="content-area" class="flex-1 p-8 overflow-y-auto pt-16 md:pt-8"></main>
+    
+    <div id="explanation-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-lg shadow-2xl p-6 max-w-md w-full">
+            <h3 id="explanation-modal-title" class="text-2xl font-bold text-[#900C3F] mb-4 infographic-font">Explicación Sencilla</h3>
+            <div id="explanation-modal-content" class="min-h-[100px]"><div class="loader mx-auto"></div></div>
+            <button id="close-explanation-modal-btn" class="mt-6 bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-400 transition-colors w-full">Cerrar</button>
+        </div>
+    </div>
+
+    <script>
+        const contentArea = document.getElementById('content-area');
+        const sidebar = document.getElementById('sidebar');
+        const menuButton = document.getElementById('menu-button');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+        // --- LISTA GLOBAL PARA EL FILTRO ANTI-TROLEO ---
+        const palabrasProhibidas = ['tonto', 'sexo', 'idiota', 'imbecil', 'puta', 'mierda', 'gilipollas', 'franco', 'hitler', 'mussolini', 'stalin', 'polla', 'picha', 'acho', 'puto', 'zorra', 'zorras', 'tetas', 'pollas', 'cabron', 'cabrón']; // Puedes ampliar esta lista
+        const respuestaCiceron = `Quo usque tandem abutere, Catilina, patientia nostra? Quam diu etiam furor iste tuus nos eludet? Quem ad finem sese effrenata iactabit audacia? Nihilne te nocturnum praesidium Palati, nihil urbis uigiliae, nihil timor populi, nihil concursus bonorum omnium, nihil hic munitissimus habendi senatus locus, nihil horum ora uoltusque mouerunt? Patere tua consilia non sentis, constrictam iam horum omnium scientia teneri coniurationem tuam non uides? Quid proxima, quid superiore nocte egeris, ubi fueris, quos conuocaueris, quid consili ceperis quem nostrum ignorare arbitraris? O tempora, o mores! Senatus haec intellegit, consul uidet; hic tamen uiuit. Viuit? Immo uero etiam in senatum uenit, fit publici consili particeps, notat et designat oculis ad caedem unum quemque nostrum. Nos autem fortes uiri satis facere rei publicae uidemur, si istius furorem ac tela uitamus.`;
+
+
+        const contentMap = {
+            '#home': {
+                title: 'Presentación de la Asignatura',
+                html: `<div class="prose max-w-none"><h2 class="text-3xl font-bold text-secondary mb-4">Bienvenida al curso de Derecho Romano</h2><p class="mb-4">Esta asignatura es vuestra primera toma de contacto con el razonamiento jurídico. El objetivo principal es que aprendáis a identificar problemas, a encontrar la norma o principio aplicable y a argumentar una solución. Este enfoque será la base de vuestra evaluación y de vuestra formación como juristas.</p><h3 class="text-2xl font-semibold text-secondary mb-2">Recursos y Metodología</h3><p class="mb-4">Para facilitar vuestro aprendizaje, hemos preparado una serie de recursos. A continuación, encontraréis la presentación de la asignatura y el material de estudio para cada tema. Es fundamental que leáis el tema correspondiente del manual <strong>antes</strong> de la clase y utilicéis los guiones como un mapa, completándolos con las explicaciones del profesor y los ejemplos prácticos.</p><div class="p-4 bg-white rounded-lg shadow-md mt-6"><h4 class="text-xl font-semibold text-primary mb-2">Guión 0: Presentación de la asignatura</h4><p class="text-secondary mb-3">Aquí encontrarás el documento con toda la información general del curso, el sistema de evaluación y consejos para superarla con éxito.</p><a href="0. presentacion.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Presentación de la asignatura</a></div></div>`
+            },
+            '#infografia': {
+                title: 'Infografía Interactiva: El Legado de Roma',
+                html: `<div class="infographic-font text-[#212529]"><header class="text-center mb-12"><h1 class="text-4xl md:text-6xl font-black text-[#C70039] mb-4">El Legado Vivo de Roma</h1><p class="text-xl md:text-2xl max-w-3xl mx-auto">Descubre visualmente cómo el Derecho Romano es el sistema operativo de nuestro mundo legal actual.</p></header><main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"><section class="md:col-span-2 lg:col-span-3 bg-white rounded-lg shadow-md p-6 flex flex-col md:flex-row items-center justify-center text-center"><div class="md:w-1/2"><h2 class="text-2xl font-bold text-[#900C3F] mb-2">Influencia Global</h2><p class="text-lg mb-4">Los principios del Derecho Romano son la base de los sistemas jurídicos que rigen a miles de millones de personas en todo el mundo.</p></div><div class="md:w-1/2"><p class="kpi-number">60%</p><p class="text-lg font-bold">De la población mundial vive bajo sistemas de Derecho Civil derivados de Roma.</p></div></section><section class="md:col-span-2 lg:col-span-3 bg-white rounded-lg shadow-md p-6"><h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">El ADN de Nuestras Leyes</h2><p class="text-center max-w-4xl mx-auto mb-6">La mayoría de los países de Europa y toda América Latina adoptaron el sistema de Derecho Continental o Civil, una evolución directa del Derecho Romano. Este mapa muestra la extensión de su influencia fundamental.</p><div id="mapChart" class="plot-container"></div></section><section class="bg-white rounded-lg shadow-md p-6"><h2 class="text-2xl font-bold text-center text-[#900C3F] mb-4">Sistemas Legales en el Mundo</h2><p class="text-center mb-4">El Derecho Civil, de raíz romana, es el sistema predominante a nivel global, demostrando su increíble perdurabilidad y adaptabilidad a través de los siglos.</p><div class="chart-container"><canvas id="donutChart"></canvas></div></section><section class="lg:col-span-2 bg-white rounded-lg shadow-md p-6"><h2 class="text-2xl font-bold text-center text-[#900C3F] mb-4">Conceptos Fundamentales Forjados en Roma</h2><p class="text-center mb-6">Términos que son el pan de cada día para cualquier abogado fueron meticulosamente definidos y desarrollados por los juristas romanos.</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center"><div class="bg-gray-100 p-4 rounded-lg"><div class="flex items-center justify-center mb-2"><p class="text-5xl">👤</p><button class="gemini-explain-btn ml-3 text-2xl" data-concept="Persona">✨</button></div><h3 class="font-bold text-lg">Persona</h3><p>Definición del sujeto de derechos y obligaciones.</p></div><div class="bg-gray-100 p-4 rounded-lg"><div class="flex items-center justify-center mb-2"><p class="text-5xl">🤝</p><button class="gemini-explain-btn ml-3 text-2xl" data-concept="Contrato">✨</button></div><h3 class="font-bold text-lg">Contrato</h3><p>El acuerdo de voluntades como fuente de obligaciones.</p></div><div class="bg-gray-100 p-4 rounded-lg"><div class="flex items-center justify-center mb-2"><p class="text-5xl">🏠</p><button class="gemini-explain-btn ml-3 text-2xl" data-concept="Propiedad">✨</button></div><h3 class="font-bold text-lg">Propiedad</h3><p>El derecho de usar, gozar y disponer de una cosa.</p></div><div class="bg-gray-100 p-4 rounded-lg"><div class="flex items-center justify-center mb-2"><p class="text-5xl">🔗</p><button class="gemini-explain-btn ml-3 text-2xl" data-concept="Obligación">✨</button></div><h3 class="font-bold text-lg">Obligación</h3><p>El vínculo jurídico que nos obliga a dar, hacer o no hacer algo.</p></div></div></section><section class="md:col-span-2 lg:col-span-3 bg-white rounded-lg shadow-md p-6"><h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">El Gimnasio de la Mente Jurídica</h2><p class="text-center max-w-4xl mx-auto mb-8">Más que leyes antiguas, el Derecho Romano es un método. Enseña un proceso de razonamiento riguroso para resolver problemas complejos, una habilidad esencial para cualquier jurista de éxito.</p><div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4"><div class="flowchart-step">Análisis del Caso</div><div class="flowchart-arrow transform md:-rotate-0 rotate-90">→</div><div class="flowchart-step">Construcción de Argumentos</div><div class="flowchart-arrow transform md:-rotate-0 rotate-90">→</div><div class="flowchart-step">Búsqueda de la Solución Justa</div></div></section></main></div>`
+            },
+            '#caselab': {
+                title: 'Laboratorio de Casos Romanos',
+                html: `<section class="infographic-font bg-white rounded-lg shadow-md p-6"><h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">Laboratorio de Casos Romanos</h2><p class="text-center max-w-4xl mx-auto mb-6">Introduce un concepto de derecho romano (ej: usufructo, dote, compraventa) y la IA generará un caso de estudio para que lo analices.</p><div class="text-center text-sm text-gray-500 mb-6 bg-amber-50 border border-amber-200 rounded-lg p-3 max-w-xl mx-auto"><p><strong>Advertencia:</strong> Los casos y soluciones son generados por la IA de Google (Gemini) y no han sido supervisados por el profesor. Úsalos como una herramienta de práctica y no como una fuente autorizada.</p></div><div class="max-w-xl mx-auto"><div class="flex flex-col sm:flex-row gap-2"><input type="text" id="case-study-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5733]" placeholder="Ej: Usufructo"><button id="generate-case-btn" class="bg-[#C70039] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#900C3F] transition-colors flex items-center justify-center"><span id="btn-text">✨ Generar Caso</span><div id="btn-loader" class="loader hidden"></div></button></div><div id="case-study-result" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[100px]"><p class="text-gray-500">Aquí aparecerá tu caso de estudio...</p></div><div class="text-center mt-4"><button id="solve-case-btn" class="hidden bg-[#FF5733] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#C70039] transition-colors flex items-center justify-center mx-auto"><span id="solve-btn-text">Ver Solución</span><div id="solve-btn-loader" class="loader hidden"></div></button></div><div id="case-solution-result" class="hidden mt-6 p-4 bg-green-50 rounded-lg border border-green-200"></div>
+                <div id="chat-follow-up" class="hidden mt-8 border-t pt-6">
+                    <h4 class="font-bold text-lg mb-4 text-gray-800">¿Necesitas más detalles? ¡Pregúntame!</h4>
+                    <div id="chat-conversation" class="h-64 overflow-y-auto p-4 bg-gray-50 rounded-md mb-4 border space-y-4"></div>
+                    <div class="flex items-center">
+                        <input type="text" id="chat-input" class="flex-grow border rounded-l-md p-2 focus:outline-none focus:ring-2 focus:ring-green-700" placeholder="Escribe aquí tu pregunta...">
+                        <button id="send-chat-btn" class="bg-green-800 text-white px-4 py-2 rounded-r-md hover:bg-green-900 flex items-center justify-center" style="min-width: 100px;">
+                            <span id="send-btn-text">Enviar</span>
+                            <div id="send-btn-loader" class="loader hidden" style="border-top-color: #fff; width:20px; height:20px;"></div>
+                        </button>
+                    </div>
+                </div>
+                </div></section>`
+            },
+            '#ulpiano': {
+                title: 'Consulta a UlpianoIA',
+                html: `<section class="infographic-font bg-white rounded-lg shadow-md p-6" style="color: #333;">
+                        <h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">Consulta a UlpianoIA</h2>
+                        <p class="text-center max-w-4xl mx-auto mb-6">Hazle una pregunta a UlpianoIA sobre cualquier tema de Derecho Romano.</p>
+                        <div class="text-center text-sm text-gray-500 mb-6 bg-amber-50 border border-amber-200 rounded-lg p-3 max-w-xl mx-auto"><p><strong>Advertencia:</strong> Las respuestas de Ulpiano son generadas por la IA de Google (Gemini) y no han sido supervisadas por el profesor. Úsalas como una herramienta de apoyo y no como una fuente autorizada para tus exámenes.</p></div>
+                        <div class="max-w-xl mx-auto">
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <textarea id="queryInput" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5733]"></textarea>
+                                <button id="submitQueryBtn" class="bg-[#C70039] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#900C3F] transition-colors flex items-center justify-center">
+                                    <span id="submit-btn-text">✨ Enviar consulta</span>
+                                    <div id="submit-btn-loader" class="loader hidden" style="border-top-color: #fff; width:20px; height:20px;"></div>
+                                </button>
+                            </div>
+                            <div id="queryResult" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 hidden">
+                                <h3 class="text-xl font-semibold mb-2 text-[#900C3F]">Respuesta de UlpianoIA:</h3>
+                                <p id="queryResultText"></p>
+                            </div>
+                            <div id="chat-follow-up-ulpiano" class="hidden mt-8 border-t pt-6">
+                                <h4 class="font-bold text-lg mb-4 text-gray-800">¿Necesitas más detalles? ¡Pregúntame!</h4>
+                                <div id="chat-conversation-ulpiano" class="h-64 overflow-y-auto p-4 bg-gray-50 rounded-md mb-4 border space-y-4"></div>
+                                <div class="flex items-center">
+                                    <input type="text" id="chat-input-ulpiano" class="flex-grow border rounded-l-md p-2 focus:outline-none focus:ring-2 focus:ring-green-700" placeholder="Escribe aquí tu pregunta...">
+                                    <button id="send-chat-btn-ulpiano" class="bg-green-800 text-white px-4 py-2 rounded-r-md hover:bg-green-900 flex items-center justify-center" style="min-width: 100px;">
+                                        <span id="send-btn-text-ulpiano">Enviar</span>
+                                        <div id="send-btn-loader-ulpiano" class="loader hidden" style="border-top-color: #fff; width:20px; height:20px;"></div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                       </section>`
+            },
+            '#bloque1': {
+                title: 'Bloque I: Fundamentos del Derecho Romano',
+                html: `<section class="prose max-w-none"><p class="mb-4">Este bloque introduce los conceptos más básicos para comprender el Derecho. Exploraremos la diferencia entre los distintos tipos de normas de conducta, la aportación fundamental de Roma al Derecho y su evolución histórica, así como su pervivencia hasta nuestros días.</p><div class="space-y-4 mt-6"><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 1: Ideas fundamentales acerca del Derecho</h4><p class="text-secondary mb-3">Este tema aborda las nociones primarias del Derecho, diferenciando entre distintas normas de conducta y sentando las bases del pensamiento jurídico. Es la puerta de entrada a la asignatura, fundamental para entender el resto de conceptos que se desarrollarán a lo largo del curso.</p><div class="flex flex-wrap gap-4 mt-3"><a href="1. introduccion.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guion del Tema 1</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 2: Breve introducción a la historia del Derecho Romano</h4><p class="text-secondary mb-3">Este tema presenta la evolución histórica del Derecho Romano, desde la época arcaica hasta la compilación justinianea. Entender la periodización histórica es clave para contextualizar la creación y aplicación de las normas a lo largo del tiempo.</p><div class="flex flex-wrap gap-4 mt-3"><a href="2. historia.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guion del Tema 2</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 3: La persistencia del Derecho Romano</h4><p class="text-secondary mb-3">Analiza la pervivencia del Derecho Romano y su influencia en los sistemas jurídicos modernos. Se estudia cómo el Derecho Romano sentó las bases para el Derecho Civil, Público y Mercantil, siendo un pilar fundamental en la formación de la tradición jurídica continental.</p><div class="flex flex-wrap gap-4 mt-3"><a href="3. persistencia.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guion del Tema 3</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div></div></section>` 
+            },
+            '#bloque2': {
+                title: 'Bloque II: Sujetos de Derecho',
+                html: `<section class="prose max-w-none"><p class="mb-4">Este bloque se centra en quiénes son los protagonistas del Derecho. Analizaremos los requisitos para ser persona en Roma, la estructura de la familia y los poderes que ostentaba el paterfamilias.</p><div class="space-y-4 mt-6"><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 4: El sujeto del derecho. La persona. La capacidad.</h4><p class="text-secondary mb-3">Estudio de los requisitos para ostentar la condición de persona y ser sujeto de derechos en Roma. Se examinan los conceptos de capacidad jurídica y capacidad de obrar, así como las restricciones que podían afectar a la condición jurídica de los individuos, como la esclavitud o la pérdida de la ciudadanía.</p><div class="flex flex-wrap gap-4 mt-3"><a href="4. persona.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guion del Tema 4</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 5: La familia</h4><p class="text-secondary mb-3">Análisis de la organización familiar romana, una estructura social y jurídica fundamental. Se estudian figuras como la patria potestas, la condición de los filii familias y la diferenciación entre los conceptos de familia agnaticia y cognaticia.</p><div class="flex flex-wrap gap-4 mt-3"><a href="5. familia.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guion del Tema 5</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div></div></section>`
+            },
+            '#bloque3': {
+                title: 'Bloque III: El Negocio Jurídico',
+                html: `<section class="prose max-w-none"><p class="mb-4">Este bloque es crucial para la comprensión de los actos voluntarios con efectos jurídicos. Analizaremos los elementos esenciales y accidentales de los negocios jurídicos y las causas que pueden llevar a su ineficacia.</p><div class="space-y-4 mt-6"><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 6: Hechos, actos y negocios jurídicos</h4><p class="text-secondary mb-3">Se exploran las bases de los negocios jurídicos, que son las declaraciones de voluntad destinadas a producir efectos jurídicos. Se diferencian de los hechos y actos jurídicos, y se estudian los elementos esenciales (capacidad, objeto, causa) y accidentales (condición, término, modo).</p><div class="flex flex-wrap gap-4 mt-3"><a href="6. negocio.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guion del Tema 6</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 font-bold">Escuchar Podcast</a></div></div></div></section>`
+            },
+            '#bloque4': {
+                title: 'Bloque IV: El Procedimiento',
+                html: `<section class="prose max-w-none"><p class="mb-4">Introducción al sistema procesal romano. Comprenderás la diferencia entre las acciones reales y personales, el desarrollo del proceso formulario y las distintas fases que lo componían, desde la *ius vocatio* hasta la sentencia.</p><div class="space-y-4 mt-6"><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 7: El proceso civil romano I</h4><p class="text-secondary mb-3">Este tema introduce el procedimiento civil romano y la distinción fundamental entre acciones reales y personales, sentando las bases para el estudio de los litigios y su resolución.</p><div class="flex flex-wrap gap-4 mt-3"><a href="7. proceso I.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guion del Tema 7</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 8: El proceso civil romano II</h4><p class="text-secondary mb-3">Se profundiza en el procedimiento formulario, su estructura bifásica (in iure y apud iudicem) y el papel de la fórmula, que contenía la clave del litigio. Es la parte central del estudio procesal de la asignatura.</p><div class="flex flex-wrap gap-4 mt-3"><a href="8. proceso II.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guion del tema 8</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 9: El proceso civil romano III</h4><p class="text-secondary mb-3">Este tema se centra en las diferentes partes de la fórmula y las excepciones procesales, así como la ejecución de la sentencia y los recursos disponibles en el procedimiento clásico.</p><div class="flex flex-wrap gap-4 mt-3"><a href="9. proceso III.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guion del Tema 9</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 10: El proceso civil romano IV</h4><p class="text-secondary mb-3">Se examinan otros procedimientos como la *cognitio extra ordinem* y los procedimientos especiales, marcando la transición hacia un sistema procesal diferente al formulario.</p><div class="flex flex-wrap gap-4 mt-3"><a href="10. proceso IV.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guion del Tema 10</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div></div></section>`
+            },
+            '#bloque5': {
+                title: 'Bloque V: Derechos Reales',
+                html: `<section class="prose max-w-none"><p class="mb-4">Este bloque es fundamental en el estudio del Derecho de Cosas. Estudiarás la diferencia entre derechos reales y de obligación, el concepto de propiedad, los modos de adquirirla y la protección jurídica de la posesión.</p><div class="space-y-4 mt-6"><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 11: Derechos Reales I</h4><p class="text-secondary mb-3">Este tema introduce la distinción esencial entre derechos reales (poder sobre una cosa) y personales (poder sobre una persona), y los conceptos de posesión y propiedad, que son la base de este bloque temático.</p><div class="flex flex-wrap gap-4 mt-3"><a href="11. reales I.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guion del Tema 11</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 12: Derechos Reales II</h4><p class="text-secondary mb-3">Se analizan los diversos modos de adquisición de la propiedad, como la *mancipatio* y la *traditio*, así como las limitaciones y protecciones que existían sobre este derecho.</p><div class="flex flex-wrap gap-4 mt-3"><a href="12. reales II.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guion del Tema 12</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 13: Derechos Reales III</h4><p class="text-secondary mb-3">Este tema se centra en los mecanismos procesales para la protección de la propiedad y la posesión, así como en el estudio de los derechos reales sobre cosa ajena (*iura in re aliena*), como las servidumbres y el usufructo.</p><div class="flex flex-wrap gap-4 mt-3"><a href="13. reales III.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guion del Tema 13</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div></div></section>`
+            },
+            '#bloque6': {
+                title: 'Bloque VI: Obligaciones y Contratos',
+                html: `<section class="prose max-w-none"><p class="mb-4">Aquí analizaremos la esencia de las relaciones jurídicas entre personas. Diferenciaremos entre las diversas fuentes de las obligaciones y las figuras contractuales más importantes del Derecho Romano.</p><div class="space-y-4 mt-6"><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 14: La relación obligacional. Introducción</h4><p class="text-secondary mb-3">Este tema introduce el concepto de obligación, que es el vínculo jurídico por el cual una persona se encuentra constreñida a cumplir una determinada prestación. Se estudian los elementos de la obligación, sus clases y los efectos que produce su cumplimiento o incumplimiento.</p><div class="flex flex-wrap gap-4 mt-3"><a href="14. obligaciones I.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guión del Tema 14</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 15: Los delitos</h4><p class="text-secondary mb-3">Se abordan los delitos privados en el Derecho Romano, que generaban una obligación de resarcir el daño causado. Se estudian los principales delitos (*furtum*, *rapina*, *iniuria*, *damnum iniuria datum*) y las acciones procesales para perseguirlos, sentando las bases de la responsabilidad extracontractual.</p><div class="flex flex-wrap gap-4 mt-3"><a href="15. obligaciones II.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guión del Tema 15</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 16: Contratos en general</h4><p class="text-secondary mb-3">Este tema ofrece una visión general de la teoría contractual romana. Se distinguen las diferentes categorías de contratos (reales, verbales, literales y consensuales) y se profundiza en los requisitos y la eficacia de los mismos, con especial atención a los contratos innominados.</p><div class="flex flex-wrap gap-4 mt-3"><a href="16. obligaciones III.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guión del Tema 16</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 17: Contratos consensuales</h4><p class="text-secondary mb-3">Estudio de los contratos que se perfeccionan con el mero consentimiento de las partes. Se analizan figuras como la compraventa (*emptio venditio*), el arrendamiento (*locatio conductio*), la sociedad (*societas*) y el mandato (*mandatum*), que son la base de los contratos modernos.</p><div class="flex flex-wrap gap-4 mt-3"><a href="17. obligaciones IV.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guión del Tema 17</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 18: Contratos formales</h4><p class="text-secondary mb-3">Se examinan los contratos que requieren una forma específica para su validez. Se estudian las estipulaciones (*stipulatio*), que eran la forma más común de crear obligaciones verbales, así como los contratos literales, que se perfeccionaban mediante la escritura.</p><div class="flex flex-wrap gap-4 mt-3"><a href="18. obligaciones V.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guión del Tema 18</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div></div></section>`
+            },
+            '#bloque7': {
+                title: 'Bloque VII: Derecho de Sucesiones',
+                html: `<section class="prose max-w-none"><p class="mb-4">Este bloque final aborda cómo se regula la sucesión de una persona. Estudiarás la sucesión intestada (sin testamento) y la testamentaria, con un énfasis especial en el testamento, los legados y los fideicomisos.</p><div class="space-y-4 mt-6"><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 19: El derecho de sucesiones I</h4><p class="text-secondary mb-3">Este tema introduce la distinción entre sucesión intestada y testamentaria, analizando la figura del testamento como la manifestación de voluntad más importante en esta materia.</p><div class="flex flex-wrap gap-4 mt-3"><a href="19. sucesiones I.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guión del Tema 19</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 20: El derecho de sucesiones II</h4><p class="text-secondary mb-3">Se abordan otros tipos de testamentos, las causas de invalidez, la desheredación y el régimen de los legados y fideicomisos, que permitían al testador disponer de bienes concretos a favor de terceros.</p><div class="flex flex-wrap gap-4 mt-3"><a href="20. sucesiones II.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guión del Tema 20</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary mb-2">Tema 21: El derecho de sucesiones III</h4><p class="text-secondary mb-3">Este tema se centra en la adquisición de la herencia, sus efectos y el régimen de los herederos y los legatarios, así como la protección procesal de la herencia.</p><div class="flex flex-wrap gap-4 mt-3"><a href="21. sucesiones III.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Guión del Tema 21</a><a href="https://open.spotify.com/episode/35iMRz5AA1AdYAAgC95tZR?si=f29d1c95b6c04f9e" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar Podcast</a></div></div></div></section>`
+            },
+            '#bibliografia': {
+                title: 'Bibliografía y Recursos',
+                html: `<section class="prose max-w-none"><h2 class="text-3xl font-bold text-secondary mb-4">Bibliografía y Recursos</h2><p class="mb-4">El manual básico para la asignatura es:</p><div class="p-4 bg-white rounded-lg shadow-md"><h4 class="text-xl font-semibold text-primary">"El derecho romano como introducción al derecho"</h4><p class="text-secondary">Autores: Antonio Díaz Bautista y Adolfo A. Díaz-Bautista Cremades.</p><p class="text-sm text-gray-500 mb-2">Cuarta edición, 2023.</p></div><h3 class="text-2xl font-semibold text-secondary mt-8 mb-4">Otras obras recomendadas</h3><ul class="space-y-4"><li class="p-4 bg-white rounded-lg shadow-md"><p class="text-secondary mb-1"><span class="font-bold">Fernández de Buján, A.</span>: Derecho Romano, Dykinson, 2024.</p></li><li class="p-4 bg-white rounded-lg shadow-md"><p class="text-secondary mb-1"><span class="font-bold">Castán Pérez-Gómez, S. e.a.</span>: Derecho privado romano, Reus, 2018.</p></li><li class="p-4 bg-white rounded-lg shadow-md"><p class="text-secondary mb-1"><span class="font-bold">Panero Gutiérrez, R.</span>: Derecho Romano, Tirant, 2021.</p></li></ul><h3 class="text-2xl font-semibold text-secondary mt-8 mb-4">Webs de interés</h3><ul class="list-disc list-inside space-y-2"><li><a href="https://www.boe.es/biblioteca_juridica/publicacion.php?id=PUB-DR-2022-266_FUENTES_DEL_DERECHO_ROMANO_ONLINE&tipo=L&modo=1" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Fuentes del Derecho Romano (BOE)</a></li><li><a href="https://droitromain.univ-grenoble-alpes.fr/" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">The Roman Law Library</a></li></ul><h3 class="text-2xl font-semibold text-secondary mt-6 mb-2">Recursos Adicionales</h3><ul class="list-disc list-inside space-y-2"><li><a href="https://webs.um.es/jal/" target="_blank" rel="noopener noreferrer" class="text-amber-600 hover:text-amber-800 font-bold">Web del profesor Joaquín Ataz López</a></li><li><a href="https://derecho-romano.blogspot.com/" target="_blank" rel="noopener noreferrer" class="text-amber-600 hover:text-amber-800 font-bold">Blog de Derecho Romano</a></li><li><a href="https://www.youtube.com/playlist?list=PLhqyfgIdoGr2SrQMeLPg9Bdl4ThnF16a3" target="_blank" rel="noopener noreferrer" class="text-amber-600 hover:text-amber-800 font-bold">Vídeos: Derecho Romano y Tradición Romanística (YouTube)</a></li><li><a href="https://www.um.es/web/biblioteca/conoce-biblioteca/biblioteca/puntos-de-servicio/biblioteca-juridica/acceso-a-los-recursos-electr%C3%B3nicos-de-cc-jur%C3%ADdicas-y-sociales" target="_blank" rel="noopener noreferrer" class="text-amber-600 hover:text-amber-800 font-bold">Recursos electrónicos de CC. Jurídicas y Sociales (UMU)</a></li><li><a href="https://www.um.es/web/derecho/conoce-la-facultad/estructura/servicios/biblioteca-digital" target="_blank" rel="noopener noreferrer" class="text-amber-600 hover:text-amber-800 font-bold">Biblioteca Digital de la Facultad de Derecho (UMU)</a></li><li><a href="https://share.podimo.com/s/ygbZufG6" target="_blank" rel="noopener noreferrer" class="text-amber-600 hover:text-amber-800 font-bold">tres meses gratis de suscripción a Podimo</a></li><li>Casos prácticos resueltos en clase.</li><li>Tutorías con el profesor.</li><li style="list-style-type: none; margin-top: 8px;"><iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/3zkPCEoTEafhA25h3y51D9?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></li></ul></section>`
+            }
+        };
+
+        function renderContent(hash) {
+            const page = contentMap[hash] || contentMap['#home'];
+            contentArea.innerHTML = `<div class="flex items-center space-x-4 mb-6 pb-4 border-b border-gray-300"><h1 class="font-heading text-4xl font-bold text-secondary">${page.title}</h1></div>${page.html}`;
+            updateActiveNavLink(hash);
+            if (hash === '#infografia') {
+                initializeInfographicScripts();
+            } else if (hash === '#caselab') {
+                initializeCaseLabScripts();
+            } else if (hash === '#ulpiano') {
+                initializeUlpianoScripts();
+            }
+        }
+
+        function updateActiveNavLink(hash) {
+            const activeClasses = ['font-bold', 'text-amber-500', 'bg-slate-700'];
+            document.querySelectorAll('nav a').forEach(link => link.classList.remove(...activeClasses));
+            const activeLink = document.querySelector(`nav a[href="${hash}"]`);
+            if (activeLink) activeLink.classList.add(...activeClasses);
+        }
+
+        window.addEventListener('hashchange', handleNavigation);
+        document.addEventListener('DOMContentLoaded', handleNavigation);
+
+        function handleNavigation() {
+            const hash = window.location.hash || '#home';
+            renderContent(hash);
+        }
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('-translate-x-full');
+            sidebarOverlay.classList.toggle('hidden');
+        }
+        menuButton.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+        document.querySelectorAll('#sidebar a').forEach(link => {
+            link.addEventListener('click', () => { if (window.innerWidth < 768) toggleSidebar(); });
+        });
+
+        // --- FUNCIÓNES PARA LLAMAR A NUESTRO SERVIDOR ---
+        async function callGeminiAPI(promptOriginal, termino = null) {
+           const apiUrl = 'https://derechoromano.onrender.com/api/consulta';
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        promptOriginal: promptOriginal,
+                        termino: termino 
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error del servidor: ${response.status}`);
+                }
+                const result = await response.json();
+                return result.respuesta; 
+            } catch (error) {
+                console.error("Error llamando al API principal:", error);
+                return "Error al contactar con el servicio de IA a través del servidor.";
+            }
+        }
+
+
+        function initializeInfographicScripts() {
+            const donutCanvas = document.getElementById('donutChart');
+            if(donutCanvas && !Chart.getChart(donutCanvas)) {
+                new Chart(donutCanvas.getContext('2d'), { type: 'doughnut', data: { labels: ['Derecho Civil (Raíz Romana)', 'Common Law (Derecho Anglosajón)', 'Otros Sistemas'], datasets: [{ data: [60, 27, 13], backgroundColor: ['#FF5733', '#FFC300', '#DAF7A6'], borderColor: '#ffffff', borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
+            }
+            const mapDiv = document.getElementById('mapChart');
+            if(mapDiv && !mapDiv.hasChildNodes()) {
+                const civilLawCountries = ['ALB', 'DZA', 'AND', 'AGO', 'ARG', 'ARM', 'AUT', 'AZE', 'BLR', 'BEL', 'BEN', 'BOL', 'BIH', 'BRA', 'BGR', 'BFA', 'BDI', 'KHM', 'CMR', 'CPV', 'CAF', 'TCD', 'CHL', 'COL', 'COG', 'COD', 'CRI', 'CIV', 'HRV', 'CUB', 'CZE', 'DNK', 'DJI', 'DOM', 'ECU', 'EGY', 'SLV', 'GNQ', 'EST', 'ETH', 'FIN', 'FRA', 'GAB', 'GEO', 'DEU', 'GRC', 'GTM', 'GIN', 'GNB', 'HTI', 'HND', 'HUN', 'ISL', 'IDN', 'IRN', 'IRQ', 'ISR', 'ITA', 'JPN', 'JOR', 'KAZ', 'KWT', 'KGZ', 'LAO', 'LVA', 'LBN', 'LBY', 'LIE', 'LTU', 'LUX', 'MAC', 'MDG', 'MLI', 'MLT', 'MRT', 'MUS', 'MEX', 'MDA', 'MCO', 'MNG', 'MNE', 'MAR', 'MOZ', 'NLD', 'NIC', 'NER', 'MKD', 'NOR', 'PAN', 'PRY', 'PER', 'PHL', 'POL', 'PRT', 'QAT', 'ROU', 'RUS', 'RWA', 'SMR', 'STP', 'SAU', 'SEN', 'SRB', 'SVK', 'SVN', 'SOM', 'KOR', 'ESP', 'SDN', 'SWE', 'CHE', 'SYR', 'TWN', 'TJK', 'THA', 'TLS', 'TGO', 'TUN', 'TUR', 'TKM', 'UKR', 'ARE', 'URY', 'UZB', 'VEN', 'VNM', 'YEM'];
+                Plotly.newPlot('mapChart', [{ type: 'choropleth', locationmode: 'ISO-3', locations: civilLawCountries, z: Array(civilLawCountries.length).fill(1), colorscale: [[0, '#FFC300'], [1, '#C70039']], showscale: false, hoverinfo: 'text' }], { geo: { projection: { type: 'robinson' }, showland: true, landcolor: 'rgb(217, 217, 217)', subunitcolor: 'rgb(255, 255, 255)' }, title: { text: 'Países con Sistemas de Derecho Civil (Influencia Romana)', font: { family: 'Inter, sans-serif', size: 18, color: '#212529' } }, margin: { l: 0, r: 0, b: 0, t: 40 } }, {responsive: true});
+            }
+            document.querySelectorAll('.gemini-explain-btn').forEach(button => button.addEventListener('click', async () => {
+                const concept = button.dataset.concept;
+                document.getElementById('explanation-modal-title').innerText = `Explicando: ${concept}`;
+                document.getElementById('explanation-modal-content').innerHTML = '<div class="loader mx-auto"></div>';
+                document.getElementById('explanation-modal').classList.remove('hidden');
+                
+                const prompt = `Explica el concepto de '${concept}' en el Derecho Romano de forma muy sencilla, en menos de 100 palabras, como si fuera para un estudiante que nunca ha oído hablar de ello.`;
+                const explanation = await callGeminiAPI(prompt, concept); 
+
+                document.getElementById('explanation-modal-content').innerHTML = `<p>${explanation}</p>`;
+            }));
+            document.getElementById('close-explanation-modal-btn').addEventListener('click', () => document.getElementById('explanation-modal').classList.add('hidden'));
+        }
+
+        function initializeCaseLabScripts() {
+            const generateCaseBtn = document.getElementById('generate-case-btn'), caseStudyInput = document.getElementById('case-study-input'), caseStudyResult = document.getElementById('case-study-result'), solveCaseBtn = document.getElementById('solve-case-btn'), caseSolutionResult = document.getElementById('case-solution-result');
+            
+            if(generateCaseBtn) generateCaseBtn.addEventListener('click', async () => {
+                const term = caseStudyInput.value.trim();
+                const termLower = term.toLowerCase();
+
+                // --- FILTRO ANTI-TROLEO ---
+                const esInapropiado = palabrasProhibidas.some(palabra => termLower.includes(palabra));
+                if (esInapropiado) {
+                    caseStudyResult.innerHTML = `<p>${respuestaCiceron}</p>`;
+                    if(solveCaseBtn) solveCaseBtn.classList.add('hidden');
+                    if(caseSolutionResult) caseSolutionResult.classList.add('hidden');
+                    return;
+                }
+
+                if (!term) { caseStudyResult.innerHTML = '<p class="text-red-500">Por favor, introduce un término legal.</p>'; return; }
+                const btnText = document.getElementById('btn-text');
+                const btnLoader = document.getElementById('btn-loader');
+                if(btnText) btnText.classList.add('hidden');
+                if(btnLoader) btnLoader.classList.remove('hidden');
+                generateCaseBtn.disabled = true;
+                caseStudyResult.innerHTML = '<div class="loader mx-auto"></div>';
+                solveCaseBtn.classList.add('hidden');
+                caseSolutionResult.classList.add('hidden');
+
+                const prompt = `Crea un breve y sencillo caso de estudio (menos de 150 palabras) basado en el derecho romano que ilustre el concepto jurídico de '${term}'. El caso debe involucrar personajes con nombres romanos (ej. Ticio, Cayo, Sempronio, Livia). La respuesta debe ser en español.`;
+                
+                const caseText = await callGeminiAPI(prompt, term);
+                
+                caseStudyResult.dataset.caseText = caseText;
+                caseStudyResult.innerHTML = `<p>${caseText.replace(/\n/g, '<br>')}</p>`;
+                if(btnText) btnText.classList.remove('hidden');
+                if(btnLoader) btnLoader.classList.add('hidden');
+                generateCaseBtn.disabled = false;
+                solveCaseBtn.classList.remove('hidden');
+            });
+
+            if(solveCaseBtn) solveCaseBtn.addEventListener('click', async () => {
+                const term = caseStudyInput.value.trim(), currentCaseText = caseStudyResult.dataset.caseText;
+                const solveBtnText = document.getElementById('solve-btn-text');
+                const solveBtnLoader = document.getElementById('solve-btn-loader');
+                if(solveBtnText) solveBtnText.classList.add('hidden');
+                if(solveBtnLoader) solveBtnLoader.classList.remove('hidden');
+                solveCaseBtn.disabled = true;
+                caseSolutionResult.classList.remove('hidden'); caseSolutionResult.innerHTML = '<div class="loader mx-auto"></div>';
+                
+                const indexContent = "Historia: 53, república: 55, principado: 65, dominado: 68, justiniano: 73, persona: 86, capacidad: 94, esclavo: 87, familia: 96, dote: 98, matrimonio: 97, ineficacia: 111, legis actiones: 112, per formulas: 120, cognitio: 136, posesión: 144, propiedad: 149, usucapión: 155, acción publiciana: 166, solidaridad: 177, mancomunidad: 177, delitos: 179, hurto: 180, robo: 180, Mutuo: 188, Comodato: 188, Depósito: 189, Fiducia: 190, Prenda (pignus): 191, Hipoteca (pignus conventum): 192, Compraventa (emptio venditio): 196, Arrendamiento (locatio conductio): 199, Sociedad (societas): 202, Mandato (mandatum): 203, Donación: 204, Stipulatio: 207, Sucesión mortis causa: 215, Sucesión intestada: 221, Sucesión testamentaria: 226, Legados: 232, Fideicomisos: 234, Sucesión forzosa o legitimaria: 236, Usufructo: 161, Servidumbres: 158, Patria Potestas: 100, Negocio jurídico: 105, Delitos: 179, Daño: 181, Iniuriae (lesiones y ofensas): 182";
+                
+                 const solutionPrompt = `Analiza el siguiente caso de derecho romano: "${currentCaseText}".
+1. **Solución Jurídica:** Proporciona una solución clara y razonada en español, basada estrictamente en los principios del derecho romano.
+2. **Fuente Clásica Obligatoria:** Tu tarea es encontrar un pasaje relevante del Digesto que se aplique al caso. Tu respuesta para este punto DEBE incluir obligatoriamente estos tres elementos: la notación académica (ej. D. 18.1.1), el texto original en latín, y la traducción completa al español. No parafrasees ni describas el contenido; DEBES citar el texto directamente.
+3. **Referencia al Manual:** Busca el concepto principal ('${term}') en este índice: [${indexContent}].
+4. **Nota Final:** Concluye tu respuesta con una referencia en una nueva línea con el formato: 'Para más información, consultar el manual en la pág. [número de página]'.`;
+                
+                const solutionText = await callGeminiAPI(solutionPrompt, term);
+                
+                caseSolutionResult.innerHTML = `<h4 class="font-bold text-lg mb-2 text-green-800">Solución Propuesta:</h4><p>${solutionText.replace(/\n/g, '<br>')}</p>`;
+                if(solveBtnText) solveBtnText.classList.remove('hidden');
+                if(solveBtnLoader) solveBtnLoader.classList.add('hidden');
+                solveCaseBtn.disabled = false;
+            });
+        }
+        
+        function initializeUlpianoScripts() {
+            const submitQueryBtn = document.getElementById('submitQueryBtn');
+            const queryInput = document.getElementById('queryInput');
+            const queryResult = document.getElementById('queryResult');
+            const queryResultText = document.getElementById('queryResultText');
+            const submitBtnText = document.getElementById('submit-btn-text');
+            const submitBtnLoader = document.getElementById('submit-btn-loader');
+
+            async function callFontAPI(termino) {
+                try {
+                    const response = await fetch('https://derechoromano.onrender.com/api/buscar-fuente', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ termino: termino })
+                    });
+                    if (!response.ok) return null;
+                    const result = await response.json();
+                    return result.fuente;
+                } catch (error) { console.error("Error en API de fuentes:", error); return null; }
+            }
+            
+            async function callModernoAPI(termino) {
+                try {
+                    const response = await fetch('https://derechoromano.onrender.com/api/derecho-moderno', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ termino: termino })
+                    });
+                    if (!response.ok) return null;
+                    const result = await response.json();
+                    return result.moderno;
+                } catch (error) { console.error("Error en API de derecho moderno:", error); return null; }
+            }
+
+            if (submitQueryBtn) submitQueryBtn.addEventListener('click', async () => {
+                const userQuery = queryInput.value.trim();
+                const userQueryLower = userQuery.toLowerCase();
+
+                const esInapropiado = palabrasProhibidas.some(palabra => userQueryLower.includes(palabra));
+
+                if (esInapropiado) {
+                    queryResult.classList.remove('hidden');
+                    queryResultText.innerHTML = respuestaCiceron.replace(/\n/g, '<br>');
+                    return;
+                }
+
+                if (!userQuery) {
+                    queryResultText.innerText = 'Por favor, introduce una pregunta.';
+                    queryResult.classList.remove('hidden');
+                    return;
+                }
+                
+                submitQueryBtn.disabled = true;
+                submitBtnText.classList.add('hidden');
+                submitBtnLoader.classList.remove('hidden');
+                queryResult.classList.remove('hidden');
+                queryResultText.innerHTML = '<div class="loader mx-auto" style="border-top-color:#C70039;"></div>';
+
+                const manualIndex = "Mutuo: 188, Comodato: 188, Depósito: 189, Fiducia: 190, Prenda (pignus): 191, Hipoteca (pignus conventum): 192, Compraventa (emptio venditio): 196, Arrendamiento (locatio conductio): 199, Sociedad (societas): 202, Mandato (mandatum): 203, Donación: 204, Stipulatio: 207, Sucesión mortis causa: 215, Sucesión intestada: 221, Sucesión testamentaria: 226, Legados: 232, Fideicomisos: 234, Sucesión forzosa o legitimaria: 236, Usufructo: 161, Servidumbres: 158, Propiedad: 149, Posesión: 144, Familia: 96, Dote: 98, Patria Potestas: 100, Negocio jurídico: 105, Delitos: 179, Hurto: 180, Daño: 181, Iniuriae (lesiones y ofensas): 182, Interdictos: 146";
+                
+                const promptPrincipal = `Eres Ulpiano, un jurisconsulto romano del siglo III d.C. Responde a la pregunta: "${userQuery}".
+Tu respuesta debe contener únicamente los siguientes puntos, separados por "---":
+1.  **Respuesta Jurídica:** Proporciona una respuesta clara y concisa en español, basada en los principios del derecho romano. Si el contexto del manual proporcionado es relevante, úsalo de forma prioritaria.
+2.  **Referencia al Manual:** Termina siempre tu respuesta con una de estas dos opciones:
+    * Si la pregunta coincide claramente con uno de los siguientes temas, usa el formato: "Para más información, consultar el manual en la pág. [número de página]".
+    * En cualquier otro caso, usa el formato genérico: "Para más información, se recomienda consultar el manual de la asignatura."
+
+Lista de temas del manual: [${manualIndex}]`;
+
+                const [respuestaPrincipal, respuestaFuente, respuestaModerno] = await Promise.all([
+                    callGeminiAPI(promptPrincipal, userQuery), 
+                    callFontAPI(userQuery),                
+                    callModernoAPI(userQuery)              
+                ]);
+                
+                let resultadoFinal = [];
+                let contador = 1;
+
+                const partesPrincipales = respuestaPrincipal.split(/2\.\s\*\*Referencia al Manual:\*\*/);
+                const respuestaJuridica = partesPrincipales[0].replace(/1\.\s\*\*Respuesta Jurídica:\*\*/, "").trim();
+                const referenciaManual = partesPrincipales[1] ? partesPrincipales[1].trim() : "Para más información, se recomienda consultar el manual de la asignatura.";
+                
+                resultadoFinal.push(`${contador}. **Respuesta Jurídica:**\n${respuestaJuridica}`);
+                contador++;
+
+                if (respuestaFuente && !respuestaFuente.trim().includes("NULL")) {
+                    resultadoFinal.push(`${contador}. **Fuente Clásica:**\n${respuestaFuente.trim()}`);
+                    contador++;
+                }
+
+                if (respuestaModerno && !respuestaModerno.trim().includes("NULL")) {
+                    resultadoFinal.push(`${contador}. **Vigencia en el Derecho Moderno:**\n${respuestaModerno.trim()}`);
+                    contador++;
+                }
+
+                resultadoFinal.push(`${contador}. **Referencia al Manual:**\n${referenciaManual}`);
+                
+                const textoFinal = resultadoFinal.join('\n\n');
+                queryResultText.innerHTML = textoFinal.replace(/\n/g, '<br>');
+
+                submitBtnText.classList.remove('hidden');
+                submitBtnLoader.classList.add('hidden');
+                submitQueryBtn.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>
