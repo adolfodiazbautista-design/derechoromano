@@ -209,7 +209,7 @@
 
         // --- FUNCIÓNES PARA LLAMAR A NUESTRO SERVIDOR ---
         async function callGeminiAPI(promptOriginal, termino = null) {
-           const apiUrl = 'https://derechoromano.onrender.com/api/consulta';
+           const apiUrl = 'https://derechoromano-ecma.onrender.com/api/consulta';
             try {
                 const response = await fetch(apiUrl, {
                     method: 'POST',
@@ -330,7 +330,7 @@
 
             async function callFontAPI(termino) {
                 try {
-                    const response = await fetch('https://derechoromano.onrender.com/api/buscar-fuente', {
+                    const response = await fetch('https://derechoromano-ecma.onrender.com/api/buscar-fuente', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ termino: termino })
@@ -343,7 +343,7 @@
             
             async function callModernoAPI(termino) {
                 try {
-                    const response = await fetch('https://derechoromano.onrender.com/api/derecho-moderno', {
+                    const response = await fetch('https://derechoromano-ecma.onrender.com/api/derecho-moderno', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ termino: termino })
