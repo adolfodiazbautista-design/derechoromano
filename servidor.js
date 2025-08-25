@@ -11,7 +11,7 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
-// --- LÓGICA DE GOOGLE SHEETS ---
+// --- LÓGICA DE GOOGLE SHEETS (CORREGIDA) ---
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const GOOGLE_CREDENTIALS = JSON.parse(process.env.GOOGLE_CREDENTIALS);
 
@@ -85,10 +85,7 @@ app.post('/api/consulta', async (req, res) => {
         const geminiResponse = await axios.post(url, payload, { headers: { 'Content-Type': 'application/json' } });
         const respuestaIA = geminiResponse.data.candidates[0].content.parts[0].text;
         cache.set(cacheKey, { data: respuestaIA, timestamp: Date.now() });
-        
-        // *** CAMBIO CLAVE AQUÍ ***
         await logQueryToSheet(termino, respuestaIA);
-        
         res.json({ respuesta: respuestaIA });
     } catch (error) {
         handleApiError(error, res);
@@ -98,23 +95,17 @@ app.post('/api/consulta', async (req, res) => {
 app.post('/api/buscar-fuente', async (req, res) => {
     const { termino } = req.body;
     const cacheKey = `fuente-${termino}`;
-    if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) {
-        return res.json({ fuente: cache.get(cacheKey).data });
-    }
+    if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) { return res.json({ fuente: cache.get(cacheKey).data }); }
     try {
         if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
-        const promptParaFuente = `Actúa como un historiador del derecho romano experto en fuentes...`;
+        const promptParaFuente = `Actúa como un historiador del derecho romano experto en fuentes. Tu única tarea es encontrar un pasaje breve pero significativo del Corpus Iuris Civilis (Digesto, Instituciones, Código) o de las Instituciones de Gayo que sea relevante para el término "${termino}". Responde únicamente con la cita en formato académico (ej. D. 1.1.1), el texto en latín y su traducción al español. Si no encuentras una cita clara y directa, responde solo con la palabra "NULL". NO DES NINGUNA EXPLICACIÓN NI JUSTIFICACIÓN.`;
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
         const payload = { contents: [{ parts: [{ text: promptParaFuente }] }] };
         const geminiResponse = await axios.post(url, payload, { headers: { 'Content-Type': 'application/json' } });
         const respuestaFuente = geminiResponse.data.candidates[0].content.parts[0].text;
         cache.set(cacheKey, { data: respuestaFuente, timestamp: Date.now() });
-        
-        // *** CAMBIO CLAVE AQUÍ ***
-        if (!respuestaFuente.includes("NULL")) {
-            await logQueryToSheet(termino, `[FUENTE CLÁSICA]: ${respuestaFuente}`);
-        }
+        if (!respuestaFuente.includes("NULL")) { await logQueryToSheet(termino, `[FUENTE CLÁSICA]: ${respuestaFuente}`); }
         res.json({ fuente: respuestaFuente });
     } catch (error) {
         handleApiError(error, res);
@@ -124,23 +115,17 @@ app.post('/api/buscar-fuente', async (req, res) => {
 app.post('/api/derecho-moderno', async (req, res) => {
     const { termino } = req.body;
     const cacheKey = `moderno-${termino}`;
-    if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) {
-        return res.json({ moderno: cache.get(cacheKey).data });
-    }
+    if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) { return res.json({ moderno: cache.get(cacheKey).data }); }
     try {
         if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
-        const promptParaModerno = `Actúa como un jurista experto en Derecho Civil español...`;
+        const promptParaModerno = `Actúa como un jurista experto en Derecho Civil español. Tu única tarea es explicar de forma breve y concisa la regulación o equivalencia del concepto "${termino}" en el Derecho español moderno, principalmente en el Código Civil. Si no existe una correspondencia clara, indícalo brevemente. Responde únicamente con la explicación. Si no encuentras nada, responde con la palabra "NULL". NO DES NINGUNA EXPLICACIÓN NI JUSTIFICACIÓN.`;
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
         const payload = { contents: [{ parts: [{ text: promptParaModerno }] }] };
         const geminiResponse = await axios.post(url, payload, { headers: { 'Content-Type': 'application/json' } });
         const respuestaModerno = geminiResponse.data.candidates[0].content.parts[0].text;
         cache.set(cacheKey, { data: respuestaModerno, timestamp: Date.now() });
-        
-        // *** CAMBIO CLAVE AQUÍ ***
-        if (!respuestaModerno.includes("NULL")) {
-            await logQueryToSheet(termino, `[DERECHO MODERNO]: ${respuestaModerno}`);
-        }
+        if (!respuestaModerno.includes("NULL")) { await logQueryToSheet(termino, `[DERECHO MODERNO]: ${respuestaModerno}`); }
         res.json({ moderno: respuestaModerno });
     } catch (error) {
         handleApiError(error, res);

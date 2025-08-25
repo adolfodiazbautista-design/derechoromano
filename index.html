@@ -194,10 +194,8 @@
                         <li><a href="https://share.podimo.com/s/ygbZufG6" target="_blank" rel="noopener noreferrer" class="text-amber-600 hover:text-amber-800 font-bold">tres meses gratis de suscripción a Podimo</a></li>
                         <li>Casos prácticos resueltos en clase.</li>
                         <li>Tutorías con el profesor.</li>
+                        <li><a href="https://open.spotify.com/playlist/6nKuBgwSXebcuw6Ekkn8xg?si=HEMGtXLiSoy9LGeyjSMT1w" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar la lista de reproducción de la asignatura en Spotify</a></li>
                     </ul>
-                    <div class="mt-8">
-                        <iframe style="border-radius:12px" src="https://open.spotify.com/playlist/6nKuBgwSXebcuw6Ekkn8xg?si=HEMGtXLiSoy9LGeyjSMT1w" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                    </div>
                 </section>`
             }
         };
@@ -304,8 +302,8 @@
             if(generateCaseBtn) generateCaseBtn.addEventListener('click', async () => {
                 const term = caseStudyInput.value.trim();
                 const termLower = term.toLowerCase();
-
-                const palabrasConsulta = termLower.split(/\s+/);
+                
+                const palabrasConsulta = termLower.split(/\s+/).filter(p => p.length > 2);
                 const esInapropiado = palabrasProhibidas.some(palabraProhibida => palabrasConsulta.includes(palabraProhibida));
                 
                 if (esInapropiado) {
