@@ -383,8 +383,8 @@ Pignus: Prenda o hipoteca. Negocio jurídico de garantía por el que una persona
 Pignus in causa iudicati captum: Embargo que dictaba el juez en el sistema de la extraordinaria cognitio sobre bienes singulares del demandado en ejecución de sentencias de condena dineraria.
 Plurispetitio: Situación en la que el demandante solicita en el juicio mayor cantidad de dinero de lo que se le debe, o bien lo reclama en condiciones más perjudiciales para el deudor de lo que le corresponde, provocando la absolución del demandado.
 Pollicitatio: Promesa unilateral y formal de hacer algo en correspondencia a un honor público recibido o que se espera recibir, y que suele consistir en el nombramiento para un cargo municipal.
-Posesión civil: possessio ad usucapionem. Es la tenencia de una cosa a título de dueño, reuniendo los elementos de corpus y animus. Permite acceder a la propiedad por usucapión.
-Posesión natural: Es la tenencia de una cosa reconociendo el dominio de otra persona. Sólo se requiere el elemento material (corpus). 
+Posesión civil: possessio ad usucapionem. Es la tenencia de una cosa a título de dueño, reuniendo los elementos de corpus y animus. Permite acceder a la propiedad por usucapión si se cumple el resto de requisitos.
+Posesión natural: Es la tenencia de una cosa reconociendo el dominio de otra persona. Sólo se requiere el elemento material (corpus). El poseedor natural SÍ tenía protección interdictal (interdictos uti possidetis, utrubi, unde vi y unde vi armata), no así los detentadores, que también tenían el corpus pero, por razones históricas, no tenían acceso a los interdictos (por ejemplo, el arrendatario).
 Postliminium: Ficción jurídica conforme a la cual, si un ciudadano con plena capacidad hacía testamento, era cautivado por los enemigos y regresaba a Roma, se fingía que jamás había sido cautivo y su testamento era válido.
 Potioris nominatio: Facultad del tutor magistratual de proponer al magistrado otra persona más idónea para el cargo de tutor.
 Praeiudicia: Acciones prejudiciales; aquellas que tienen por finalidad obtener una resolución judicial que sirva de base para formular un nuevo proceso.

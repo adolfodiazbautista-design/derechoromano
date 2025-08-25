@@ -282,7 +282,7 @@
                 solveCaseBtn.classList.add('hidden');
                 caseSolutionResult.classList.add('hidden');
 
-                const prompt = `Crea un breve y sencillo caso de estudio (menos de 150 palabras) basado en el derecho romano que ilustre el concepto jurídico de '${term}'. El caso debe involucrar personajes con nombres romanos (ej. Ticio, Cayo, Sempronio, Mevio o Livia). La respuesta debe ser en español. No des la solución en el planteamiento del caso`;
+                const prompt = `Crea un breve y sencillo caso de estudio (menos de 150 palabras) basado en el derecho romano que ilustre el concepto jurídico de '${term}'. El caso debe involucrar personajes con nombres romanos (ej. Ticio, Cayo, Sempronio, Mevio o Livia). La respuesta debe ser en español.`;
                 
                 const caseText = await callGeminiAPI(prompt, term);
                 
