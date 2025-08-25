@@ -4,14 +4,14 @@ const cors = require('cors');
 const fs = require('fs');
 const axios = require('axios');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
-const { JWT } = require('google-auth-library'); // Nueva librería requerida
+const { JWT } = require('google-auth-library');
 
 const app = express();
 const port = 3000;
 app.use(cors());
 app.use(express.json());
 
-// --- LÓGICA DE GOOGLE SHEETS (CORREGIDA) ---
+// --- LÓGICA DE GOOGLE SHEETS ---
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const GOOGLE_CREDENTIALS = JSON.parse(process.env.GOOGLE_CREDENTIALS);
 
@@ -27,11 +27,9 @@ async function logQueryToSheet(consulta, respuesta) {
     try {
         await doc.loadInfo();
         const sheet = doc.sheetsByIndex[0];
-
         const now = new Date();
         const fecha = now.toLocaleDateString('es-ES');
         const hora = now.toLocaleTimeString('es-ES');
-
         await sheet.addRow({
             Fecha: fecha,
             Hora: hora,
@@ -87,7 +85,10 @@ app.post('/api/consulta', async (req, res) => {
         const geminiResponse = await axios.post(url, payload, { headers: { 'Content-Type': 'application/json' } });
         const respuestaIA = geminiResponse.data.candidates[0].content.parts[0].text;
         cache.set(cacheKey, { data: respuestaIA, timestamp: Date.now() });
-        logQueryToSheet(termino, respuestaIA);
+        
+        // *** CAMBIO CLAVE AQUÍ ***
+        await logQueryToSheet(termino, respuestaIA);
+        
         res.json({ respuesta: respuestaIA });
     } catch (error) {
         handleApiError(error, res);
@@ -95,11 +96,55 @@ app.post('/api/consulta', async (req, res) => {
 });
 
 app.post('/api/buscar-fuente', async (req, res) => {
-    // ... (lógica del endpoint sin cambios, ya usa handleApiError) ...
+    const { termino } = req.body;
+    const cacheKey = `fuente-${termino}`;
+    if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) {
+        return res.json({ fuente: cache.get(cacheKey).data });
+    }
+    try {
+        if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
+        const promptParaFuente = `Actúa como un historiador del derecho romano experto en fuentes...`;
+        const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        const payload = { contents: [{ parts: [{ text: promptParaFuente }] }] };
+        const geminiResponse = await axios.post(url, payload, { headers: { 'Content-Type': 'application/json' } });
+        const respuestaFuente = geminiResponse.data.candidates[0].content.parts[0].text;
+        cache.set(cacheKey, { data: respuestaFuente, timestamp: Date.now() });
+        
+        // *** CAMBIO CLAVE AQUÍ ***
+        if (!respuestaFuente.includes("NULL")) {
+            await logQueryToSheet(termino, `[FUENTE CLÁSICA]: ${respuestaFuente}`);
+        }
+        res.json({ fuente: respuestaFuente });
+    } catch (error) {
+        handleApiError(error, res);
+    }
 });
 
 app.post('/api/derecho-moderno', async (req, res) => {
-    // ... (lógica del endpoint sin cambios, ya usa handleApiError) ...
+    const { termino } = req.body;
+    const cacheKey = `moderno-${termino}`;
+    if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) {
+        return res.json({ moderno: cache.get(cacheKey).data });
+    }
+    try {
+        if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
+        const promptParaModerno = `Actúa como un jurista experto en Derecho Civil español...`;
+        const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        const payload = { contents: [{ parts: [{ text: promptParaModerno }] }] };
+        const geminiResponse = await axios.post(url, payload, { headers: { 'Content-Type': 'application/json' } });
+        const respuestaModerno = geminiResponse.data.candidates[0].content.parts[0].text;
+        cache.set(cacheKey, { data: respuestaModerno, timestamp: Date.now() });
+        
+        // *** CAMBIO CLAVE AQUÍ ***
+        if (!respuestaModerno.includes("NULL")) {
+            await logQueryToSheet(termino, `[DERECHO MODERNO]: ${respuestaModerno}`);
+        }
+        res.json({ moderno: respuestaModerno });
+    } catch (error) {
+        handleApiError(error, res);
+    }
 });
 
 app.listen(port, () => {
