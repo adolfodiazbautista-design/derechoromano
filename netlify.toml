@@ -1,10 +1,10 @@
-# Regla para redirigir todas las llamadas de /api/* a nuestra función proxy.
+# Regla para redirigir todas las llamadas de /api/* a nuestra funcion proxy.
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api/:splat"
   status = 200
 
-# Configuración de la función (incluyendo el timeout que ya teníamos).
+# Configuracion de la funcion (incluyendo el timeout que ya teniamos).
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
