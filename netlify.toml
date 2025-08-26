@@ -1,4 +1,11 @@
-# Configuración simplificada de Netlify
+# Regla para redirigir todas las llamadas de /api/* a nuestra función proxy.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+# Configuración de la función (incluyendo el timeout que ya teníamos).
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
+  timeout = 60

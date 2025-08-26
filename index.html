@@ -265,16 +265,18 @@
         }
         document.getElementById('close-explanation-modal-btn').addEventListener('click', hideExplanationModal);
 
-        async function callApiAndHandleErrors(endpoint, payload) {
+async function callApiAndHandleErrors(endpoint, payload) {
             try {
-                const response = await fetch(`/.netlify/functions/api`, {
+                // MODIFICADO: Ahora llamamos a una ruta amigable como /api/consulta
+                // en lugar de la ruta larga de la función de Netlify.
+                const response = await fetch(`/api/${endpoint}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ endpoint, payload })
+                    body: JSON.stringify(payload)
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({ error: 'UNKNOWN_SERVER_ERROR', message: 'El servidor proxy respondió con un error inesperado.' }));
+                    const errorData = await response.json().catch(() => ({ error: 'UNKNOWN_SERVER_ERROR', message: 'El servidor respondió con un error inesperado.' }));
                     if (errorData.error === 'CONTENIDO_INAPROPIADO') {
                         return { error: respuestaCiceron.replace(/\n/g, '<br>') };
                     }
@@ -294,7 +296,6 @@
                 return { error: "No se ha podido establecer conexión con el servidor. Revisa tu conexión a internet." };
             }
         }
-
         async function callGeminiAPI(promptOriginal, termino = null) {
            const result = await callApiAndHandleErrors('consulta', { promptOriginal, termino });
            return result;
