@@ -3,13 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>Guía Interactiva de Derecho Romano</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.plot.ly/plotly-2.20.0.min.js" charset="utf-8"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <meta name="description" content="Guía interactiva de Derecho Romano para estudiantes de la Universidad de Murcia, con herramientas de IA para consultas teóricas y casos prácticos.">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <meta property="og:title" content="Guía Interactiva de Derecho Romano">
+    <meta property="og:description" content="Una herramienta de estudio con IA para la asignatura de Derecho Romano.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tu-sitio.netlify.app/"> <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Lato:wght@400;700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="https://cdn.plot.ly/plotly-2.20.0.min.js" charset="utf-8" defer></script>
     
     <style>
         body { font-family: 'Lato', sans-serif; color: #1e293b; }
@@ -26,12 +33,12 @@
 
     <header class="md:hidden p-4 bg-slate-800 text-white flex items-center justify-between shadow-lg z-30 fixed top-0 left-0 right-0">
         <h1 class="font-heading text-2xl font-bold text-amber-500">Derecho Romano</h1>
-        <button id="menu-button" class="text-white focus:outline-none">
+        <button id="menu-button" class="text-white focus:outline-none" aria-label="Abrir menú">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
     </header>
 
-    <aside id="sidebar" class="w-64 bg-slate-800 text-white p-6 shadow-lg fixed md:relative top-0 left-0 h-full transform -translate-x-full transition-transform duration-200 ease-in-out z-20 flex-col md:flex md:translate-x-0 pt-20 overflow-y-auto">
+    <aside id="sidebar" class="w-64 bg-slate-800 text-white p-6 shadow-lg fixed md:relative top-0 left-0 h-full transform -translate-x-full transition-transform duration-300 ease-in-out z-20 flex-col md:flex md:translate-x-0 pt-20 overflow-y-auto">
         <h1 class="font-heading text-3xl font-bold text-amber-500 mb-6 hidden md:block">Derecho Romano</h1>
         <nav class="flex-grow">
             <ul class="space-y-2">
@@ -58,7 +65,7 @@
 
     <main id="content-area" class="flex-1 p-8 overflow-y-auto pt-16 md:pt-8"></main>
     
-    <div id="explanation-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
+    <div id="explanation-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50" role="dialog" aria-modal="true" aria-labelledby="explanation-modal-title" aria-hidden="true">
         <div class="bg-white rounded-lg shadow-2xl p-6 max-w-md w-full">
             <h3 id="explanation-modal-title" class="text-2xl font-bold text-[#900C3F] mb-4 infographic-font">Explicación Sencilla</h3>
             <div id="explanation-modal-content" class="min-h-[100px]"><div class="loader mx-auto"></div></div>
@@ -71,6 +78,7 @@
         const sidebar = document.getElementById('sidebar');
         const menuButton = document.getElementById('menu-button');
         const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const body = document.body;
 
         // --- LISTA GLOBAL PARA EL FILTRO ANTI-TROLEO ---
         const palabrasProhibidas = ['tonto', 'tonta', 'sexo', 'idiota', 'imbecil', 'puta', 'mierda', 'gilipollas', 'franco', 'hitler', 'mussolini', 'stalin', 'polla', 'picha', 'acho', 'puto', 'zorra', 'zorras', 'tetas', 'pollas', 'cabron', 'cabrón', 'teta', 'coño', 'examen', 'test'];
@@ -226,45 +234,72 @@
             renderContent(hash);
         }
 
+        // --- MEJORAS DE ACCESIBILIDAD Y RENDIMIENTO MÓVIL ---
         function toggleSidebar() {
-            sidebar.classList.toggle('-translate-x-full');
-            sidebarOverlay.classList.toggle('hidden');
+            const isHidden = sidebar.classList.contains('-translate-x-full');
+            if (isHidden) {
+                sidebar.classList.remove('-translate-x-full');
+                sidebarOverlay.classList.remove('hidden');
+                body.style.overflow = 'hidden'; // Bloquea el scroll del body
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                sidebarOverlay.classList.add('hidden');
+                body.style.overflow = ''; // Desbloquea el scroll del body
+            }
         }
+        
         menuButton.addEventListener('click', toggleSidebar);
         sidebarOverlay.addEventListener('click', toggleSidebar);
         document.querySelectorAll('#sidebar a').forEach(link => {
             link.addEventListener('click', () => { if (window.innerWidth < 768) toggleSidebar(); });
         });
 
-        // --- FUNCIÓNES PARA LLAMAR A NUESTRO SERVIDOR ---
-        async function callApiAndHandleErrors(apiUrl, bodyPayload) {
+        const explanationModal = document.getElementById('explanation-modal');
+        function showExplanationModal() {
+            explanationModal.classList.remove('hidden');
+            explanationModal.setAttribute('aria-hidden', 'false');
+        }
+        function hideExplanationModal() {
+            explanationModal.classList.add('hidden');
+            explanationModal.setAttribute('aria-hidden', 'true');
+        }
+        document.getElementById('close-explanation-modal-btn').addEventListener('click', hideExplanationModal);
+
+
+        // --- MODIFICADO: FUNCIÓN DE LLAMADA A LA API A TRAVÉS DEL PROXY DE NETLIFY ---
+        async function callApiAndHandleErrors(endpoint, payload) {
             try {
-                const response = await fetch(apiUrl, {
+                // La URL ahora apunta a nuestra propia función de Netlify, que actúa como proxy
+                const response = await fetch(`/.netlify/functions/api`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(bodyPayload)
+                    // El cuerpo ahora contiene el endpoint real y los datos
+                    body: JSON.stringify({ endpoint, payload })
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({ error: 'UNKNOWN_SERVER_ERROR', message: 'El servidor respondió con un error inesperado.' }));
+                    const errorData = await response.json().catch(() => ({ error: 'UNKNOWN_SERVER_ERROR', message: 'El servidor proxy respondió con un error inesperado.' }));
                     switch (errorData.error) {
                         case 'MODEL_OVERLOADED':
                             return { error: "Ulpiano parece estar desbordado por el trabajo en este momento (el modelo de IA está sobrecargado). Por favor, dale un minuto de descanso y vuelve a intentarlo." };
                         case 'RATE_LIMIT_EXCEEDED':
                             return { error: "Parece que hemos consultado a los juristas con demasiada frecuencia. La curia necesita un respiro. Por favor, espera un poco antes de volver a preguntar." };
+                         case 'CONTENIDO_INAPROPIADO':
+                            return { error: respuestaCiceron };
                         default:
                             return { error: "Ha ocurrido un problema de comunicación con el servidor. Es posible que el servicio no esté disponible." };
                     }
                 }
                 return await response.json();
             } catch (error) {
-                console.error("Error de red llamando al API:", error);
+                console.error("Error de red llamando al API proxy:", error);
                 return { error: "No se ha podido establecer conexión con el servidor. Revisa tu conexión a internet." };
             }
         }
 
         async function callGeminiAPI(promptOriginal, termino = null) {
-           const result = await callApiAndHandleErrors('https://derechoromano-ecma.onrender.com/api/consulta', { promptOriginal, termino });
+           // Modificamos la llamada para pasar el endpoint y el payload
+           const result = await callApiAndHandleErrors('consulta', { promptOriginal, termino });
            return result;
         }
 
@@ -283,14 +318,13 @@
                 const concept = button.dataset.concept;
                 document.getElementById('explanation-modal-title').innerText = `Explicando: ${concept}`;
                 document.getElementById('explanation-modal-content').innerHTML = '<div class="loader mx-auto"></div>';
-                document.getElementById('explanation-modal').classList.remove('hidden');
+                showExplanationModal();
                 
                 const prompt = `Explica el concepto de '${concept}' en el Derecho Romano de forma muy sencilla, en menos de 100 palabras, como si fuera para un estudiante que nunca ha oído hablar de ello.`;
                 const result = await callGeminiAPI(prompt, concept); 
 
                 document.getElementById('explanation-modal-content').innerHTML = `<p>${result.respuesta || result.error}</p>`;
             }));
-            document.getElementById('close-explanation-modal-btn').addEventListener('click', () => document.getElementById('explanation-modal').classList.add('hidden'));
         }
 
         function initializeCaseLabScripts() {
@@ -323,7 +357,6 @@
 
                 const prompt = `Actúa como un profesor de derecho romano. Tu tarea es crear un breve supuesto de hecho (menos de 150 palabras) que plantee una controversia o un problema jurídico sobre el concepto de '${term}'. El caso debe involucrar a personajes con nombres romanos (ej. Ticio, Cayo, Sempronio) y describir una situación que requiera una solución legal. La descripción debe terminar justo cuando se plantea el problema, sin dar ninguna pista sobre la solución o el resultado final. REGLAS ESTRICTAS: NO incluyas la solución. NO uses palabras como "solución", "resolvió", "sentencia", "ganó", "perdió", "correctamente", "interdicto", "acción". NO expliques la teoría jurídica. El texto DEBE terminar con una pregunta como "¿Qué podría hacer Ticio?" o "¿Tiene Cayo derecho a reclamar?". Crea solo el problema.`;
                 
-                // --- CAMBIO 1: Se añade un prefijo al término para crear una clave de caché única para la generación de casos ---
                 const result = await callGeminiAPI(prompt, `caso_estudio_${term}`);
                 const caseText = result.respuesta || result.error;
                 
@@ -352,7 +385,6 @@
 3. **Referencia al Manual:** Busca el concepto principal ('${term}') en este índice: [${indexContent}].
 4. **Nota Final:** Concluye tu respuesta con una referencia en una nueva línea con el formato: 'Para más información, consultar el manual en la pág. [número de página]'.`;
                 
-                // --- CAMBIO 2: Se añade un prefijo diferente para la clave de caché de la solución del caso ---
                 const result = await callGeminiAPI(solutionPrompt, `solucion_caso_${term}`);
                 const solutionText = result.respuesta || result.error;
                 
@@ -378,7 +410,6 @@
                 if(sendChatBtn) sendChatBtn.disabled = true;
                 if(chatInput) chatInput.disabled = true;
                 
-                // --- CAMBIO 3: Se envía `null` como término en el chat para evitar usar la caché en conversaciones dinámicas ---
                 const result = await callGeminiAPI(userMessage, null);
                 const followUpResponse = result.respuesta || result.error;
 
@@ -410,12 +441,12 @@
             const sendChatBtn = document.getElementById('send-chat-btn-ulpiano');
 
             async function callFontAPI(termino) {
-                const result = await callApiAndHandleErrors('https://derechoromano-ecma.onrender.com/api/buscar-fuente', { termino });
+                const result = await callApiAndHandleErrors('buscar-fuente', { termino });
                 return result.error ? `NULL` : result.fuente;
             }
             
             async function callModernoAPI(termino) {
-                const result = await callApiAndHandleErrors('https://derechoromano-ecma.onrender.com/api/derecho-moderno', { termino });
+                const result = await callApiAndHandleErrors('derecho-moderno', { termino });
                 return result.error ? `NULL` : result.moderno;
             }
 

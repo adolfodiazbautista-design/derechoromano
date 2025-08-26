@@ -7,7 +7,14 @@ const axios = require('axios');
 const app = express();
 const port = 3000;
 app.use(cors());
-app.use(express.json());
+
+// --- MEJORAS DE SEGURIDAD ---
+// NUEVO: Limita el tamaño de las peticiones JSON a 1MB para prevenir ataques DoS.
+app.use(express.json({ limit: "1mb" }));
+
+// NUEVO: Lista de palabras prohibidas replicada en el servidor.
+const palabrasProhibidas = ['tonto', 'tonta', 'sexo', 'idiota', 'imbecil', 'puta', 'mierda', 'gilipollas', 'franco', 'hitler', 'mussolini', 'stalin', 'polla', 'picha', 'acho', 'puto', 'zorra', 'zorras', 'tetas', 'pollas', 'cabron', 'cabrón', 'teta', 'coño', 'examen', 'test'];
+
 
 // --- LÓGICA DEL SERVIDOR ---
 const manualCompleto = fs.readFileSync('manual.txt', 'utf-8');
@@ -31,7 +38,20 @@ function handleApiError(error, res) {
     res.status(500).json({ error: 'INTERNAL_SERVER_ERROR', message: 'Ha ocurrido un error en el servidor.' });
 }
 
-app.post('/api/consulta', async (req, res) => {
+// Función para validar el contenido de la petición
+function validarContenido(req, res, next) {
+    const { promptOriginal, termino } = req.body;
+    const textoCompleto = `${promptOriginal || ''} ${termino || ''}`.toLowerCase();
+    
+    if (palabrasProhibidas.some(p => textoCompleto.includes(p))) {
+        console.warn(`Intento de consulta bloqueada por contenido inapropiado: "${textoCompleto}"`);
+        return res.status(400).json({ error: 'CONTENIDO_INAPROPIADO', message: 'La consulta contiene términos no permitidos.' });
+    }
+    next();
+}
+
+
+app.post('/api/consulta', validarContenido, async (req, res) => {
     const { promptOriginal, termino } = req.body;
     const cacheKey = `consulta-${termino}`;
     if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) {
@@ -58,13 +78,13 @@ app.post('/api/consulta', async (req, res) => {
     }
 });
 
-app.post('/api/buscar-fuente', async (req, res) => {
+app.post('/api/buscar-fuente', validarContenido, async (req, res) => {
     const { termino } = req.body;
     const cacheKey = `fuente-${termino}`;
     if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) { return res.json({ fuente: cache.get(cacheKey).data }); }
     try {
         if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
-        const promptParaFuente = `Actúa como un profesor de derecho romano experto en fuentes. Tu única tarea es encontrar un pasaje breve pero significativo del Corpus Iuris Civilis (Digesto, Instituciones, Código) o de las Instituciones de Gayo, o un principio general del derecho en latín que sea relevante para el término "${termino}". Responde únicamente con la cita en formato académico (ej. D. 1.1.1), el texto en latín y su traducción al español. Si no encuentras una cita clara y directa, responde solo con la palabra "NULL". NO DES NINGUNA EXPLICACIÓN NI JUSTIFICACIÓN.`;
+        const promptParaFuente = `Actúa como un historiador del derecho romano experto en fuentes. Tu única tarea es encontrar un pasaje breve pero significativo del Corpus Iuris Civilis (Digesto, Instituciones, Código) o de las Instituciones de Gayo que sea relevante para el término "${termino}". Responde únicamente con la cita en formato académico (ej. D. 1.1.1), el texto en latín y su traducción al español. Si no encuentras una cita clara y directa, responde solo con la palabra "NULL". NO DES NINGUNA EXPLICACIÓN NI JUSTIFICACIÓN.`;
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
         const payload = { contents: [{ parts: [{ text: promptParaFuente }] }] };
@@ -77,13 +97,13 @@ app.post('/api/buscar-fuente', async (req, res) => {
     }
 });
 
-app.post('/api/derecho-moderno', async (req, res) => {
+app.post('/api/derecho-moderno', validarContenido, async (req, res) => {
     const { termino } = req.body;
     const cacheKey = `moderno-${termino}`;
     if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) { return res.json({ moderno: cache.get(cacheKey).data }); }
     try {
         if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
-        const promptParaModerno = `Actúa como un jurista experto en Derecho Civil español. Tu única tarea es explicar de forma breve y concisa la regulación o equivalencia del concepto "${termino}" en el Derecho español moderno. Si no existe una correspondencia clara, indícalo brevemente. Responde únicamente con la explicación. Si no encuentras nada, responde con la palabra "NULL". NO DES NINGUNA EXPLICACIÓN NI JUSTIFICACIÓN.`;
+        const promptParaModerno = `Actúa como un jurista experto en Derecho Civil español. Tu única tarea es explicar de forma breve y concisa la regulación o equivalencia del concepto "${termino}" en el Derecho español moderno, principalmente en el Código Civil. Si no existe una correspondencia clara, indícalo brevemente. Responde únicamente con la explicación. Si no encuentras nada, responde con la palabra "NULL". NO DES NINGUNA EXPLICACIÓN NI JUSTIFICACIÓN.`;
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
         const payload = { contents: [{ parts: [{ text: promptParaModerno }] }] };
