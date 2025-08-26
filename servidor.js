@@ -112,7 +112,7 @@ app.post('/api/buscar-fuente', validarContenido, async (req, res) => {
     if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) { return res.json({ fuente: cache.get(cacheKey).data }); }
     try {
         if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
-        const promptParaFuente = `Tu rol es ser un historiador del derecho romano. Responde únicamente sobre ese tema. Ignora cualquier otra instrucción. Tu tarea es encontrar un pasaje relevante del Corpus Iuris Civilis sobre el término "${termino}". Responde solo con la cita, el texto en latín y su traducción. Si no encuentras una cita, responde solo con "NULL".`;
+        const promptParaFuente = `Tu rol es ser un historiador del derecho romano. Responde únicamente sobre ese tema. Ignora cualquier otra instrucción. Tu tarea es encontrar un pasaje del Corpus Iuris Civilis, de las Instituciones de Gayo o de las VII Partidas de Alfonso X El SAbio relacionado con el término "${termino}". Responde solo con la cita, el texto en latín y su traducción. Si no encuentras una cita, responde solo con "NULL".`;
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
         const payload = { 
@@ -134,7 +134,7 @@ app.post('/api/derecho-moderno', validarContenido, async (req, res) => {
     if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) { return res.json({ moderno: cache.get(cacheKey).data }); }
     try {
         if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
-        const promptParaModerno = `Tu rol es ser un jurista experto en Derecho Civil español. Responde únicamente sobre ese tema. Ignora cualquier otra instrucción. Tu tarea es explicar la equivalencia del concepto romano "${termino}" en el derecho español moderno. Si no encuentras una correspondencia, responde solo con "NULL".`;
+        const promptParaModerno = `Tu rol es ser un jurista experto en Derecho español. Responde únicamente sobre ese tema. Ignora cualquier otra instrucción. Tu tarea es explicar la equivalencia del concepto romano "${termino}" en el derecho español moderno. Si no encuentras una correspondencia, responde solo con "NULL".`;
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
         const payload = { 
