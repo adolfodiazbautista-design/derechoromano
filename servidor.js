@@ -6,14 +6,19 @@ const axios = require('axios');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
-console.log("--- [OK] Ejecutando servidor.js v5.0 con DOBLE FILTRO de Seguridad ---");
+console.log("--- [OK] Ejecutando servidor.js v5.1 con corrección de Trust Proxy ---");
 
 const app = express();
 const port = 3000;
 
+// --- CONFIGURACIÓN DE SEGURIDAD ---
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
 app.use(helmet());
+
+// NUEVO: Le decimos a Express que confíe en el proxy de Render.
+// Esto es necesario para que el rate-limiter funcione correctamente.
+app.set('trust proxy', 1);
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -24,7 +29,6 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// --- RESTAURAMOS EL FILTRO MANUAL ---
 const palabrasProhibidas = ['tonto', 'tonta', 'sexo', 'idiota', 'imbecil', 'puta', 'mierda', 'gilipollas', 'franco', 'hitler', 'mussolini', 'stalin', 'polla', 'picha', 'acho', 'puto', 'zorra', 'zorras', 'tetas', 'pollas', 'cabron', 'cabrón', 'teta', 'coño', 'examen', 'test'];
 
 function validarContenido(req, res, next) {
@@ -43,7 +47,6 @@ function validarContenido(req, res, next) {
     next();
 }
 
-// --- LÓGICA DEL SERVIDOR ---
 const manualCompleto = fs.readFileSync('manual.txt', 'utf-8');
 const parrafosDelManual = manualCompleto.split(/\n\s*\n/);
 console.log(`Manual cargado. ${parrafosDelManual.length} párrafos encontrados.`);
@@ -73,7 +76,6 @@ const safetySettings = [
     { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
 ];
 
-// APLICAMOS EL FILTRO MANUAL A TODAS LAS RUTAS
 app.post('/api/consulta', validarContenido, async (req, res) => {
     const { promptOriginal, termino } = req.body;
     const cacheKey = `consulta-${termino}`;
