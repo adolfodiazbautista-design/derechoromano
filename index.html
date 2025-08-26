@@ -325,7 +325,8 @@
 
                 const prompt = `Actúa como un profesor de derecho romano. Tu tarea es crear un breve supuesto de hecho (menos de 150 palabras) que plantee una controversia o un problema jurídico sobre el concepto de '${term}'. El caso debe involucrar a personajes con nombres romanos (ej. Ticio, Cayo, Sempronio) y describir una situación que requiera una solución legal. La descripción debe terminar justo cuando se plantea el problema, sin dar ninguna pista sobre la solución o el resultado final. REGLAS ESTRICTAS: NO incluyas la solución. NO uses palabras como "solución", "resolvió", "sentencia", "ganó", "perdió", "correctamente", "interdicto", "acción". NO expliques la teoría jurídica. El texto DEBE terminar con una pregunta como "¿Qué podría hacer Ticio?" o "¿Tiene Cayo derecho a reclamar?". Crea solo el problema.`;
                 
-                const result = await callGeminiAPI(prompt, term);
+                // --- CAMBIO 1: Se añade un prefijo al término para crear una clave de caché única para la generación de casos ---
+                const result = await callGeminiAPI(prompt, `caso_estudio_${term}`);
                 const caseText = result.respuesta || result.error;
                 
                 caseStudyResult.dataset.caseText = caseText;
@@ -353,7 +354,8 @@
 3. **Referencia al Manual:** Busca el concepto principal ('${term}') en este índice: [${indexContent}].
 4. **Nota Final:** Concluye tu respuesta con una referencia en una nueva línea con el formato: 'Para más información, consultar el manual en la pág. [número de página]'.`;
                 
-                const result = await callGeminiAPI(solutionPrompt, term);
+                // --- CAMBIO 2: Se añade un prefijo diferente para la clave de caché de la solución del caso ---
+                const result = await callGeminiAPI(solutionPrompt, `solucion_caso_${term}`);
                 const solutionText = result.respuesta || result.error;
                 
                 caseSolutionResult.innerHTML = `<h4 class="font-bold text-lg mb-2 text-green-800">Solución Propuesta:</h4><p>${solutionText.replace(/\n/g, '<br>')}</p>`;
@@ -378,7 +380,8 @@
                 if(sendChatBtn) sendChatBtn.disabled = true;
                 if(chatInput) chatInput.disabled = true;
                 
-                const result = await callGeminiAPI(userMessage, caseStudyInput.value.trim());
+                // --- CAMBIO 3: Se envía `null` como término en el chat para evitar usar la caché en conversaciones dinámicas ---
+                const result = await callGeminiAPI(userMessage, null);
                 const followUpResponse = result.respuesta || result.error;
 
                 chatConversation.innerHTML += `<div class="text-left"><span class="bg-gray-200 text-gray-800 px-3 py-2 rounded-lg inline-block max-w-xs sm:max-w-md">${followUpResponse.replace(/\n/g, '<br>')}</span></div>`;
@@ -536,4 +539,4 @@ Lista de temas del manual: [${manualIndex}]`;
         }
     </script>
 </body>
-</html> 
+</html>
