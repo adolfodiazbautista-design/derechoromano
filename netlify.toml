@@ -4,8 +4,12 @@
   to = "/.netlify/functions/api/:splat"
   status = 200
 
-# Configuracion de la funcion (incluyendo el timeout que ya teniamos).
+# Configuracion general para TODAS las funciones.
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
+
+# Configuración específica para nuestra funcion llamada "api".
+# Aqui es donde debemos poner el timeout.
+[functions.api]
   timeout = 90
