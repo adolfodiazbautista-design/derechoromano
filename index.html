@@ -37,8 +37,6 @@
             <ul class="space-y-2">
                 <li><a href="#home" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Presentación</a></li>
                 <li><a href="#infografia" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Infografía Interactiva</a></li>
-                <li><a href="#caselab" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Laboratorio de Casos</a></li>
-                <li><a href="#ulpiano" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Consulta a UlpianoIA</a></li>
                 <li><a href="#bloque1" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Bloque I: Fundamentos</a></li>
                 <li><a href="#bloque2" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Bloque II: Sujetos de Derecho</a></li>
                 <li><a href="#bloque3" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Bloque III: Negocio Jurídico</a></li>
@@ -46,8 +44,9 @@
                 <li><a href="#bloque5" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Bloque V: Derechos Reales</a></li>
                 <li><a href="#bloque6" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Bloque VI: Obligaciones y Contratos</a></li>
                 <li><a href="#bloque7" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Bloque VII: Sucesiones</a></li>
-                
-                <li><a href="#bibliografia" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Bibliografía</a></li>
+                <li><a href="#caselab" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Laboratorio de Casos</a></li>
+                <li><a href="#ulpiano" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Consulta a UlpianoIA</a></li>
+                <li><a href="#bibliografia" class="block p-2 rounded transition-colors duration-200 text-white hover:bg-slate-700">Recursos</a></li>
             </ul>
         </nav>
         <div class="mt-8 text-sm text-slate-400">
@@ -74,7 +73,7 @@
         const sidebarOverlay = document.getElementById('sidebar-overlay');
 
         // --- LISTA GLOBAL PARA EL FILTRO ANTI-TROLEO ---
-        const palabrasProhibidas = ['tonto', 'sexo', 'idiota', 'imbecil', 'puta', 'mierda', 'gilipollas', 'franco', 'hitler', 'mussolini', 'stalin', 'polla', 'picha', 'acho', 'puto', 'zorra', 'zorras', 'tetas', 'pollas', 'cabron', 'cabrón', 'teta', 'coño', 'examen', 'test'];
+        const palabrasProhibidas = ['tonto', 'tonta', 'sexo', 'idiota', 'imbecil', 'puta', 'mierda', 'gilipollas', 'franco', 'hitler', 'mussolini', 'stalin', 'polla', 'picha', 'acho', 'puto', 'zorra', 'zorras', 'tetas', 'pollas', 'cabron', 'cabrón', 'teta', 'coño', 'examen', 'test'];
         const respuestaCiceron = `Quo usque tandem abutere, Catilina, patientia nostra? Quam diu etiam furor iste tuus nos eludet? Quem ad finem sese effrenata iactabit audacia? Nihilne te nocturnum praesidium Palati, nihil urbis uigiliae, nihil timor populi, nihil concursus bonorum omnium, nihil hic munitissimus habendi senatus locus, nihil horum ora uoltusque mouerunt? Patere tua consilia non sentis, constrictam iam horum omnium scientia teneri coniurationem tuam non uides? Quid proxima, quid superiore nocte egeris, ubi fueris, quos conuocaueris, quid consili ceperis quem nostrum ignorare arbitraris? O tempora, o mores! Senatus haec intellegit, consul uidet; hic tamen uiuit. Viuit? Immo uero etiam in senatum uenit, fit publici consili particeps, notat et designat oculis ad caedem unum quemque nostrum. Nos autem fortes uiri satis facere rei publicae uidemur, si istius furorem ac tela uitamus.`;
 
 
@@ -186,14 +185,13 @@
                     </ul>
                     <h3 class="text-2xl font-semibold text-secondary mt-6 mb-2">Recursos Adicionales</h3>
                     <ul class="list-disc list-inside space-y-2">
-                        <li><a href="https://webs.um.es/jal/" target="_blank" rel="noopener noreferrer" class="text-amber-600 hover:text-amber-800 font-bold">Web del profesor Joaquín Ataz López</a></li>
+                        <li><a href="https://webs.um.es/jal/" target="_blank" rel="noopener noreferrer" class="text-amber-600 hover:text-amber-800 font-bold">CIVILizándonos. Web del profesor Joaquín Ataz López</a></li>
                         <li><a href="https://derecho-romano.blogspot.com/" target="_blank" rel="noopener noreferrer" class="text-amber-600 hover:text-amber-800 font-bold">Blog de Derecho Romano</a></li>
-                        <li><a href="https://www.youtube.com/playlist?list=PLhqyfgIdoGr2SrQMeLPg9Bdl4ThnF16a3" target="_blank" rel="noopener noreferrer" class="text-amber-600 hover:text-amber-800 font-bold">Vídeos: Derecho Romano y Tradición Romanística (YouTube)</a></li>
+                        <li><a href="https://www.youtube.com/playlist?list=PLhqyfgIdoGr2SrQMeLPg9Bdl4ThnF16a3" target="_blank" rel="noopener noreferrer" class="text-amber-600 hover:text-amber-800 font-bold">Roma, un Imperio sin Límites con Mary Beard (YouTube)</a></li>
                         <li><a href="https://www.um.es/web/biblioteca/conoce-biblioteca/biblioteca/puntos-de-servicio/biblioteca-juridica/acceso-a-los-recursos-electr%C3%B3nicos-de-cc-jur%C3%ADdicas-y-sociales" target="_blank" rel="noopener noreferrer" class="text-amber-600 hover:text-amber-800 font-bold">Recursos electrónicos de CC. Jurídicas y Sociales (UMU)</a></li>
                         <li><a href="https://www.um.es/web/derecho/conoce-la-facultad/estructura/servicios/biblioteca-digital" target="_blank" rel="noopener noreferrer" class="text-amber-600 hover:text-amber-800 font-bold">Biblioteca Digital de la Facultad de Derecho (UMU)</a></li>
                         <li><a href="https://share.podimo.com/s/ygbZufG6" target="_blank" rel="noopener noreferrer" class="text-amber-600 hover:text-amber-800 font-bold">tres meses gratis de suscripción a Podimo</a></li>
-                        <li>Casos prácticos resueltos en clase.</li>
-                        <li>Tutorías con el profesor.</li>
+                        <li><a href="mailto:adiaz-bautista@um.es" class="text-amber-600 hover:text-amber-800 font-bold">Tutorías con el profesor (adiaz-bautista@um.es)</a></li>
                         <li><a href="https://open.spotify.com/playlist/6nKuBgwSXebcuw6Ekkn8xg?si=HEMGtXLiSoy9LGeyjSMT1w" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Escuchar la lista de reproducción de la asignatura en Spotify</a></li>
                     </ul>
                 </section>`
