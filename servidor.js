@@ -4,15 +4,16 @@ const cors = require('cors');
 const fs = require('fs');
 const axios = require('axios');
 
+// --- VERIFICADOR DE VERSIÓN ---
+console.log("--- [OK] Ejecutando servidor.js v3.0 con FILTRO CORREGIDO (REGEX) ---");
+
 const app = express();
 const port = 3000;
 app.use(cors());
 
 // --- MEJORAS DE SEGURIDAD ---
-// NUEVO: Limita el tamaño de las peticiones JSON a 1MB para prevenir ataques DoS.
 app.use(express.json({ limit: "1mb" }));
 
-// NUEVO: Lista de palabras prohibidas replicada en el servidor.
 const palabrasProhibidas = ['tonto', 'tonta', 'sexo', 'idiota', 'imbecil', 'puta', 'mierda', 'gilipollas', 'franco', 'hitler', 'mussolini', 'stalin', 'polla', 'picha', 'acho', 'puto', 'zorra', 'zorras', 'tetas', 'pollas', 'cabron', 'cabrón', 'teta', 'coño', 'examen', 'test'];
 
 
@@ -38,13 +39,19 @@ function handleApiError(error, res) {
     res.status(500).json({ error: 'INTERNAL_SERVER_ERROR', message: 'Ha ocurrido un error en el servidor.' });
 }
 
-// Función para validar el contenido de la petición
+// --- FUNCIÓN DE VALIDACIÓN CORREGIDA ---
+// Usa una expresión regular con \b (word boundary) para que solo detecte palabras completas.
 function validarContenido(req, res, next) {
     const { promptOriginal, termino } = req.body;
     const textoCompleto = `${promptOriginal || ''} ${termino || ''}`.toLowerCase();
     
-    if (palabrasProhibidas.some(p => textoCompleto.includes(p))) {
-        console.warn(`Intento de consulta bloqueada por contenido inapropiado: "${textoCompleto}"`);
+    const esInapropiado = palabrasProhibidas.some(palabra => {
+        const regex = new RegExp(`\\b${palabra}\\b`, 'i');
+        return regex.test(textoCompleto);
+    });
+
+    if (esInapropiado) {
+        console.warn(`Intento de consulta bloqueada por contenido inapropiado.`);
         return res.status(400).json({ error: 'CONTENIDO_INAPROPIADO', message: 'La consulta contiene términos no permitidos.' });
     }
     next();
