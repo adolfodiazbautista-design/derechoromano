@@ -98,17 +98,6 @@
             '#caselab': {
                 title: 'Laboratorio de Casos Romanos',
                 html: `<section class="infographic-font bg-white rounded-lg shadow-md p-6"><h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">Laboratorio de Casos Romanos</h2><p class="text-center max-w-4xl mx-auto mb-6">Introduce un concepto de derecho romano (ej: usufructo, dote, compraventa) y la IA generará un caso de estudio para que lo analices.</p><div class="text-center text-sm text-gray-500 mb-6 bg-amber-50 border border-amber-200 rounded-lg p-3 max-w-xl mx-auto"><p><strong>Advertencia:</strong> Los casos y soluciones son generados por la IA de Google (Gemini) y no han sido supervisados por el profesor. Úsalos como una herramienta de práctica y no como una fuente autorizada.</p></div><div class="max-w-xl mx-auto"><div class="flex flex-col sm:flex-row gap-2"><input type="text" id="case-study-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5733]" placeholder="Ej: Usufructo"><button id="generate-case-btn" class="bg-[#C70039] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#900C3F] transition-colors flex items-center justify-center"><span id="btn-text">✨ Generar Caso</span><div id="btn-loader" class="loader hidden"></div></button></div><div id="case-study-result" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[100px]"><p class="text-gray-500">Aquí aparecerá tu caso de estudio...</p></div><div class="text-center mt-4"><button id="solve-case-btn" class="hidden bg-[#FF5733] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#C70039] transition-colors flex items-center justify-center mx-auto"><span id="solve-btn-text">Ver Solución</span><div id="solve-btn-loader" class="loader hidden"></div></button></div><div id="case-solution-result" class="hidden mt-6 p-4 bg-green-50 rounded-lg border border-green-200"></div>
-                <div id="chat-follow-up" class="hidden mt-8 border-t pt-6">
-                    <h4 class="font-bold text-lg mb-4 text-gray-800">¿Necesitas más detalles? ¡Pregúntame!</h4>
-                    <div id="chat-conversation" class="h-64 overflow-y-auto p-4 bg-gray-50 rounded-md mb-4 border space-y-4"></div>
-                    <div class="flex items-center">
-                        <input type="text" id="chat-input" class="flex-grow border rounded-l-md p-2 focus:outline-none focus:ring-2 focus:ring-green-700" placeholder="Escribe aquí tu pregunta...">
-                        <button id="send-chat-btn" class="bg-green-800 text-white px-4 py-2 rounded-r-md hover:bg-green-900 flex items-center justify-center" style="min-width: 100px;">
-                            <span id="send-btn-text">Enviar</span>
-                            <div id="send-btn-loader" class="loader hidden" style="border-top-color: #fff; width:20px; height:20px;"></div>
-                        </button>
-                    </div>
-                </div>
                 </div></section>`
             },
             '#ulpiano': {
@@ -128,17 +117,6 @@
                             <div id="queryResult" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 hidden">
                                 <h3 class="text-xl font-semibold mb-2 text-[#900C3F]">Respuesta de UlpianoIA:</h3>
                                 <p id="queryResultText"></p>
-                            </div>
-                            <div id="chat-follow-up-ulpiano" class="hidden mt-8 border-t pt-6">
-                                <h4 class="font-bold text-lg mb-4 text-gray-800">¿Necesitas más detalles? ¡Pregúntame!</h4>
-                                <div id="chat-conversation-ulpiano" class="h-64 overflow-y-auto p-4 bg-gray-50 rounded-md mb-4 border space-y-4"></div>
-                                <div class="flex items-center">
-                                    <input type="text" id="chat-input-ulpiano" class="flex-grow border rounded-l-md p-2 focus:outline-none focus:ring-2 focus:ring-green-700" placeholder="Escribe aquí tu pregunta...">
-                                    <button id="send-chat-btn-ulpiano" class="bg-green-800 text-white px-4 py-2 rounded-r-md hover:bg-green-900 flex items-center justify-center" style="min-width: 100px;">
-                                        <span id="send-btn-text-ulpiano">Enviar</span>
-                                        <div id="send-btn-loader-ulpiano" class="loader hidden" style="border-top-color: #fff; width:20px; height:20px;"></div>
-                                    </button>
-                                </div>
                             </div>
                         </div>
                        </section>`
@@ -327,8 +305,7 @@ async function callApiAndHandleErrors(endpoint, payload) {
 
         function initializeCaseLabScripts() {
             const generateCaseBtn = document.getElementById('generate-case-btn'), caseStudyInput = document.getElementById('case-study-input'), caseStudyResult = document.getElementById('case-study-result'), solveCaseBtn = document.getElementById('solve-case-btn'), caseSolutionResult = document.getElementById('case-solution-result');
-            const chatFollowUp = document.getElementById('chat-follow-up'), chatConversation = document.getElementById('chat-conversation'), chatInput = document.getElementById('chat-input'), sendChatBtn = document.getElementById('send-chat-btn');
-
+            
             if(generateCaseBtn) generateCaseBtn.addEventListener('click', async () => {
                 const term = caseStudyInput.value.trim();
                 
@@ -397,40 +374,7 @@ async function callApiAndHandleErrors(endpoint, payload) {
                 if(solveBtnText) solveBtnText.classList.remove('hidden');
                 if(solveBtnLoader) solveBtnLoader.classList.add('hidden');
                 solveCaseBtn.disabled = false;
-                chatFollowUp.classList.remove('hidden');
             });
-
-            async function handleChatSubmit() {
-                const userMessage = chatInput.value.trim();
-                if (userMessage === '') return;
-                chatConversation.innerHTML += `<div class="text-right"><span class="bg-green-200 text-green-900 px-3 py-2 rounded-lg inline-block max-w-xs sm:max-w-md">${userMessage}</span></div>`;
-                chatInput.value = '';
-                chatConversation.scrollTop = chatConversation.scrollHeight;
-                const sendBtnText = document.getElementById('send-btn-text');
-                const sendBtnLoader = document.getElementById('send-btn-loader');
-                if(sendBtnText && sendBtnLoader) {
-                    sendBtnText.classList.add('hidden');
-                    sendBtnLoader.classList.remove('hidden');
-                }
-                if(sendChatBtn) sendChatBtn.disabled = true;
-                if(chatInput) chatInput.disabled = true;
-                
-                const result = await callGeminiAPI(userMessage, null);
-                const followUpResponse = result.respuesta || result.error;
-
-                chatConversation.innerHTML += `<div class="text-left"><span class="bg-gray-200 text-gray-800 px-3 py-2 rounded-lg inline-block max-w-xs sm:max-w-md">${followUpResponse.replace(/\n/g, '<br>')}</span></div>`;
-                chatConversation.scrollTop = chatConversation.scrollHeight;
-                if(sendBtnText && sendBtnLoader) {
-                    sendBtnText.classList.remove('hidden');
-                    sendBtnLoader.classList.add('hidden');
-                }
-                if(sendChatBtn) sendChatBtn.disabled = false;
-                if(chatInput) chatInput.disabled = false;
-                if(chatInput) chatInput.focus();
-            }
-
-            if (sendChatBtn) sendChatBtn.addEventListener('click', handleChatSubmit);
-            if (chatInput) chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleChatSubmit(); } });
         }
         
         function initializeUlpianoScripts() {
@@ -440,10 +384,6 @@ async function callApiAndHandleErrors(endpoint, payload) {
             const queryResultText = document.getElementById('queryResultText');
             const submitBtnText = document.getElementById('submit-btn-text');
             const submitBtnLoader = document.getElementById('submit-btn-loader');
-            const chatFollowUp = document.getElementById('chat-follow-up-ulpiano');
-            const chatConversation = document.getElementById('chat-conversation-ulpiano');
-            const chatInput = document.getElementById('chat-input-ulpiano');
-            const sendChatBtn = document.getElementById('send-chat-btn-ulpiano');
 
             async function callFontAPI(termino) {
                 const result = await callApiAndHandleErrors('buscar-fuente', { termino });
@@ -476,7 +416,6 @@ async function callApiAndHandleErrors(endpoint, payload) {
                 submitBtnLoader.classList.remove('hidden');
                 queryResult.classList.remove('hidden');
                 queryResultText.innerHTML = '<div class="loader mx-auto" style="border-top-color:#C70039;"></div>';
-                chatFollowUp.classList.add('hidden');
 
                 const manualIndex = "Historia de Roma: 53, república romana: 55, principado: 65, dominado: 68, justiniano: 73, persona: 86, capacidad: 94, esclavo: 87, familia: 96, dote: 98, matrimonio: 97, ineficacia del negocio jurídico: 111, legis actiones: 112, per formulas: 120, cognitio: 136, posesión: 144, propiedad: 149, usucapión: 155, acción publiciana: 166, solidaridad: 177, mancomunidad: 177, delitos: 179, hurto: 180, robo: 180, Mutuo: 188, Comodato: 188, Depósito: 189, Fiducia: 190, Prenda (pignus): 191, Hipoteca (pignus conventum): 192, Compraventa (emptio venditio): 196, Arrendamiento (locatio conductio): 199, Sociedad (societas): 202, Mandato (mandatum): 203, Donación: 204, Stipulatio: 207, Sucesión mortis causa: 215, Sucesión intestada: 221, Sucesión testamentaria: 226, Legados: 232, Fideicomisos: 234, Sucesión forzosa o legitimaria: 236, Usufructo: 161, Servidumbres: 158, Patria Potestas: 100, Negocio jurídico: 105, vicios de la voluntad: 105, error 105, dolo: 105 y 179, metus (intimidación): 105, representación: 106, simulación: 106, condición: 106, término: 106, modo: 106, Delitos: 179, Daño: 181, Iniuriae (lesiones y ofensas): 182";
                 
@@ -515,40 +454,7 @@ async function callApiAndHandleErrors(endpoint, payload) {
                 submitBtnText.classList.remove('hidden');
                 submitBtnLoader.classList.add('hidden');
                 submitQueryBtn.disabled = false;
-                chatFollowUp.classList.remove('hidden');
             });
-
-            async function handleChatSubmitUlpiano() {
-                const userMessage = chatInput.value.trim();
-                if (userMessage === '') return;
-                chatConversation.innerHTML += `<div class="text-right"><span class="bg-green-200 text-green-900 px-3 py-2 rounded-lg inline-block max-w-xs sm:max-w-md">${userMessage}</span></div>`;
-                chatInput.value = '';
-                chatConversation.scrollTop = chatConversation.scrollHeight;
-                const sendBtnText = document.getElementById('send-btn-text-ulpiano');
-                const sendBtnLoader = document.getElementById('send-btn-loader-ulpiano');
-                if(sendBtnText && sendBtnLoader) {
-                    sendBtnText.classList.add('hidden');
-                    sendBtnLoader.classList.remove('hidden');
-                }
-                if(sendChatBtn) sendChatBtn.disabled = true;
-                if(chatInput) chatInput.disabled = true;
-                
-                const result = await callGeminiAPI(userMessage, userMessage);
-                const followUpResponse = result.respuesta || result.error;
-                
-                chatConversation.innerHTML += `<div class="text-left"><span class="bg-gray-200 text-gray-800 px-3 py-2 rounded-lg inline-block max-w-xs sm:max-w-md">${followUpResponse.replace(/\n/g, '<br>')}</span></div>`;
-                chatConversation.scrollTop = chatConversation.scrollHeight;
-                if(sendBtnText && sendBtnLoader) {
-                    sendBtnText.classList.remove('hidden');
-                    sendBtnLoader.classList.add('hidden');
-                }
-                if(sendChatBtn) sendChatBtn.disabled = false;
-                if(chatInput) chatInput.disabled = false;
-                if(chatInput) chatInput.focus();
-            }
-
-            if (sendChatBtn) sendChatBtn.addEventListener('click', handleChatSubmitUlpiano);
-            if (chatInput) chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleChatSubmitUlpiano(); } });
         }
     </script>
 </body>

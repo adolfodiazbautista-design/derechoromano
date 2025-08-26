@@ -12,4 +12,4 @@
 # Configuración específica para nuestra funcion llamada "api".
 # Aqui es donde debemos poner el timeout.
 [functions.api]
-  timeout = 90
+  timeout = 100
