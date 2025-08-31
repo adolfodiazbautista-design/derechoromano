@@ -87,11 +87,40 @@
 
 
         const contentMap = {
-            '#home': {
-                title: 'Presentación de la Asignatura',
-                html: `<div class="prose max-w-none"><h2 class="text-3xl font-bold text-secondary mb-4">Bienvenida al curso de Derecho Romano</h2><p class="mb-4">Esta asignatura es vuestra primera toma de contacto con el razonamiento jurídico. El objetivo principal es que aprendáis a identificar problemas, a encontrar la norma o principio aplicable y a argumentar una solución. Este enfoque será la base de vuestra evaluación y de vuestra formación como juristas.</p><h3 class="text-2xl font-semibold text-secondary mb-2">Recursos y Metodología</h3><p class="mb-4">Para facilitar vuestro aprendizaje, hemos preparado una serie de recursos. A continuación, encontraréis la presentación de la asignatura y el material de estudio para cada tema. Es fundamental que leáis el tema correspondiente del manual <strong>antes</strong> de la clase y utilicéis los guiones como un mapa, completándolos con las explicaciones del profesor y los ejemplos prácticos.</p><div class="p-4 bg-white rounded-lg shadow-md mt-6"><h4 class="text-xl font-semibold text-primary mb-2">Guión 0: Presentación de la asignatura</h4><p class="text-secondary mb-3">Aquí encontrarás el documento con toda la información general del curso, el sistema de evaluación y consejos para superarla con éxito.</p><a href="0. presentacion.pdf" target="_blank" class="text-amber-600 hover:text-amber-800 font-bold">Ver Presentación de la asignatura</a></div></div>`
-            },
-            '#infografia': {
+'#home': {
+    title: 'Presentación de la Asignatura',
+    html: `<div class="prose max-w-none">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 items-start mb-12">
+                
+                <div>
+                    <h2 class="text-3xl font-bold text-secondary mb-4 !mt-0">Bienvenida al curso de Derecho Romano</h2>
+                    <p class="mb-4">Esta asignatura es vuestra primera toma de contacto con el razonamiento jurídico. El objetivo principal es que aprendáis a identificar problemas, a encontrar la norma o principio aplicable y a argumentar una solución.</p>
+                    <p class="mb-6">Este enfoque será la base de vuestra evaluación y de vuestra formación como juristas.</p>
+                    
+                    <a href="0. presentacion.pdf" target="_blank" class="no-prose inline-block bg-amber-600 text-white font-bold py-2 px-5 rounded-lg hover:bg-amber-700 transition-colors no-underline mb-8">
+                        Ver Presentación de la Asignatura
+                    </a>
+ 	
+
+                    <h3 class="text-2xl font-semibold text-secondary mb-2">Recursos y Metodología</h3>
+                    <p>Para facilitar vuestro aprendizaje, hemos preparado una serie de guiones y recursos. Es fundamental que los uséis como un mapa de estudio antes de cada clase junto con el manual, completándolos con las explicaciones del profesor.</p>
+
+                </div>
+
+                <div class="not-prose text-center mt-6 md:mt-0">
+                    <button id="open-video-modal-btn" class="relative w-full max-w-md mx-auto rounded-lg overflow-hidden group focus:outline-none focus:ring-4 focus:ring-amber-500 shadow-lg">
+                        <img src="video_preview.jpg" alt="Vista previa del vídeo sobre Derecho Romano" class="w-full h-auto">
+                        <div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                            <svg class="w-16 h-16 text-white opacity-80 group-hover:opacity-100 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg>
+                        </div>
+                    </button>
+                </div>
+
+            </div>
+            
+            </div>`
+},            '#infografia': {
                 title: 'Infografía Interactiva: El Legado de Roma',
                 html: `<div class="infographic-font text-[#212529]"><header class="text-center mb-12"><h1 class="text-4xl md:text-6xl font-black text-[#C70039] mb-4">El Legado Vivo de Roma</h1><p class="text-xl md:text-2xl max-w-3xl mx-auto">Descubre visualmente cómo el Derecho Romano es el sistema operativo de nuestro mundo legal actual.</p></header><main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"><section class="md:col-span-2 lg:col-span-3 bg-white rounded-lg shadow-md p-6 flex flex-col md:flex-row items-center justify-center text-center"><div class="md:w-1/2"><h2 class="text-2xl font-bold text-[#900C3F] mb-2">Influencia Global</h2><p class="text-lg mb-4">Los principios del Derecho Romano son la base de los sistemas jurídicos que rigen a miles de millones de personas en todo el mundo.</p></div><div class="md:w-1/2"><p class="kpi-number">60%</p><p class="text-lg font-bold">De la población mundial vive bajo sistemas de Derecho Civil derivados de Roma.</p></div></section><section class="md:col-span-2 lg:col-span-3 bg-white rounded-lg shadow-md p-6"><h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">El ADN de Nuestras Leyes</h2><p class="text-center max-w-4xl mx-auto mb-6">La mayoría de los países de Europa y toda América Latina adoptaron el sistema de Derecho Continental o Civil, una evolución directa del Derecho Romano. Este mapa muestra la extensión de su influencia fundamental.</p><div id="mapChart" class="plot-container"></div></section><section class="bg-white rounded-lg shadow-md p-6"><h2 class="text-2xl font-bold text-center text-[#900C3F] mb-4">Sistemas Legales en el Mundo</h2><p class="text-center mb-4">El Derecho Civil, de raíz romana, es el sistema predominante a nivel global, demostrando su increíble perdurabilidad y adaptabilidad a través de los siglos.</p><div class="chart-container"><canvas id="donutChart"></canvas></div></section><section class="lg:col-span-2 bg-white rounded-lg shadow-md p-6"><h2 class="text-2xl font-bold text-center text-[#900C3F] mb-4">Conceptos Fundamentales Forjados en Roma</h2><p class="text-center mb-6">Términos que son el pan de cada día para cualquier abogado fueron meticulosamente definidos y desarrollados por los juristas romanos.</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center"><div class="bg-gray-100 p-4 rounded-lg"><div class="flex items-center justify-center mb-2"><p class="text-5xl">👤</p><button class="gemini-explain-btn ml-3 text-2xl" data-concept="Persona">✨</button></div><h3 class="font-bold text-lg">Persona</h3><p>Definición del sujeto de derechos y obligaciones.</p></div><div class="bg-gray-100 p-4 rounded-lg"><div class="flex items-center justify-center mb-2"><p class="text-5xl">🤝</p><button class="gemini-explain-btn ml-3 text-2xl" data-concept="Contrato">✨</button></div><h3 class="font-bold text-lg">Contrato</h3><p>El acuerdo de voluntades como fuente de obligaciones.</p></div><div class="bg-gray-100 p-4 rounded-lg"><div class="flex items-center justify-center mb-2"><p class="text-5xl">🏠</p><button class="gemini-explain-btn ml-3 text-2xl" data-concept="Propiedad">✨</button></div><h3 class="font-bold text-lg">Propiedad</h3><p>El derecho de usar, gozar y disponer de una cosa.</p></div><div class="bg-gray-100 p-4 rounded-lg"><div class="flex items-center justify-center mb-2"><p class="text-5xl">🔗</p><button class="gemini-explain-btn ml-3 text-2xl" data-concept="Obligación">✨</button></div><h3 class="font-bold text-lg">Obligación</h3><p>El vínculo jurídico que nos obliga a dar, hacer o no hacer algo.</p></div></div></section><section class="md:col-span-2 lg:col-span-3 bg-white rounded-lg shadow-md p-6"><h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">El Gimnasio de la Mente Jurídica</h2><p class="text-center max-w-4xl mx-auto mb-8">Más que leyes antiguas, el Derecho Romano es un método. Enseña un proceso de razonamiento riguroso para resolver problemas complejos, una habilidad esencial para cualquier jurista de éxito.</p><div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4"><div class="flowchart-step">Análisis del Caso</div><div class="flowchart-arrow transform md:-rotate-0 rotate-90">→</div><div class="flowchart-step">Construcción de Argumentos</div><div class="flowchart-arrow transform md:-rotate-0 rotate-90">→</div><div class="flowchart-step">Búsqueda de la Solución Justa</div></div></section></main></div>`
             },
@@ -188,7 +217,7 @@
 
         function renderContent(hash) {
             const page = contentMap[hash] || contentMap['#home'];
-            contentArea.innerHTML = `<div class="flex items-center space-x-4 mb-6 pb-4 border-b border-gray-300"><h1 class="font-heading text-4xl font-bold text-secondary">${page.title}</h1></div>${page.html}`;
+            contentArea.innerHTML = `<div class="flex justify-center items-center space-x-4 mb-6 pb-4 border-b border-gray-300"><h1 class="font-heading text-4xl font-bold text-secondary">${page.title}</h1></div>${page.html}`;
             updateActiveNavLink(hash);
             if (hash === '#infografia') {
                 initializeInfographicScripts();
@@ -454,6 +483,53 @@ async function callApiAndHandleErrors(endpoint, payload) {
                 submitBtnText.classList.remove('hidden');
                 submitBtnLoader.classList.add('hidden');
                 submitQueryBtn.disabled = false;
+            });
+        }
+    </script>
+
+    <div id="video-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 hidden z-50" role="dialog" aria-modal="true">
+        <div class="bg-slate-800 rounded-lg shadow-2xl p-4 max-w-4xl w-full relative">
+            <video id="modal-video-player" class="w-full rounded-lg" controls>
+                <source src="El_ADN_del_Derecho_Romano.mp4" type="video/mp4">
+                Tu navegador no soporta el elemento de video.
+            </video>
+            <button id="close-video-modal-btn" class="absolute -top-4 -right-4 bg-white rounded-full p-1 text-slate-800 hover:bg-amber-400 focus:outline-none focus:ring-2 focus:ring-white">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+    </div>
+    <script>
+        // --- Lógica para el modal del vídeo ---
+        const videoModal = document.getElementById('video-modal');
+        const openVideoModalBtn = document.getElementById('open-video-modal-btn');
+        const closeVideoModalBtn = document.getElementById('close-video-modal-btn');
+        const videoPlayer = document.getElementById('modal-video-player');
+
+        // Este es un delegado de eventos para manejar clics en contenido que se carga dinámicamente
+        document.addEventListener('click', function(event) {
+            // Comprueba si el elemento clickeado es el botón de abrir el vídeo
+            if (event.target.closest('#open-video-modal-btn')) {
+                videoModal.classList.remove('hidden');
+                videoPlayer.play();
+            }
+        });
+
+        if (closeVideoModalBtn) {
+            closeVideoModalBtn.addEventListener('click', () => {
+                videoModal.classList.add('hidden');
+                videoPlayer.pause();
+                videoPlayer.currentTime = 0; // Opcional: rebobina el vídeo al cerrar
+            });
+        }
+        
+        // Cierra el modal si se hace clic fuera del vídeo
+        if (videoModal) {
+            videoModal.addEventListener('click', (event) => {
+                if (event.target === videoModal) {
+                    videoModal.classList.add('hidden');
+                    videoPlayer.pause();
+                    videoPlayer.currentTime = 0;
+                }
             });
         }
     </script>
