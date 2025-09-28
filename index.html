@@ -178,13 +178,15 @@
     </div>
 
     <script>
-        // --- INICIO DEL SCRIPT ---
         const contentArea = document.getElementById('content-area');
         const sidebar = document.getElementById('sidebar');
         const menuButton = document.getElementById('menu-button');
         const sidebarOverlay = document.getElementById('sidebar-overlay');
         const body = document.body;
         
+        const palabrasProhibidas = ['tonto', 'tonta', 'sexo', 'idiota', 'imbecil', 'puta', 'mierda', 'gilipollas', 'franco', 'hitler', 'mussolini', 'stalin', 'polla', 'picha', 'acho', 'puto', 'zorra', 'zorras', 'tetas', 'pollas', 'cabron', 'cabrón', 'teta', 'coño', 'examen', 'test'];
+        const respuestaCiceron = `Quo usque tandem abutere, Catilina, patientia nostra? Quam diu etiam furor iste tuus nos eludet? Quem ad finem sese effrenata iactabit audacia? Nihilne te nocturnum praesidium Palati, nihil urbis uigiliae, nihil timor populi, nihil concursus bonorum omnium, nihil hic munitissimus habendi senatus locus, nihil horum ora uoltusque mouunt? Patere tua consilia non sentis, constrictam iam horum omnium scientia teneri coniurationem tuam non uides? Quid proxima, quid superiore nocte egeris, ubi fueris, quos conuocaueris, quid consili ceperis quem nostrum ignorare arbitraris? O tempora, o mores! Senatus haec intellegit, consul uidet; hic tamen uiuit. Viuit? Immo uero etiam in senatum uenit, fit publici consili particeps, notat et designat oculis ad caedem unum quemque nostrum. Nos autem fortes uiri satis facere rei publicae uidemur, si istius furorem ac tela uitamus.`;
+
         const contentMap = {
             '#home': {
                 title: 'Presentación de la Asignatura',
@@ -212,48 +214,30 @@
                         </div>`
             },
             '#caselab': {
-                title: 'Laboratorio de Casos',
-                html: `<div class="prose text-center"><p class="text-secondary">Introduce un concepto de derecho romano (ej: usufructo, dote, compraventa) y la IA generará un caso de estudio para que lo analices.</p></div>
-                        <div class="max-w-2xl mx-auto mt-8">
-                            <div class="bg-white p-6 rounded-lg shadow-lg">
-                                <div class="text-center text-sm text-yellow-800 mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-3"><p><strong>Advertencia:</strong> Los casos y soluciones son generados por IA y no han sido supervisados por el profesor. Úsalos como una herramienta de práctica.</p></div>
-                                <div class="flex flex-col sm:flex-row gap-2">
-                                    <input type="text" id="case-study-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-600" placeholder="Ej: Usufructo">
-                                    <button id="generate-case-btn" class="bg-amber-700 text-white font-bold py-2 px-6 rounded-lg hover:bg-amber-800 transition-colors flex items-center justify-center">
-                                        <span id="btn-text">✨ Generar Caso</span>
-                                        <div id="btn-loader" class="loader hidden"></div>
-                                    </button>
-                                </div>
-                                <div id="case-study-result" class="mt-6 p-4 bg-slate-50 rounded-lg border border-gray-200 min-h-[100px] text-secondary"><p class="text-gray-500">Aquí aparecerá tu caso de estudio...</p></div>
-                                <div class="text-center mt-4">
-                                    <button id="solve-case-btn" class="hidden bg-amber-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-amber-700 transition-colors flex items-center justify-center mx-auto">
-                                        <span id="solve-btn-text">Ver Solución</span>
-                                        <div id="solve-btn-loader" class="loader hidden"></div>
-                                    </button>
-                                </div>
-                                <div id="case-solution-result" class="hidden mt-6 p-4 bg-green-50 rounded-lg border border-green-200 text-green-800"></div>
-                            </div>
-                        </div>`
+                title: 'Laboratorio de Casos Romanos',
+                html: `<section class="infographic-font bg-white rounded-lg shadow-md p-6"><h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">Laboratorio de Casos Romanos</h2><p class="text-center max-w-4xl mx-auto mb-6">Introduce un concepto de derecho romano (ej: usufructo, dote, compraventa) y la IA generará un caso de estudio para que lo analices.</p><div class="text-center text-sm text-gray-500 mb-6 bg-amber-50 border border-amber-200 rounded-lg p-3 max-w-xl mx-auto"><p><strong>Advertencia:</strong> Los casos y soluciones son generados por la IA de Google (Gemini) y no han sido supervisados por el profesor. Úsalos como una herramienta de práctica y no como una fuente autorizada.</p></div><div class="max-w-xl mx-auto"><div class="flex flex-col sm:flex-row gap-2"><input type="text" id="case-study-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5733]" placeholder="Ej: Usufructo"><button id="generate-case-btn" class="bg-[#C70039] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#900C3F] transition-colors flex items-center justify-center"><span id="btn-text">✨ Generar Caso</span><div id="btn-loader" class="loader hidden"></div></button></div><div id="case-study-result" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[100px]"><p class="text-gray-500">Aquí aparecerá tu caso de estudio...</p></div><div class="text-center mt-4"><button id="solve-case-btn" class="hidden bg-[#FF5733] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#C70039] transition-colors flex items-center justify-center mx-auto"><span id="solve-btn-text">Ver Solución</span><div id="solve-btn-loader" class="loader hidden"></div></button></div><div id="case-solution-result" class="hidden mt-6 p-4 bg-green-50 rounded-lg border border-green-200"></div>
+                </div></section>`
             },
             '#ulpiano': {
                 title: 'Consulta a UlpianoIA',
-                html: `<div class="prose text-center"><p class="text-secondary">Hazle una pregunta a UlpianoIA sobre cualquier tema de Derecho Romano.</p></div>
-                        <div class="max-w-2xl mx-auto mt-8">
-                            <div class="bg-white p-6 rounded-lg shadow-lg">
-                                <div class="text-center text-sm text-yellow-800 mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-3"><p><strong>Advertencia:</strong> Las respuestas de Ulpiano son generadas por IA y no han sido supervisadas por el profesor. Úsalas como una herramienta de apoyo.</p></div>
-                                <div class="flex flex-col sm:flex-row gap-2">
-                                    <textarea id="queryInput" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-600"></textarea>
-                                    <button id="submitQueryBtn" class="bg-amber-700 text-white font-bold py-2 px-6 rounded-lg hover:bg-amber-800 transition-colors flex items-center justify-center">
-                                        <span id="submit-btn-text">✨ Enviar</span>
-                                        <div id="submit-btn-loader" class="loader hidden" style="border-top-color: #fff; width:20px; height:20px;"></div>
-                                    </button>
-                                </div>
-                                <div id="queryResult" class="mt-6 p-4 bg-slate-50 rounded-lg border border-gray-200 hidden">
-                                    <h3 class="font-heading text-xl font-semibold mb-2 text-amber-800">Respuesta de UlpianoIA:</h3>
-                                    <p id="queryResultText" class="text-secondary"></p>
-                                </div>
+                html: `<section class="infographic-font bg-white rounded-lg shadow-md p-6" style="color: #333;">
+                        <h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">Consulta a UlpianoIA</h2>
+                        <p class="text-center max-w-4xl mx-auto mb-6">Hazle una pregunta a UlpianoIA sobre cualquier tema de Derecho Romano.</p>
+                        <div class="text-center text-sm text-gray-500 mb-6 bg-amber-50 border border-amber-200 rounded-lg p-3 max-w-xl mx-auto"><p><strong>Advertencia:</strong> Las respuestas de Ulpiano son generadas por la IA de Google (Gemini) y no han sido supervisadas por el profesor. Úsalas como una herramienta de apoyo y no como una fuente autorizada para tus exámenes.</p></div>
+                        <div class="max-w-xl mx-auto">
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <textarea id="queryInput" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5733]"></textarea>
+                                <button id="submitQueryBtn" class="bg-[#C70039] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#900C3F] transition-colors flex items-center justify-center">
+                                    <span id="submit-btn-text">✨ Enviar consulta</span>
+                                    <div id="submit-btn-loader" class="loader hidden" style="border-top-color: #fff; width:20px; height:20px;"></div>
+                                </button>
                             </div>
-                        </div>`
+                            <div id="queryResult" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 hidden">
+                                <h3 class="text-xl font-semibold mb-2 text-[#900C3F]">Respuesta de UlpianoIA:</h3>
+                                <p id="queryResultText"></p>
+                            </div>
+                        </div>
+                       </section>`
             },
             '#bloque1': {
                 title: 'Bloque I: Fundamentos',
@@ -320,6 +304,7 @@
                     </ul>
                     <h3 class="text-2xl font-semibold text-secondary mt-8 mb-2">Recursos Adicionales</h3>
                     <ul class="list-disc list-inside space-y-2">
+                        <li><a href="cronograma-curso.csv" download class="text-amber-700 hover:text-amber-800 font-semibold">Descargar Cronograma del Curso (CSV)</a></li>
                         <li><a href="https://webs.um.es/jal/" class="text-amber-700 hover:text-amber-800 font-semibold">CIVILizándonos. Web del profesor Joaquín Ataz López</a></li>
                         <li><a href="https://derecho-romano.blogspot.com/" class="text-amber-700 hover:text-amber-800 font-semibold">Blog de Derecho Romano</a></li>
                         <li><a href="https://www.youtube.com/playlist?list=PLhqyfgIdoGr2SrQMeLPg9Bdl4ThnF16a3" class="text-amber-700 hover:text-amber-800 font-semibold">Roma, un Imperio sin Límites con Mary Beard (YouTube)</a></li>
@@ -339,8 +324,11 @@
             contentArea.innerHTML = `<div class="prose mb-8"><h1 class="text-4xl font-bold text-gray-800">${page.title}</h1></div>${page.html}`;
             updateActiveNavLink(hash);
             
-            if (hash === '#caselab') initializeCaseLabScripts();
-            if (hash === '#ulpiano') initializeUlpianoScripts();
+            if (hash === '#caselab') {
+                initializeCaseLabScripts();
+            } else if (hash === '#ulpiano') {
+                initializeUlpianoScripts();
+            }
         }
 
         function updateActiveNavLink(hash) {
@@ -370,7 +358,6 @@
             link.addEventListener('click', () => { if (window.innerWidth < 768) toggleSidebar(); });
         });
 
-        // Lógica para el modal del vídeo
         const videoModal = document.getElementById('video-modal');
         const closeVideoModalBtn = document.getElementById('close-video-modal-btn');
         const videoPlayer = document.getElementById('modal-video-player');
@@ -406,8 +393,59 @@
             } catch (error) { return { error: "No se ha podido establecer conexión con el servidor." }; }
         }
 
-        function initializeCaseLabScripts() { /* ... */ }
-        function initializeUlpianoScripts() { /* ... */ }
+        function initializeCaseLabScripts() {
+            const generateCaseBtn = document.getElementById('generate-case-btn'), caseStudyInput = document.getElementById('case-study-input'), caseStudyResult = document.getElementById('case-study-result'), solveCaseBtn = document.getElementById('solve-case-btn'), caseSolutionResult = document.getElementById('case-solution-result');
+            const btnText = document.getElementById('btn-text'), btnLoader = document.getElementById('btn-loader');
+            const solveBtnText = document.getElementById('solve-btn-text'), solveBtnLoader = document.getElementById('solve-btn-loader');
+            
+            if(btn) btn.addEventListener('click', async () => {
+                const term = caseStudyInput.value.trim();
+                if (!term) { resultDiv.innerHTML = '<p class="text-red-500">Por favor, introduce un término.</p>'; return; }
+                
+                btn.disabled = true; btnText.classList.add('hidden'); btnLoader.classList.remove('hidden');
+                resultDiv.innerHTML = '<div class="loader mx-auto"></div>'; solveBtn.classList.add('hidden'); solutionDiv.classList.add('hidden');
+                
+                const prompt = `Tu rol es ser un profesor de derecho romano. Crea un breve supuesto de hecho sobre '${term}'. Usa nombres romanos y termina con una pregunta legal. NO incluyas la solución.`;
+                const result = await callApiAndHandleErrors('consulta', { promptOriginal: prompt });
+                
+                resultDiv.dataset.caseText = result.respuesta || '';
+                resultDiv.innerHTML = `<p>${(result.respuesta || result.error).replace(/\n/g, '<br>')}</p>`;
+                
+                btn.disabled = false; btnText.classList.remove('hidden'); btnLoader.classList.add('hidden');
+                if(result.respuesta) solveBtn.classList.remove('hidden');
+            });
+
+            if(solveBtn) solveBtn.addEventListener('click', async () => {
+                const caseText = resultDiv.dataset.caseText;
+                solveBtn.disabled = true; solveBtnText.classList.add('hidden'); solveBtnLoader.classList.remove('hidden');
+                solutionDiv.classList.remove('hidden'); solutionDiv.innerHTML = '<div class="loader mx-auto"></div>';
+                
+                const prompt = `Tu rol es ser un jurista romano. Analiza este caso: "${caseText}". Proporciona una solución jurídica clara y razonada basada en derecho romano.`;
+                const result = await callApiAndHandleErrors('consulta', { promptOriginal: prompt });
+                
+                solutionDiv.innerHTML = `<p>${(result.respuesta || result.error).replace(/\n/g, '<br>')}</p>`;
+                solveBtn.disabled = false; solveBtnText.classList.remove('hidden'); solveBtnLoader.classList.add('hidden');
+            });
+        }
+        
+        function initializeUlpianoScripts() {
+            const btn = document.getElementById('submitQueryBtn'), input = document.getElementById('queryInput'), resultDiv = document.getElementById('queryResult'), resultText = document.getElementById('queryResultText');
+            const btnText = document.getElementById('submit-btn-text'), btnLoader = document.getElementById('submit-btn-loader');
+
+            if (btn) btn.addEventListener('click', async () => {
+                const query = input.value.trim();
+                if (!query) { resultText.innerText = 'Por favor, introduce una pregunta.'; resultDiv.classList.remove('hidden'); return; }
+
+                btn.disabled = true; btnText.classList.add('hidden'); btnLoader.classList.remove('hidden');
+                resultDiv.classList.remove('hidden'); resultText.innerHTML = '<div class="loader mx-auto"></div>';
+                
+                const prompt = `Tu rol es ser Ulpiano, un jurista romano. Responde a la pregunta: "${query}".`;
+                const result = await callApiAndHandleErrors('consulta', { promptOriginal: prompt });
+                
+                resultText.innerHTML = (result.respuesta || result.error).replace(/\n/g, '<br>');
+                btn.disabled = false; btnText.classList.remove('hidden'); btnLoader.classList.add('hidden');
+            });
+        }
     </script>
 </body>
 </html>
