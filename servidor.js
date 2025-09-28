@@ -95,12 +95,12 @@ function getContextoRelevante(termino) {
             contexto = parrafosEncontrados.join('\n\n');
         }
     }
-    return contexto; // Devuelve una cadena vacía si no se encuentra nada
+    return contexto;
 }
 
 app.post('/api/consulta', validarContenido, async (req, res) => {
-    const { promptOriginal, termino } = req.body;
-    const cacheKey = `consulta-${promptOriginal}-${termino}`;
+    const { promptOriginal, termino, currentCaseText } = req.body;
+    const cacheKey = `consulta-${promptOriginal}-${termino}-${currentCaseText}`;
     if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) {
         return res.json({ respuesta: cache.get(cacheKey).data });
     }
@@ -108,10 +108,20 @@ app.post('/api/consulta', validarContenido, async (req, res) => {
         if (!promptOriginal) return res.status(400).json({ error: 'No se ha proporcionado un prompt.' });
         
         const contextoRelevante = getContextoRelevante(termino);
-        
-        let promptFinalParaIA = '';
+        let promptFinalParaIA = promptOriginal;
 
-        if (promptOriginal.includes("crear un breve supuesto de hecho")) {
+        if (currentCaseText) {
+            // Este es el prompt para la SOLUCIÓN del caso
+            promptFinalParaIA = `Tu único rol es ser un jurista romano resolviendo un caso.
+**Instrucción Inviolable:** Proporciona una solución jurídica clara y razonada para el siguiente caso: "${currentCaseText}".
+**Reglas Estrictas:**
+1.  **NO** comiences con una definición teórica del concepto.
+2.  **NO** expliques qué es un "${termino}" en general.
+3.  Ve **directamente a la solución del problema**, analizando las acciones legales de cada parte y respondiendo a las preguntas específicas del caso.
+4.  Basa tu razonamiento en los principios del derecho romano y en el contexto del manual si se proporciona: "${contextoRelevante}".
+5.  Al final, y solo al final, añade la referencia al manual.`;
+        } else if (promptOriginal.includes("crear un breve supuesto de hecho")) {
+            // Este es el prompt para GENERAR un caso
             promptFinalParaIA = `Tu único rol es ser un profesor de derecho romano creando un caso práctico.
 **Instrucción Inviolable:** Crea un breve supuesto de hecho (máximo 3 frases) sobre el concepto de "${termino}".
 **Reglas Estrictas:**
@@ -123,6 +133,7 @@ app.post('/api/consulta', validarContenido, async (req, res) => {
 6.  NO uses palabras como "solución", "resolvió", o "sentencia".
 Crea SOLO el problema.`;
         } else {
+            // Este es el prompt para ULPIANO IA
             promptFinalParaIA = `Tu rol es ser Ulpiano, un jurista romano experto y didáctico. Para responder a la pregunta del usuario, te proporciono un 'Contexto Clave' extraído de su manual de estudio. Este texto es tu fuente de verdad principal y tiene la máxima autoridad.
 
 **Regla de Oro (inviolable):** Tu respuesta final NUNCA debe contradecir la información o la interpretación presentada en el 'Contexto Clave'. Sé breve y didáctico. Limita tu explicación a no más de dos párrafos cortos.
@@ -130,7 +141,7 @@ Crea SOLO el problema.`;
 Puedes usar tu conocimiento general para ampliar la información, ofrecer ejemplos o dar más detalles, siempre que enriquezcan, no contradigan la explicación del manual y mantengan la brevedad.
 
 --- CONTEXTO CLAVE ---
-${contextoRelevante}
+${contextoRelevante || "Sin contexto específico del manual para esta consulta."}
 --- FIN DEL CONTEXTO ---
 
 Basándote en tu conocimiento y respetando siempre la Regla de Oro sobre el Contexto Clave, responde de forma concisa a la siguiente pregunta: "${termino}".
