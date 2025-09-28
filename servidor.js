@@ -95,7 +95,7 @@ function getContextoRelevante(termino) {
             contexto = parrafosEncontrados.join('\n\n');
         }
     }
-    return contexto || "No se ha encontrado información relevante en el manual de referencia para esta consulta.";
+    return contexto; // Devuelve una cadena vacía si no se encuentra nada
 }
 
 app.post('/api/consulta', validarContenido, async (req, res) => {
