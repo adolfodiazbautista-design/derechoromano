@@ -100,7 +100,7 @@ function getContextoRelevante(termino) {
 
 app.post('/api/consulta', validarContenido, async (req, res) => {
     const { promptOriginal, termino } = req.body;
-    const cacheKey = `consulta-${termino}`;
+    const cacheKey = `consulta-${promptOriginal}-${termino}`;
     if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) {
         return res.json({ respuesta: cache.get(cacheKey).data });
     }
