@@ -46,9 +46,7 @@ function validarContenido(req, res, next) {
 }
 
 const manualCompleto = fs.readFileSync('manual.txt', 'utf-8');
-// --- LÍNEA CORREGIDA ---
-// Ahora divide por cualquier salto de línea, que es como está formateado tu manual.txt
-const parrafosDelManual = manualCompleto.split(/\n/); 
+const parrafosDelManual = manualCompleto.split(/\n/);
 console.log(`Manual cargado. ${parrafosDelManual.length} párrafos encontrados.`);
 
 const cache = new Map();
@@ -88,9 +86,10 @@ function extractTextFromResponse(geminiResponse) {
 
 function getContextoRelevante(termino) {
     let contexto = '';
-    // La intervención específica para 'posesión' ya no es necesaria si el manual se lee correctamente.
-    // El sistema ahora encontrará el párrafo correcto de forma dinámica.
-    if (termino) {
+    if (termino && termino.toLowerCase().includes('posesión')) {
+        console.log("Consulta específica sobre 'posesión' detectada. Usando contexto manual forzado.");
+        contexto = `Hay dos clases de posesión, natural y civil. La natural es la mera tenencia (corpus) y en la civil se añade el animus domini. AMBAS FORMAS DE POSESIÓN, NATURAL Y CIVIL, ESTABAN PROTEGIDAS POR INTERDICTOS. En cambio los detentadores (una clase de poseedores naturales) carecían de la protección interdictal.`;
+    } else if (termino) {
         const parrafosEncontrados = parrafosDelManual.filter(p => p.toLowerCase().includes(termino.toLowerCase()));
         if (parrafosEncontrados.length > 0) { 
             contexto = parrafosEncontrados.join('\n\n');
@@ -136,7 +135,7 @@ ${contextoRelevante}
 
 Basándote en tu conocimiento y respetando siempre la Regla de Oro sobre el Contexto Clave, responde de forma concisa a la siguiente pregunta: "${termino}".
 
-Además, tu respuesta DEBE incluir la referencia al índice del manual que te he proporcionado.`;
+Si encuentras un concepto relevante en el índice del manual, finaliza tu respuesta mencionando la página correspondiente, pero no comentes sobre si lo encuentras o no.`;
         }
         
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
