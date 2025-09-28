@@ -46,7 +46,9 @@ function validarContenido(req, res, next) {
 }
 
 const manualCompleto = fs.readFileSync('manual.txt', 'utf-8');
-const parrafosDelManual = manualCompleto.split(/\n\s*\n/);
+// --- LÍNEA CORREGIDA ---
+// Ahora divide por cualquier salto de línea, que es como está formateado tu manual.txt
+const parrafosDelManual = manualCompleto.split(/\n/); 
 console.log(`Manual cargado. ${parrafosDelManual.length} párrafos encontrados.`);
 
 const cache = new Map();
@@ -86,10 +88,9 @@ function extractTextFromResponse(geminiResponse) {
 
 function getContextoRelevante(termino) {
     let contexto = '';
-    if (termino && termino.toLowerCase().includes('posesión')) {
-        console.log("Consulta específica sobre 'posesión' detectada. Usando contexto manual forzado.");
-        contexto = `Hay dos clases de posesión, natural y civil. La natural es la mera tenencia (corpus) y en la civil se añade el animus domini. AMBAS FORMAS DE POSESIÓN, NATURAL Y CIVIL, ESTABAN PROTEGIDAS POR INTERDICTOS. En cambio los detentadores (una clase de poseedores naturales) carecían de la protección interdictal.`;
-    } else if (termino) {
+    // La intervención específica para 'posesión' ya no es necesaria si el manual se lee correctamente.
+    // El sistema ahora encontrará el párrafo correcto de forma dinámica.
+    if (termino) {
         const parrafosEncontrados = parrafosDelManual.filter(p => p.toLowerCase().includes(termino.toLowerCase()));
         if (parrafosEncontrados.length > 0) { 
             contexto = parrafosEncontrados.join('\n\n');
@@ -139,7 +140,7 @@ Además, tu respuesta DEBE incluir la referencia al índice del manual que te he
         }
         
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
         const payload = { 
             contents: [{ parts: [{ text: promptFinalParaIA }] }],
             safetySettings 
@@ -166,7 +167,7 @@ app.post('/api/buscar-fuente', validarContenido, async (req, res) => {
 3.  Tu respuesta final debe contener únicamente la cita en formato académico, el texto original en latín y su traducción al español. NO añadas explicaciones.`;
 
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
         const payload = { 
             contents: [{ parts: [{ text: promptParaFuente }] }],
             safetySettings 
@@ -188,7 +189,7 @@ app.post('/api/derecho-moderno', validarContenido, async (req, res) => {
         if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
         const promptParaModerno = `Tu rol es ser un jurista experto en Derecho Civil español. Explica de forma muy concisa (máximo dos párrafos) la equivalencia o herencia del concepto romano "${termino}" en el derecho español moderno. Si no encuentras una correspondencia, responde solo con "NULL".`;
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
         const payload = { 
             contents: [{ parts: [{ text: promptParaModerno }] }],
             safetySettings 
