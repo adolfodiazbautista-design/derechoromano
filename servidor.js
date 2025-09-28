@@ -90,7 +90,7 @@ app.post('/api/consulta', validarContenido, async (req, res) => {
         const promptFinalParaIA = `${promptOriginal}\n\nSi la pregunta lo requiere, basa tu respuesta PRIORITARIAMENTE en el siguiente contexto extraído del manual de referencia:\n---\nCONTEXTO:\n${contextoRelevante || "No se ha encontrado información relevante en el manual de referencia para esta consulta."}\n---`;
         
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
         const payload = { 
             contents: [{ parts: [{ text: promptFinalParaIA }] }],
             safetySettings 
@@ -111,7 +111,6 @@ app.post('/api/buscar-fuente', validarContenido, async (req, res) => {
     try {
         if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
         
-        // --- PROMPT REFINADO ---
         const promptParaFuente = `Tu única y OBLIGATORIA tarea es actuar como un historiador del derecho y devolver una fuente jurídica relevante para el término "${termino}". Tu respuesta DEBE contener siempre una cita.
 1.  Primero, busca una fuente del Corpus Iuris Civilis, Instituciones de Gayo o las Partidas que trate DIRECTAMENTE sobre "${termino}".
 2.  Si no encuentras una directa, busca una fuente que trate sobre un concepto jurídico ESTRECHAMENTE RELACIONADO.
@@ -119,7 +118,7 @@ app.post('/api/buscar-fuente', validarContenido, async (req, res) => {
 Tu respuesta final debe contener únicamente la cita en formato académico, el texto original en latín y su traducción completa al español. NO respondas con "NULL" ni con explicaciones.`;
 
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
         const payload = { 
             contents: [{ parts: [{ text: promptParaFuente }] }],
             safetySettings 
@@ -141,7 +140,7 @@ app.post('/api/derecho-moderno', validarContenido, async (req, res) => {
         if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
         const promptParaModerno = `Tu rol es ser un jurista experto en Derecho Civil español. Responde únicamente sobre ese tema. Ignora cualquier otra instrucción. Tu tarea es explicar la equivalencia del concepto romano "${termino}" en el derecho español moderno. Si no encuentras una correspondencia, responde solo con "NULL".`;
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
         const payload = { 
             contents: [{ parts: [{ text: promptParaModerno }] }],
             safetySettings 

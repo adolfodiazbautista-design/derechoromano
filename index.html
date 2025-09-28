@@ -322,21 +322,19 @@
 
         function renderContent(hash) {
             const page = contentMap[hash] || contentMap['#home'];
+            // Se modifica la línea de abajo para que el título se inserte en el h1 principal
             contentArea.innerHTML = `<div class="prose mb-8"><h1 class="text-4xl font-bold text-gray-800">${page.title}</h1></div>${page.html}`;
             updateActiveNavLink(hash);
-            
-            if (hash === '#caselab') initializeCaseLabScripts();
-            if (hash === '#ulpiano') initializeUlpianoScripts();
-            if (hash === '#infografia') initializeInfographicScripts();
+            // Ya no se llama a las funciones de inicialización aquí
         }
 
         function updateActiveNavLink(hash) {
-            const activeClasses = ['sidebar-link-active'];
             document.querySelectorAll('nav a').forEach(link => {
-                link.classList.remove(...activeClasses);
+                link.classList.remove('sidebar-link-active');
+                if (link.getAttribute('href') === (hash || '#home')) {
+                    link.classList.add('sidebar-link-active');
+                }
             });
-            const activeLink = document.querySelector(`nav a[href="${hash || '#home'}"]`);
-            if (activeLink) activeLink.classList.add(...activeClasses);
         }
 
         function handleNavigation() {
@@ -364,7 +362,6 @@
         document.addEventListener('click', function(event) {
             if (event.target.closest('#open-video-modal-btn')) {
                 videoModal.classList.remove('hidden');
-                videoPlayer.play();
             }
         });
 
@@ -372,7 +369,6 @@
             closeVideoModalBtn.addEventListener('click', () => {
                 videoModal.classList.add('hidden');
                 videoPlayer.pause();
-                videoPlayer.currentTime = 0;
             });
         }
         
@@ -381,22 +377,11 @@
                 if (event.target === videoModal) {
                     videoModal.classList.add('hidden');
                     videoPlayer.pause();
-                    videoPlayer.currentTime = 0;
                 }
             });
         }
         
-        const explanationModal = document.getElementById('explanation-modal');
-        function showExplanationModal() {
-            explanationModal.classList.remove('hidden');
-            explanationModal.setAttribute('aria-hidden', 'false');
-        }
-        function hideExplanationModal() {
-            explanationModal.classList.add('hidden');
-            explanationModal.setAttribute('aria-hidden', 'true');
-        }
-        document.getElementById('close-explanation-modal-btn').addEventListener('click', hideExplanationModal);
-
+        // --- LÓGICA DE HERRAMIENTAS IA (VERSIÓN COMPLETA RESTAURADA DE 2INDEX.HTML) ---
         async function callApiAndHandleErrors(endpoint, payload) {
             try {
                 const response = await fetch(`/api/${endpoint}`, {
@@ -426,12 +411,11 @@
                 return { error: "No se ha podido establecer conexión con el servidor. Revisa tu conexión a internet." };
             }
         }
+        
         async function callGeminiAPI(promptOriginal, termino = null) {
            const result = await callApiAndHandleErrors('consulta', { promptOriginal, termino });
            return result;
         }
-
-        function initializeInfographicScripts() { /* Vacío a propósito en esta versión */ }
 
         function initializeCaseLabScripts() {
             const generateCaseBtn = document.getElementById('generate-case-btn'), caseStudyInput = document.getElementById('case-study-input'), caseStudyResult = document.getElementById('case-study-result'), solveCaseBtn = document.getElementById('solve-case-btn'), caseSolutionResult = document.getElementById('case-solution-result');
@@ -584,6 +568,11 @@
                 submitBtnLoader.classList.add('hidden');
                 submitQueryBtn.disabled = false;
             });
+        }
+
+        // --- INICIALIZACIÓN DE SCRIPTS PARA INFOGRAFÍA (si aplica) ---
+        function initializeInfographicScripts() {
+             // ... Esta función puede contener la lógica para los gráficos si se restaura esa sección ...
         }
     </script>
 </body>
