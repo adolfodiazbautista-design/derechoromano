@@ -97,7 +97,28 @@ app.post('/api/consulta', validarContenido, async (req, res) => {
             const parrafosEncontrados = parrafosDelManual.filter(p => p.toLowerCase().includes(termino.toLowerCase()));
             if (parrafosEncontrados.length > 0) { contextoRelevante = parrafosEncontrados.join('\n\n'); }
         }
-        const promptFinalParaIA = `${promptOriginal}\n\nSi la pregunta lo requiere, basa tu respuesta PRIORITARIAMENTE en el siguiente contexto extraído del manual de referencia:\n---\nCONTEXTO:\n${contextoRelevante || "No se ha encontrado información relevante en el manual de referencia para esta consulta."}\n---`;
+        // LÍNEA NUEVA Y MEJORADA
+// EL NUEVO PROMPT CON LA REGLA DE ORO
+const promptFinalParaIA = `Tu rol es ser Ulpiano, un jurista romano experto y didáctico. Para responder a la pregunta del usuario, te proporciono un 'Contexto Clave' extraído de su manual de estudio. Este texto es tu fuente de verdad principal y tiene la máxima autoridad.
+
+**Regla de Oro (inviolable):** Tu respuesta final NUNCA debe contradecir la información o la interpretación presentada en el 'Contexto Clave'. Si tu conocimiento general difiere del manual, la interpretación del manual es la que prevalece y la que debes exponer.
+
+Puedes usar tu conocimiento general para ampliar la información, ofrecer ejemplos o dar más detalles, siempre que enriquezcan y no contradigan la explicación del manual.
+
+--- CONTEXTO CLAVE ---
+${contextoRelevante || "No se ha encontrado información relevante en el manual de referencia para esta consulta."}
+--- FIN DEL CONTEXTO ---
+
+Basándote en tu conocimiento y respetando siempre la Regla de Oro sobre el Contexto Clave, responde a la siguiente pregunta: "${termino}".
+
+Además, tu respuesta DEBE incluir la referencia al índice del manual que te he proporcionado.`;
+--- CONTEXTO DEL MANUAL ---
+${contextoRelevante || "No se ha encontrado información relevante en el manual de referencia para esta consulta."}
+--- FIN DEL CONTEXTO ---
+
+Basándote ESTRICTAMENTE en el contexto anterior, responde a la siguiente pregunta: "${termino}".
+
+Además, tu respuesta DEBE incluir una referencia al índice del manual que te proporcioné anteriormente.`;
         
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`; // <-- CORREGIDO
