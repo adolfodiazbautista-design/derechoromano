@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
     
     <title>Guía Interactiva de Derecho Romano | Versión Definitiva</title>
     <meta name="description" content="Guía interactiva de Derecho Romano para estudiantes de la Universidad de Murcia, con un diseño moderno, herramientas de IA, infografías detalladas y casos prácticos.">
@@ -191,7 +191,7 @@
 
         const contentMap = {
             '#home': {
-                title: 'Presentación de la Asignatura',
+                title: 'Presentación',
                 html: `<div class="prose">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 items-center">
                             <div>
@@ -216,7 +216,7 @@
                         </div>`
             },
             '#caselab': {
-                title: 'Laboratorio de Casos Romanos',
+                title: 'Laboratorio de Casos',
                 html: `<section class="infographic-font bg-white rounded-lg shadow-md p-6"><h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">Laboratorio de Casos Romanos</h2><p class="text-center max-w-4xl mx-auto mb-6">Introduce un concepto de derecho romano (ej: usufructo, dote, compraventa) y la IA generará un caso de estudio para que lo analices.</p><div class="text-center text-sm text-gray-500 mb-6 bg-amber-50 border border-amber-200 rounded-lg p-3 max-w-xl mx-auto"><p><strong>Advertencia:</strong> Los casos y soluciones son generados por la IA de Google (Gemini) y no han sido supervisados por el profesor. Úsalos como una herramienta de práctica y no como una fuente autorizada.</p></div><div class="max-w-xl mx-auto"><div class="flex flex-col sm:flex-row gap-2"><input type="text" id="case-study-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5733]" placeholder="Ej: Usufructo"><button id="generate-case-btn" class="bg-[#C70039] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#900C3F] transition-colors flex items-center justify-center"><span id="btn-text">✨ Generar Caso</span><div id="btn-loader" class="loader hidden"></div></button></div><div id="case-study-result" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[100px]"><p class="text-gray-500">Aquí aparecerá tu caso de estudio...</p></div><div class="text-center mt-4"><button id="solve-case-btn" class="hidden bg-[#FF5733] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#C70039] transition-colors flex items-center justify-center mx-auto"><span id="solve-btn-text">Ver Solución</span><div id="solve-btn-loader" class="loader hidden"></div></button></div><div id="case-solution-result" class="hidden mt-6 p-4 bg-green-50 rounded-lg border border-green-200"></div>
                 </div></section>`
             },
@@ -322,10 +322,12 @@
 
         function renderContent(hash) {
             const page = contentMap[hash] || contentMap['#home'];
-            // Se modifica la línea de abajo para que el título se inserte en el h1 principal
             contentArea.innerHTML = `<div class="prose mb-8"><h1 class="text-4xl font-bold text-gray-800">${page.title}</h1></div>${page.html}`;
             updateActiveNavLink(hash);
-            // Ya no se llama a las funciones de inicialización aquí
+            
+            if (hash === '#caselab') initializeCaseLabScripts();
+            if (hash === '#ulpiano') initializeUlpianoScripts();
+            // La infografía no tiene scripts complejos en esta versión
         }
 
         function updateActiveNavLink(hash) {
@@ -362,6 +364,7 @@
         document.addEventListener('click', function(event) {
             if (event.target.closest('#open-video-modal-btn')) {
                 videoModal.classList.remove('hidden');
+                videoPlayer.play();
             }
         });
 
@@ -369,6 +372,7 @@
             closeVideoModalBtn.addEventListener('click', () => {
                 videoModal.classList.add('hidden');
                 videoPlayer.pause();
+                videoPlayer.currentTime = 0;
             });
         }
         
@@ -377,9 +381,12 @@
                 if (event.target === videoModal) {
                     videoModal.classList.add('hidden');
                     videoPlayer.pause();
+                    videoPlayer.currentTime = 0;
                 }
             });
         }
+        
+        const explanationModal = document.getElementById('explanation-modal');
         
         // --- LÓGICA DE HERRAMIENTAS IA (VERSIÓN COMPLETA RESTAURADA DE 2INDEX.HTML) ---
         async function callApiAndHandleErrors(endpoint, payload) {
@@ -568,11 +575,6 @@
                 submitBtnLoader.classList.add('hidden');
                 submitQueryBtn.disabled = false;
             });
-        }
-
-        // --- INICIALIZACIÓN DE SCRIPTS PARA INFOGRAFÍA (si aplica) ---
-        function initializeInfographicScripts() {
-             // ... Esta función puede contener la lógica para los gráficos si se restaura esa sección ...
         }
     </script>
 </body>
