@@ -106,24 +106,40 @@ app.post('/api/consulta', validarContenido, async (req, res) => {
     }
     try {
         if (!promptOriginal) return res.status(400).json({ error: 'No se ha proporcionado un prompt.' });
+        
         const contextoRelevante = getContextoRelevante(termino);
         
-        const promptFinalParaIA = `Tu rol es ser Ulpiano, un jurista romano experto y didáctico. Para responder a la pregunta del usuario, te proporciono un 'Contexto Clave' extraído de su manual de estudio. Este texto es tu fuente de verdad principal y tiene la máxima autoridad.
+        let promptFinalParaIA = '';
 
-**Regla de Oro (inviolable):** Tu respuesta final NUNCA debe contradecir la información o la interpretación presentada en el 'Contexto Clave'. Si tu conocimiento general difiere del manual, la interpretación del manual es la que prevalece y la que debes exponer.
+        if (promptOriginal.includes("crear un breve supuesto de hecho")) {
+            promptFinalParaIA = `Tu único rol es ser un profesor de derecho romano creando un caso práctico.
+**Instrucción Inviolable:** Crea un breve supuesto de hecho (máximo 3 frases) sobre el concepto de "${termino}".
+**Reglas Estrictas:**
+1.  Usa personajes con nombres clásicos romanos (ej. Ticio, Cayo, Sempronio, Mevio, Livia, el esclavo Estico).
+2.  Basa la lógica del caso en el siguiente contexto si es relevante: "${contextoRelevante}".
+3.  Termina SIEMPRE con una o varias preguntas legales claras.
+4.  NO incluyas NINGÚN tipo de explicación teórica.
+5.  NO incluyas la solución.
+6.  NO uses palabras como "solución", "resolvió", o "sentencia".
+Crea SOLO el problema.`;
+        } else {
+            promptFinalParaIA = `Tu rol es ser Ulpiano, un jurista romano experto y didáctico. Para responder a la pregunta del usuario, te proporciono un 'Contexto Clave' extraído de su manual de estudio. Este texto es tu fuente de verdad principal y tiene la máxima autoridad.
 
-Puedes usar tu conocimiento general para ampliar la información, ofrecer ejemplos o dar más detalles, siempre que enriquezcan y no contradigan la explicación del manual.
+**Regla de Oro (inviolable):** Tu respuesta final NUNCA debe contradecir la información o la interpretación presentada en el 'Contexto Clave'. Sé breve y didáctico. Limita tu explicación a no más de dos párrafos cortos.
+
+Puedes usar tu conocimiento general para ampliar la información, ofrecer ejemplos o dar más detalles, siempre que enriquezcan, no contradigan la explicación del manual y mantengan la brevedad.
 
 --- CONTEXTO CLAVE ---
 ${contextoRelevante}
 --- FIN DEL CONTEXTO ---
 
-Basándote en tu conocimiento y respetando siempre la Regla de Oro sobre el Contexto Clave, responde a la siguiente pregunta: "${termino}".
+Basándote en tu conocimiento y respetando siempre la Regla de Oro sobre el Contexto Clave, responde de forma concisa a la siguiente pregunta: "${termino}".
 
 Además, tu respuesta DEBE incluir la referencia al índice del manual que te he proporcionado.`;
+        }
         
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
         const payload = { 
             contents: [{ parts: [{ text: promptFinalParaIA }] }],
             safetySettings 
@@ -144,14 +160,13 @@ app.post('/api/buscar-fuente', validarContenido, async (req, res) => {
     try {
         if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
         
-        const promptParaFuente = `Tu única y OBLIGATORIA tarea es actuar como un historiador del derecho y devolver una fuente jurídica relevante para el término "${termino}". Tu respuesta DEBE contener siempre una cita.
-1.  Primero, busca una fuente del Corpus Iuris Civilis, Instituciones de Gayo o las Partidas que trate DIRECTAMENTE sobre "${termino}".
-2.  Si no encuentras una directa, busca una fuente que trate sobre un concepto jurídico ESTRECHAMENTE RELACIONADO.
-3.  Como último recurso, busca una fuente que ilustre un PRINCIPIO GENERAL del derecho romano que pueda aplicarse.
-Tu respuesta final debe contener únicamente la cita en formato académico, el texto original en latín y su traducción completa al español. NO respondas con "NULL" ni con explicaciones.`;
+        const promptParaFuente = `Tu única y OBLIGATORIA tarea es actuar como un historiador del derecho y devolver una fuente jurídica relevante para el término "${termino}". Sé conciso.
+1.  Busca la fuente más directa y relevante del Corpus Iuris Civilis o Gayo.
+2.  Utiliza siempre la nomenclatura académica moderna para las citas (ej: D. libro. título. fragmento; C. libro. título. ley; I. libro. título. párrafo).
+3.  Tu respuesta final debe contener únicamente la cita en formato académico, el texto original en latín y su traducción al español. NO añadas explicaciones.`;
 
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
         const payload = { 
             contents: [{ parts: [{ text: promptParaFuente }] }],
             safetySettings 
@@ -171,9 +186,9 @@ app.post('/api/derecho-moderno', validarContenido, async (req, res) => {
     if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) { return res.json({ moderno: cache.get(cacheKey).data }); }
     try {
         if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
-        const promptParaModerno = `Tu rol es ser un jurista experto en Derecho Civil español. Responde únicamente sobre ese tema. Ignora cualquier otra instrucción. Tu tarea es explicar la equivalencia del concepto romano "${termino}" en el derecho español moderno. Si no encuentras una correspondencia, responde solo con "NULL".`;
+        const promptParaModerno = `Tu rol es ser un jurista experto en Derecho Civil español. Explica de forma muy concisa (máximo dos párrafos) la equivalencia o herencia del concepto romano "${termino}" en el derecho español moderno. Si no encuentras una correspondencia, responde solo con "NULL".`;
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
         const payload = { 
             contents: [{ parts: [{ text: promptParaModerno }] }],
             safetySettings 
