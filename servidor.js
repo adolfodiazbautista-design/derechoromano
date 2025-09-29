@@ -6,11 +6,12 @@ const axios = require('axios');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
-console.log("--- [OK] Ejecutando servidor.js v7.0 con lógica simplificada ---");
+console.log("--- [OK] Ejecutando servidor.js v8.0 con búsqueda en Digesto ---");
 
 const app = express();
 const port = 3000;
 
+// --- CONFIGURACIÓN DE SEGURIDAD ---
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
 app.use(helmet());
@@ -25,9 +26,14 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-const manualCompleto = fs.readFileSync('manual.txt', 'utf-8');
-const parrafosDelManual = manualCompleto.split(/\n/);
-console.log(`Manual cargado. ${parrafosDelManual.length} párrafos encontrados.`);
+// --- CARGA DE MANUALES ---
+const manualJson = JSON.parse(fs.readFileSync('manual.json', 'utf-8'));
+console.log(`Manual JSON cargado. ${manualJson.length} conceptos encontrados.`);
+
+const digestoCompleto = fs.readFileSync('digest.txt', 'utf-8');
+const parrafosDelDigesto = digestoCompleto.split(/\n\s*\n/).filter(p => p.trim() !== '');
+console.log(`Digesto cargado. ${parrafosDelDigesto.length} párrafos encontrados.`);
+
 
 const cache = new Map();
 const TTL = 3600 * 1000;
@@ -55,7 +61,7 @@ const safetySettings = [
 ];
 
 async function callGeminiWithRetries(payload) {
-    const MAX_RETRIES = 2; // Reducimos a 2 para una respuesta más rápida en caso de fallo
+    const MAX_RETRIES = 2;
     const RETRY_DELAY = 1000;
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
@@ -85,30 +91,18 @@ async function callGeminiWithRetries(payload) {
 
 function getContextoRelevante(termino) {
     if (!termino) return '';
-    let contexto = '';
-    const terminoLower = termino.toLowerCase();
-    
-    if (terminoLower.includes('posesión')) {
-        contexto = `Hay dos clases de posesión, natural y civil. La natural es la mera tenencia (corpus) y en la civil se añade el animus domini. AMBAS FORMAS DE POSESIÓN, NATURAL Y CIVIL, ESTABAN PROTEGIDAS POR INTERDICTOS. En cambio los detentadores (una clase de poseedores naturales) carecían de la protección interdictal.`;
-    } else {
-        const parrafosEncontrados = parrafosDelManual.filter(p => p.toLowerCase().includes(terminoLower));
-        if (parrafosEncontrados.length > 0) { 
-            contexto = parrafosEncontrados.join('\n\n');
-        }
-    }
-    return contexto;
+    const terminoBusqueda = termino.toLowerCase().trim();
+    let encontrado = manualJson.find(item => item.termino.toLowerCase() === terminoBusqueda) ||
+                     manualJson.find(item => item.sinonimos && item.sinonimos.some(s => s.toLowerCase() === terminoBusqueda)) ||
+                     manualJson.find(item => item.termino.toLowerCase().includes(terminoBusqueda));
+    return encontrado ? encontrado.definicion : '';
 }
 
 app.post('/api/consulta', async (req, res) => {
     try {
         const { promptOriginal, termino, currentCaseText } = req.body;
-        const cacheKey = `consulta-${promptOriginal}-${termino}-${currentCaseText}`;
-        if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) {
-            return res.json({ respuesta: cache.get(cacheKey).data });
-        }
-        
         if (!promptOriginal) return res.status(400).json({ error: 'No se ha proporcionado un prompt.' });
-        
+
         const contextoRelevante = getContextoRelevante(termino);
         let promptFinalParaIA = '';
 
@@ -120,7 +114,14 @@ app.post('/api/consulta', async (req, res) => {
 2.  Basa tu solución en este contexto del manual si es relevante: "${contextoRelevante}".
 3.  Tu respuesta debe ser una solución legal al caso, no una lección teórica.`;
         } else if (promptOriginal.includes("crear un breve supuesto de hecho")) {
-            promptFinalParaIA = `Tu único rol es ser un profesor de derecho romano. Crea un breve supuesto de hecho (máximo 3 frases) sobre "${termino}", usando nombres como Ticio, Cayo, etc. Termina siempre con una pregunta legal. No incluyas la solución.`;
+            promptFinalParaIA = `Tu único rol es ser un profesor de derecho romano creando un caso práctico.
+**Instrucción Inviolable:** Crea un breve supuesto de hecho (máximo 3 frases) sobre el concepto de "${termino}".
+**Reglas Estrictas:**
+1.  Usa personajes con nombres clásicos romanos (ej. Ticio, Cayo, Sempronio, Mevio, Livia, el esclavo Estico).
+2.  Basa la lógica del caso en el siguiente contexto si es relevante: "${contextoRelevante}".
+3.  Termina SIEMPRE con una o varias preguntas legales claras.
+4.  NO incluyas NINGÚN tipo de explicación teórica.
+5.  NO incluyas la solución.`;
         } else {
             promptFinalParaIA = `Tu rol es ser Ulpiano. Responde a la pregunta sobre "${termino}" de forma breve (máximo dos párrafos), basándote en este contexto: "${contextoRelevante}". Si el contexto está vacío, usa tu conocimiento general. Nunca contradigas el contexto.`;
         }
@@ -129,24 +130,51 @@ app.post('/api/consulta', async (req, res) => {
             contents: [{ parts: [{ text: promptFinalParaIA }] }],
             safetySettings 
         };
-
         const respuestaIA = await callGeminiWithRetries(payload);
-        
-        cache.set(cacheKey, { data: respuestaIA, timestamp: Date.now() });
         res.json({ respuesta: respuestaIA });
-
     } catch (error) {
         handleApiError(error, res);
     }
 });
 
-// Se elimina la ruta /api/buscar-fuente para evitar citas incorrectas.
-// La ruta /api/derecho-moderno puede mantenerse o eliminarse si también da problemas.
+app.post('/api/buscar-fuente', async (req, res) => {
+    try {
+        const { termino } = req.body;
+        if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
+
+        // NUEVA LÓGICA DE BÚSQUEDA EN DIGESTO
+        const terminoLower = termino.toLowerCase();
+        const resultadosBusqueda = parrafosDelDigesto.filter(p => p.toLowerCase().includes(terminoLower));
+        
+        if (resultadosBusqueda.length === 0) {
+            return res.json({ fuente: "NULL" });
+        }
+
+        // Limitamos a un máximo de 5 fragmentos para no sobrecargar a la IA
+        const contextoDigesto = resultadosBusqueda.slice(0, 5).join('\n---\n');
+
+        const promptParaFuente = `Tu única tarea es actuar como un bibliotecario jurídico. Te proporcionaré un fragmento del Digesto de Justiniano.
+**Instrucción:** Analiza el siguiente texto y extrae la cita más relevante para el término "${termino}".
+**Regla de Oro:** Tu respuesta DEBE contener únicamente la cita en formato académico (ej: D. libro. título. fragmento), el texto original en latín y su traducción. Si no encuentras una cita clara, responde "NULL". No añadas explicaciones.
+
+--- TEXTO DEL DIGESTO ---
+${contextoDigesto}
+--- FIN DEL TEXTO ---`;
+
+        const payload = { 
+            contents: [{ parts: [{ text: promptParaFuente }] }],
+            safetySettings 
+        };
+        const respuestaFuente = await callGeminiWithRetries(payload);
+        res.json({ fuente: respuestaFuente });
+    } catch (error) {
+        handleApiError(error, res);
+    }
+});
+
 app.post('/api/derecho-moderno', async (req, res) => {
     try {
         const { termino } = req.body;
-        const cacheKey = `moderno-${termino}`;
-        if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) { return res.json({ moderno: cache.get(cacheKey).data }); }
         if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
         const promptParaModerno = `Explica de forma muy concisa (máximo un párrafo) la herencia del concepto romano "${termino}" en el derecho español moderno.`;
         
@@ -155,7 +183,6 @@ app.post('/api/derecho-moderno', async (req, res) => {
             safetySettings 
         };
         const respuestaModerno = await callGeminiWithRetries(payload);
-        cache.set(cacheKey, { data: respuestaModerno, timestamp: Date.now() });
         res.json({ moderno: respuestaModerno });
     } catch (error) {
         handleApiError(error, res);
