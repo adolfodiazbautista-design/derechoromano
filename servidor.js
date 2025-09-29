@@ -103,7 +103,20 @@ app.post('/api/consulta', async (req, res) => {
         const { promptOriginal, termino, currentCaseText } = req.body;
         if (!promptOriginal) return res.status(400).json({ error: 'No se ha proporcionado un prompt.' });
 
-        const contextoRelevante = getContextoRelevante(termino);
+        // --- INICIO DE LA MODIFICACIÓN ---
+        let contextoFinal;
+        const terminoNormalizado = termino ? termino.toLowerCase().trim() : '';
+
+        // Comprobamos si el término es 'posesión' para inyectar el contexto obligatorio.
+        if (terminoNormalizado === 'posesión' || terminoNormalizado === 'posesion') {
+            console.log("Detectado término 'posesión'. Usando contexto específico y prioritario.");
+            contextoFinal = `En Roma había dos clases de posesión: natural (solo corpus) y civil (corpus y animus domini) AMBAS FORMAS DE POSESIÓN TENÍAN PROTECCIÓN INTERDICTAL. Había una serie de casos, llamados "detentadores" (por ejemplo los arrendatarios) que, por razones desconocidas, no tenían protección de los interdictos.`;
+        } else {
+            // Si no es 'posesión', usamos la lógica original de buscar en el manual.
+            contextoFinal = getContextoRelevante(termino);
+        }
+        // --- FIN DE LA MODIFICACIÓN ---
+
         let promptFinalParaIA = '';
 
         if (currentCaseText) {
@@ -111,19 +124,19 @@ app.post('/api/consulta', async (req, res) => {
 **Tarea:** Resuelve el siguiente caso práctico aplicando los principios del derecho romano a los hechos presentados: "${currentCaseText}".
 **Instrucciones:**
 1.  Ve directamente al grano y responde a las preguntas del caso de forma clara y concisa.
-2.  Basa tu solución en este contexto del manual si es relevante: "${contextoRelevante}".
+2.  Basa tu solución en este contexto del manual si es relevante: "${contextoFinal}".
 3.  Tu respuesta debe ser una solución legal al caso, no una lección teórica.`;
         } else if (promptOriginal.includes("crear un breve supuesto de hecho")) {
             promptFinalParaIA = `Tu único rol es ser un profesor de derecho romano creando un caso práctico.
 **Instrucción Inviolable:** Crea un breve supuesto de hecho (máximo 3 frases) sobre el concepto de "${termino}".
 **Reglas Estrictas:**
 1.  Usa personajes con nombres clásicos romanos (ej. Ticio, Cayo, Sempronio, Mevio, Livia, el esclavo Estico).
-2.  Basa la lógica del caso en el siguiente contexto si es relevante: "${contextoRelevante}".
+2.  Basa la lógica del caso en el siguiente contexto si es relevante: "${contextoFinal}".
 3.  Termina SIEMPRE con una o varias preguntas legales claras.
 4.  NO incluyas NINGÚN tipo de explicación teórica.
 5.  NO incluyas la solución.`;
         } else {
-            promptFinalParaIA = `Tu rol es ser Ulpiano. Responde a la pregunta sobre "${termino}" de forma breve (máximo dos párrafos), basándote en este contexto: "${contextoRelevante}". Si el contexto está vacío, usa tu conocimiento general. Nunca contradigas el contexto.`;
+            promptFinalParaIA = `Tu rol es ser Ulpiano. Responde a la pregunta sobre "${termino}" de forma breve (máximo dos párrafos), basándote en este contexto: "${contextoFinal}". Si el contexto está vacío, usa tu conocimiento general. Nunca contradigas el contexto.`;
         }
 
         const payload = { 
