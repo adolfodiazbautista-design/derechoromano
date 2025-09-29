@@ -103,19 +103,18 @@ app.post('/api/consulta', async (req, res) => {
         const { promptOriginal, termino, currentCaseText } = req.body;
         if (!promptOriginal) return res.status(400).json({ error: 'No se ha proporcionado un prompt.' });
 
-        // --- INICIO DE LA MODIFICACIÓN ---
         let contextoFinal;
         const terminoNormalizado = termino ? termino.toLowerCase().trim() : '';
 
-        // Comprobamos si el término es 'posesión' para inyectar el contexto obligatorio.
-        if (terminoNormalizado === 'posesión' || terminoNormalizado === 'posesion') {
+        // Cambiamos la comprobación estricta (===) por una flexible (.includes())
+        // para que se active con cualquier consulta que contenga "posesion".
+        if (terminoNormalizado.includes('posesion')) {
             console.log("Detectado término 'posesión'. Usando contexto específico y prioritario.");
             contextoFinal = `En Roma había dos clases de posesión: natural (solo corpus) y civil (corpus y animus domini) AMBAS FORMAS DE POSESIÓN TENÍAN PROTECCIÓN INTERDICTAL. Había una serie de casos, llamados "detentadores" (por ejemplo los arrendatarios) que, por razones desconocidas, no tenían protección de los interdictos.`;
         } else {
             // Si no es 'posesión', usamos la lógica original de buscar en el manual.
             contextoFinal = getContextoRelevante(termino);
         }
-        // --- FIN DE LA MODIFICACIÓN ---
 
         let promptFinalParaIA = '';
 
