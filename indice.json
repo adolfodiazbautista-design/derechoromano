@@ -1,0 +1,122 @@
+[
+  {
+    "temaNumero": 1,
+    "titulo": "Ideas fundamentales acerca del Derecho",
+    "pagina": 48,
+    "palabrasClave": ["reglas de conducta", "roma y el derecho", "derecho objetivo", "derecho subjetivo", "derecho público", "derecho privado", "ius cogens", "ius dispositivum"]
+  },
+  {
+    "temaNumero": 2,
+    "titulo": "Breve introducción a la historia del Derecho Romano",
+    "pagina": 53,
+    "palabrasClave": ["época arcaica", "república romana", "xii tablas", "crisis de la república", "época clásica", "leyes y plebiscitos", "edictos", "senadoconsultos", "constituciones imperiales", "ius gentium", "principado", "dominado", "derecho posclásico", "época justinianea", "corpus iuris civilis"]
+  },
+  {
+    "temaNumero": 3,
+    "titulo": "La persistencia del Derecho Romano",
+    "pagina": 78,
+    "palabrasClave": ["leges romanae barabarorum", "derecho común", "edad media", "edad moderna", "edad contemporánea"]
+  },
+  {
+    "temaNumero": 4,
+    "titulo": "El sujeto del derecho. La persona. La capacidad",
+    "pagina": 86,
+    "palabrasClave": ["persona", "personas físicas", "personas jurídicas", "libres", "esclavos", "servi", "ciudadanos", "cives", "extranjeros", "sui iuris", "alieni iuris", "capitis deminutio", "capacidad jurídica", "capacidad de obrar"]
+  },
+  {
+    "temaNumero": 5,
+    "titulo": "La familia",
+    "pagina": 96,
+    "palabrasClave": ["parentesco", "pater familias", "matrimonio", "manus", "dote", "patria potestas", "dominica potestas", "patronato", "tutela", "curatela", "curae"]
+  },
+  {
+    "temaNumero": 6,
+    "titulo": "Hechos jurídicos, actos jurídicos, negocios jurídicos",
+    "pagina": 105,
+    "palabrasClave": ["negocio jurídico", "elementos esenciales", "elementos accidentales", "ineficacia", "convalidación", "conversión"]
+  },
+  {
+    "temaNumero": 7,
+    "titulo": "Generalidades sobre el proceso. Las legis actiones",
+    "pagina": 112,
+    "palabrasClave": ["proceso", "legis actiones", "iurisdictio", "iudicatio", "magistrado", "fase in iure"]
+  },
+  {
+    "temaNumero": 9,
+    "titulo": "El procedimiento per formulas",
+    "pagina": 128,
+    "palabrasClave": ["procedimiento per formulas", "fórmula", "litis contestatio", "fase apud iudicem", "prueba", "sentencia", "ejecución de la sentencia"]
+  },
+  {
+    "temaNumero": 10,
+    "titulo": "La cognitio extra ordinem y protección pretoria",
+    "pagina": 136,
+    "palabrasClave": ["cognitio extra ordinem", "protección pretoria", "arbitraje", "episcopalis audientia"]
+  },
+  {
+    "temaNumero": 11,
+    "titulo": "Introducción a los derechos reales. Las cosas. La posesión",
+    "pagina": 142,
+    "palabrasClave": ["derechos reales", "cosas", "posesión", "propiedad", "corpus", "animus", "interdictos", "posesión civil", "usucapionem"]
+  },
+  {
+    "temaNumero": 12,
+    "titulo": "La propiedad y otros derechos reales",
+    "pagina": 149,
+    "palabrasClave": ["propiedad", "adquirir la propiedad", "traditio", "usucapión", "copropiedad", "servidumbres", "usufructo", "uso", "habitación", "enfiteusis", "superficie"]
+  },
+  {
+    "temaNumero": 13,
+    "titulo": "Protección procesal de los derechos reales",
+    "pagina": 164,
+    "palabrasClave": ["propiedad civil", "actio negatoria", "propiedad pretoria", "propiedad bonitaria", "doble venta"]
+  },
+  {
+    "temaNumero": 14,
+    "titulo": "La relación obligacional",
+    "pagina": 169,
+    "palabrasClave": ["obligación", "obligaciones", "incumplimiento", "responsabilidad"]
+  },
+  {
+    "temaNumero": 15,
+    "titulo": "Los delitos",
+    "pagina": 179,
+    "palabrasClave": ["delito", "delitos", "hurto", "daño", "iniuriae", "lesiones", "ofensas"]
+  },
+  {
+    "temaNumero": 16,
+    "titulo": "Contratos reales",
+    "pagina": 186,
+    "palabrasClave": ["contrato", "contratos", "contratos reales", "mutuo", "comodato", "depósito", "fiducia", "prenda", "pignus", "hipoteca", "contratos innominados"]
+  },
+  {
+    "temaNumero": 17,
+    "titulo": "Contratos consensuales",
+    "pagina": 196,
+    "palabrasClave": ["contratos consensuales", "compraventa", "emptio venditio", "arrendamiento", "locatio conductio", "sociedad", "societas", "mandato", "mandatum", "donación"]
+  },
+  {
+    "temaNumero": 18,
+    "titulo": "Contratos formales y de garantía",
+    "pagina": 207,
+    "palabrasClave": ["contratos formales", "contratos verbales", "contratos literales", "contratos de garantía", "stipulatio"]
+  },
+  {
+    "temaNumero": 19,
+    "titulo": "La sucesión mortis causa",
+    "pagina": 215,
+    "palabrasClave": ["sucesión", "herencia", "bonorum possessio", "mortis causa"]
+  },
+  {
+    "temaNumero": 20,
+    "titulo": "Sucesión intestada",
+    "pagina": 221,
+    "palabrasClave": ["sucesión intestada", "herencia civil", "herencia pretoria", "bonorum possessio sine tabulis"]
+  },
+  {
+    "temaNumero": 21,
+    "titulo": "Sucesión testamentaria",
+    "pagina": 226,
+    "palabrasClave": ["sucesión testamentaria", "testamento", "legados", "fideicomisos", "sucesión forzosa", "legitimaria"]
+  }
+]

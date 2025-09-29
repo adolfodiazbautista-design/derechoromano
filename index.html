@@ -482,26 +482,40 @@
                 
                 submitQueryBtn.disabled = true;
                 submitBtnText.classList.add('hidden');
-                submitBtnLoader.classList.remove('hidden');
+                submitBtnLoader.classList.add('hidden');
                 queryResult.classList.remove('hidden');
                 queryResultText.innerHTML = '<div class="loader mx-auto"></div>';
 
                 const promptPrincipal = `pregunta teórica`;
                 
-                const [respuestaPrincipalResult, respuestaFuente, respuestaModerno] = await Promise.all([
+                // --- ACTUALIZADO PARA INCLUIR BÚSQUEDA DE PÁGINA ---
+                const [
+                    respuestaPrincipalResult, 
+                    respuestaFuente, 
+                    respuestaModerno,
+                    respuestaPagina
+                ] = await Promise.all([
                     callGeminiAPI(promptPrincipal, userQuery), 
                     callApiAndHandleErrors('buscar-fuente', { termino: userQuery }),                
-                    callApiAndHandleErrors('derecho-moderno', { termino: userQuery })              
+                    callApiAndHandleErrors('derecho-moderno', { termino: userQuery }),
+                    callApiAndHandleErrors('buscar-pagina', { termino: userQuery })
                 ]);
                 
                 let resultadoFinal = [];
                 resultadoFinal.push(`**Respuesta Jurídica:**\n${respuestaPrincipalResult.respuesta || respuestaPrincipalResult.error}`);
+                
                 if (respuestaFuente.fuente && !respuestaFuente.fuente.includes("NULL")) {
                     resultadoFinal.push(`**Fuente Clásica:**\n${respuestaFuente.fuente}`);
                 }
+                
                 if (respuestaModerno.moderno && !respuestaModerno.moderno.includes("NULL")) {
                     resultadoFinal.push(`**Vigencia en el Derecho Moderno:**\n${respuestaModerno.moderno}`);
                 }
+                
+                if (respuestaPagina.pagina) {
+                    resultadoFinal.push(`**Para saber más:**\nPuedes consultar el tema "${respuestaPagina.titulo}" en la página ${respuestaPagina.pagina} del manual.`);
+                }
+                
                 const textoFinal = resultadoFinal.join('\n\n');
                 queryResultText.innerHTML = textoFinal.replace(/\n/g, '<br>');
 

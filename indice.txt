@@ -1,0 +1,173 @@
+ÍNDICE	3
+PRÓLOGO A LA SEGUNDA EDICIÓN	8
+PRÓLOGO (A LA PRIMERA EDICIÓN)	9
+BREVE GLOSARIO	11
+1. Ideas fundamentales acerca del Derecho	48
+Las reglas de conducta	48
+Roma y el derecho	49
+Derecho objetivo y derecho subjetivo	50
+Derecho público y Derecho privado	50
+Ius cogens y ius dispositivum	51
+Sentidos de la expresión “Derecho romano”	51
+El Derecho romano como acontecimiento histórico. Periodificación	52
+2. Breve introducción a la historia del Derecho Romano	53
+Época arcaica	53
+Organización política de la república romana	55
+El derecho romano en la época arcaica hasta las XII tablas	56
+Las XII tablas	57
+Fuentes del derecho romano en la época arcaica después de las XII tablas	57
+Crisis de la república.	59
+Fuentes del derecho romano en la época clásica	60
+Leyes y plebiscitos, edictos, senadoconsultos, constituciones imperiales, Derecho provincial y ius gentium, en la época clásica	62
+El principado	65
+El dominado	68
+El Derecho posclásico	71
+Época justinianea	73
+El derecho romano en el imperio de oriente. La compilación justinianea (“corpus iuris civilis”)	74
+3. La persistencia del Derecho Romano	78
+La persistencia del Derecho romano	78
+La persistencia del Derecho romano en occidente tras la caída del imperio romano. Leges romanae barabarorum	78
+El Derecho romano postjustinianeo en oriente	78
+El Derecho romano en occidente en la edad media	79
+La recepción del Derecho común en Europa	80
+El Derecho romano en la edad moderna	81
+El Derecho romano en la edad contemporánea	83
+El Derecho romano en la actualidad	84
+4. El sujeto del derecho. La persona. La capacidad	86
+La persona	86
+Personas físicas y jurídicas	86
+La persona física en Derecho romano	86
+Libres y esclavos (servi)	87
+Ciudadanos (cives) y extranjeros	89
+Sui iuris y alieni iuris	91
+Cambio en el estatus. Capitis deminutio	91
+Diferencias sociales entre las personas físicas	92
+Comienzo y fin de la persona física	93
+La persona jurídica en derecho romano	93
+Capacidad jurídica y capacidad de obrar	94
+Circunstancias modificativas de la capacidad de obrar	95
+5. La familia	96
+El parentesco	96
+Poderes del pater familias	97
+Matrimonio y manus	97
+La dote	98
+Patria potestas	100
+Dominica potestas y patronato	100
+Situación patrimonial de los hijos in potestate y los esclavos	101
+Situación de los sui iuris incapaces. (tutela y curatela)	102
+Las curatelas (curae)	103
+6. Hechos jurídicos, actos jurídicos, negocios jurídicos	105
+Elementos esenciales del negocio jurídico	106
+Elementos accidentales del negocio jurídico	108
+Clases de negocios jurídicos	110
+Ineficacia de los negocios jurídicos	110
+Convalidación y conversión de los negocios jurídicos ineficaces	111
+7. Generalidades sobre el proceso. Las legis actiones	112
+Iurisdictio y iudicatio	112
+Órganos jurisdiccionales y judiciales romanos	115
+Lugar y tiempo de los procesos	116
+Competencia	116
+El procedimiento de las legis actiones	116
+Tramitación del proceso	117
+Formas más antiguas de las legis actiones	117
+Innovaciones posteriores	119
+Clases de juicios según la intervención de la iurisdictio del magistrado	120
+La fase in iure del procedimiento per formulas	120
+Terminación anormal del proceso en la fase in iure	122
+Concesión y denegación de la acción	123
+La fórmula y sus partes	123
+Partes más importantes de la fórmula	123
+Clases de fórmulas (clases de acciones)	126
+Nombramiento del juez, el árbitro, o los recuperatores	127
+9. El procedimiento per formulas (litis contestatio, fase apud iudicem). La sentencia y su ejecución. Protección pretoria	128
+La litis contestatio	128
+La fase apud iudicem	129
+Alegaciones de las partes	129
+La prueba	129
+La sentencia	131
+La ejecución de la sentencia en el procedimiento per formulas	133
+10. La cognitio extra ordinem, la protección pretoria extrajudicial y los procedimientos arbitrales	136
+La cognitio extra ordinem	136
+Protección pretoria extrajudicial de los derechos	139
+Procedimientos arbitrales	140
+Episcopalis audientia (derecho postclásico)	141
+11. Introducción a los derechos reales. Las cosas. La posesión	142
+Las cosas	142
+Posesión y propiedad. Distinción y relación entre ambos conceptos	144
+Corpus y animus en la posesión	145
+La protección interdictal	145
+Clases de interdictos	146
+Posesión civil, (possessio ad usucapionem)	148
+12. La propiedad y otros derechos reales	149
+Modos de adquirir la propiedad	150
+Modos formales de adquirir la propiedad	151
+Modos no formales de adquisición de la propiedad	152
+Traditio	154
+Usucapión.	155
+La copropiedad	157
+Las servidumbres	158
+Constitución de las servidumbres	159
+Extinción de las servidumbres	160
+El usufructo	161
+Constitución del usufructo	162
+Extinción del usufructo	162
+Uso, habitación y operae servorum	162
+Referencia a los derechos reales de enfiteusis y superficie	163
+13. Protección procesal de los derechos reales	164
+Protección procesal de la propiedad civil	164
+Actio negatoria “Acción declarativa del dominio”	166
+Protección procesal de la propiedad pretoria o bonitaria	166
+El caso de la doble venta	167
+Protección de la “propiedad peregrina”.	168
+Protección de la “propiedad provincial”.	168
+Protección del “dominio útil”.	168
+Protección procesal de las servidumbres	169
+Protección procesal del usufructo	169
+14. La relación obligacional. Introducción	169
+Transmisión de las obligaciones	172
+Pluralidad de sujetos en las obligaciones	172
+Nacimiento y extinción de las obligaciones	173
+La responsabilidad por incumplimiento de las obligaciones	176
+15. Los delitos	179
+Introducción	179
+Delitos de hurto	180
+Delitos de daño	181
+Delitos de iniuriae (lesiones y ofensas)	182
+Delitos pretorios	183
+Delitos pretorios que no exigían la prueba de la culpabilidad	185
+Delitos pretorios relacionados con la administración de justicia	185
+16. Los contratos en general. Contratos reales.	186
+Introducción a los contratos	186
+Contratos reales.	187
+Mutuo	188
+Comodato	188
+Depósito	189
+Fiducia	190
+Prenda (pignus)	191
+Hipoteca (pignus conventum)	192
+Los llamados “contratos innominados”	193
+Supuestos no contractuales semejantes a los contratos reales	194
+17. Contratos consensuales	196
+Introducción	196
+Compraventa (emptio venditio)	196
+Arrendamiento (locatio conductio)	199
+Arrendamiento de obra (locatio operis)	200
+Sociedad (societas)	202
+Mandato (mandatum)	203
+Donación.	204
+18. Contratos formales y contratos de garantía.	207
+Los contratos formales	207
+Contratos verbales	207
+Contratos literales	210
+Contratos de garantía	210
+19. La sucesión mortis causa	215
+La herencia	215
+La “herencia pretoria” (bonorum possessio)	219
+20. Sucesión intestada.	221
+Herencia civil	221
+Herencia intestada en el derecho pretorio (bonorum possessio sine tabulis)	221
+Herencia intestada justinianea	224
+21. Sucesión testamentaria.	226
+Los legados	232
+Los fideicomisos	234
+La sucesión forzosa o legitimaria	236
