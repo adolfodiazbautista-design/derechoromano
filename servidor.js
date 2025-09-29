@@ -6,7 +6,7 @@ const axios = require('axios');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
-console.log("--- [OK] Ejecutando servidor.js v8.0 con búsqueda en Digesto ---");
+console.log("--- [OK] Ejecutando servidor.js v10.0 (Corrección definitiva) ---");
 
 const app = express();
 const port = 3000;
@@ -26,28 +26,31 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// --- CARGA DE MANUALES ---
+// --- CARGA DE DATOS ---
 const manualJson = JSON.parse(fs.readFileSync('manual.json', 'utf-8'));
 console.log(`Manual JSON cargado. ${manualJson.length} conceptos encontrados.`);
 
+const indiceJson = JSON.parse(fs.readFileSync('indice.json', 'utf-8'));
+console.log(`Índice JSON cargado. ${indiceJson.length} temas encontrados.`);
+
+// --- CORRECCIÓN DEFINITIVA CARGA DIGESTO ---
 const digestoCompleto = fs.readFileSync('digest.txt', 'utf-8');
-const parrafosDelDigesto = digestoCompleto.split(/\n\s*\n/).filter(p => p.trim() !== '');
+// Paso 1: Normaliza TODOS los tipos de saltos de línea a un único formato (\n)
+const textoNormalizado = digestoCompleto.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+// Paso 2: Divide por dos o más saltos de línea (párrafos separados por una o más líneas en blanco)
+const parrafosDelDigesto = textoNormalizado.split(/\n{2,}/).filter(p => p.trim() !== '');
 console.log(`Digesto cargado. ${parrafosDelDigesto.length} párrafos encontrados.`);
+// --- FIN CORRECCIÓN ---
 
-
-const cache = new Map();
-const TTL = 3600 * 1000;
 
 function handleApiError(error, res) {
     console.error("Error definitivo desde la API de Gemini:", error.response ? error.response.data : error.message);
     let errorMessage = 'Ha ocurrido un error en el servidor.';
     if (error.response) {
         const errorData = error.response.data?.error;
-        if (errorData) {
-            if (errorData.code === 503) {
-                errorMessage = 'Ulpiano parece estar desbordado por el trabajo en este momento (el modelo de IA está sobrecargado). Por favor, dale un minuto de descanso y vuelve a intentarlo.';
-                return res.status(503).json({ error: 'MODEL_OVERLOADED', message: errorMessage });
-            }
+        if (errorData && errorData.code === 503) {
+            errorMessage = 'Ulpiano parece estar desbordado por el trabajo en este momento (el modelo de IA está sobrecargado). Por favor, dale un minuto de descanso y vuelve a intentarlo.';
+            return res.status(503).json({ error: 'MODEL_OVERLOADED', message: errorMessage });
         }
     }
     res.status(500).json({ error: 'INTERNAL_SERVER_ERROR', message: errorMessage });
@@ -61,27 +64,23 @@ const safetySettings = [
 ];
 
 async function callGeminiWithRetries(payload) {
-    const MAX_RETRIES = 2;
-    const RETRY_DELAY = 1000;
+    const MAX_RETRIES = 3;
+    let RETRY_DELAY = 1000;
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${GEMINI_API_KEY}`;
 
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
         try {
             const geminiResponse = await axios.post(url, payload, { headers: { 'Content-Type': 'application/json' } });
-            
-            if (geminiResponse.data && geminiResponse.data.candidates && geminiResponse.data.candidates.length > 0) {
-                const candidate = geminiResponse.data.candidates[0];
-                if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0) {
-                    return candidate.content.parts[0].text;
-                }
+            if (geminiResponse.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+                return geminiResponse.data.candidates[0].content.parts[0].text;
             }
             throw new Error('Respuesta de la IA inválida o vacía.');
-
         } catch (error) {
             if (error.response && error.response.status === 503 && attempt < MAX_RETRIES) {
                 console.log(`Intento ${attempt} fallido (Modelo Sobrecargado). Reintentando en ${RETRY_DELAY / 1000}s...`);
                 await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+                RETRY_DELAY *= 2;
             } else {
                 throw error;
             }
@@ -93,10 +92,12 @@ function getContextoRelevante(termino) {
     if (!termino) return '';
     const terminoBusqueda = termino.toLowerCase().trim();
     let encontrado = manualJson.find(item => item.termino.toLowerCase() === terminoBusqueda) ||
-                     manualJson.find(item => item.sinonimos && item.sinonimos.some(s => s.toLowerCase() === terminoBusqueda)) ||
+                     manualJson.find(item => item.sinonimos?.some(s => s.toLowerCase() === terminoBusqueda)) ||
                      manualJson.find(item => item.termino.toLowerCase().includes(terminoBusqueda));
     return encontrado ? encontrado.definicion : '';
 }
+
+// --- ENDPOINTS DE LA API ---
 
 app.post('/api/consulta', async (req, res) => {
     try {
@@ -106,42 +107,23 @@ app.post('/api/consulta', async (req, res) => {
         let contextoFinal;
         const terminoNormalizado = termino ? termino.toLowerCase().trim() : '';
 
-        // Cambiamos la comprobación estricta (===) por una flexible (.includes())
-        // para que se active con cualquier consulta que contenga "posesion".
         if (terminoNormalizado.includes('posesion')) {
             console.log("Detectado término 'posesión'. Usando contexto específico y prioritario.");
             contextoFinal = `En Roma había dos clases de posesión: natural (solo corpus) y civil (corpus y animus domini) AMBAS FORMAS DE POSESIÓN TENÍAN PROTECCIÓN INTERDICTAL. Había una serie de casos, llamados "detentadores" (por ejemplo los arrendatarios) que, por razones desconocidas, no tenían protección de los interdictos.`;
         } else {
-            // Si no es 'posesión', usamos la lógica original de buscar en el manual.
             contextoFinal = getContextoRelevante(termino);
         }
 
         let promptFinalParaIA = '';
-
         if (currentCaseText) {
-            promptFinalParaIA = `Tu único rol es ser un juez romano resolviendo un caso.
-**Tarea:** Resuelve el siguiente caso práctico aplicando los principios del derecho romano a los hechos presentados: "${currentCaseText}".
-**Instrucciones:**
-1.  Ve directamente al grano y responde a las preguntas del caso de forma clara y concisa.
-2.  Basa tu solución en este contexto del manual si es relevante: "${contextoFinal}".
-3.  Tu respuesta debe ser una solución legal al caso, no una lección teórica.`;
+             promptFinalParaIA = `Rol: Juez romano. Tarea: Resolver el caso "${currentCaseText}" aplicando principios del derecho romano. Instrucciones: Solución legal, clara y concisa. Basa tu solución en este contexto si es relevante: "${contextoFinal}".`;
         } else if (promptOriginal.includes("crear un breve supuesto de hecho")) {
-            promptFinalParaIA = `Tu único rol es ser un profesor de derecho romano creando un caso práctico.
-**Instrucción Inviolable:** Crea un breve supuesto de hecho (máximo 3 frases) sobre el concepto de "${termino}".
-**Reglas Estrictas:**
-1.  Usa personajes con nombres clásicos romanos (ej. Ticio, Cayo, Sempronio, Mevio, Livia, el esclavo Estico).
-2.  Basa la lógica del caso en el siguiente contexto si es relevante: "${contextoFinal}".
-3.  Termina SIEMPRE con una o varias preguntas legales claras.
-4.  NO incluyas NINGÚN tipo de explicación teórica.
-5.  NO incluyas la solución.`;
+            promptFinalParaIA = `Rol: Profesor de derecho romano. Tarea: Crear un caso práctico (máx 3 frases) sobre "${termino}". Reglas: Nombres romanos. Terminar con preguntas legales. Sin explicaciones ni soluciones. Basar lógica en: "${contextoFinal}".`;
         } else {
-            promptFinalParaIA = `Tu rol es ser Ulpiano. Responde a la pregunta sobre "${termino}" de forma breve (máximo dos párrafos), basándote en este contexto: "${contextoFinal}". Si el contexto está vacío, usa tu conocimiento general. Nunca contradigas el contexto.`;
+            promptFinalParaIA = `Rol: Jurista Ulpiano. Tarea: Responder a la pregunta sobre "${termino}" (máx 2 párrafos). Contexto principal: "${contextoFinal}". No lo contradigas. Si está vacío, usa tu conocimiento general.`;
         }
 
-        const payload = { 
-            contents: [{ parts: [{ text: promptFinalParaIA }] }],
-            safetySettings 
-        };
+        const payload = { contents: [{ parts: [{ text: promptFinalParaIA }] }], safetySettings };
         const respuestaIA = await callGeminiWithRetries(payload);
         res.json({ respuesta: respuestaIA });
     } catch (error) {
@@ -153,8 +135,13 @@ app.post('/api/buscar-fuente', async (req, res) => {
     try {
         const { termino } = req.body;
         if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
+        
+        // Esta condición ahora funcionará porque parrafosDelDigesto tendrá contenido
+        if (parrafosDelDigesto.length === 0) {
+            console.log("Advertencia: No hay párrafos en el Digesto para buscar.");
+            return res.json({ fuente: "NULL" });
+        }
 
-        // NUEVA LÓGICA DE BÚSQUEDA EN DIGESTO
         const terminoLower = termino.toLowerCase();
         const resultadosBusqueda = parrafosDelDigesto.filter(p => p.toLowerCase().includes(terminoLower));
         
@@ -162,21 +149,10 @@ app.post('/api/buscar-fuente', async (req, res) => {
             return res.json({ fuente: "NULL" });
         }
 
-        // Limitamos a un máximo de 5 fragmentos para no sobrecargar a la IA
         const contextoDigesto = resultadosBusqueda.slice(0, 5).join('\n---\n');
+        const promptParaFuente = `Tarea: Bibliotecario jurídico. Instrucción: Analiza este texto del Digesto y extrae la cita más relevante para "${termino}". Regla: Tu respuesta DEBE ser únicamente la cita (ej: D. libro. título. fragmento), el texto en latín y su traducción. Si no hay cita clara, responde "NULL". Sin explicaciones. Texto: --- ${contextoDigesto} ---`;
 
-        const promptParaFuente = `Tu única tarea es actuar como un bibliotecario jurídico. Te proporcionaré un fragmento del Digesto de Justiniano.
-**Instrucción:** Analiza el siguiente texto y extrae la cita más relevante para el término "${termino}".
-**Regla de Oro:** Tu respuesta DEBE contener únicamente la cita en formato académico (ej: D. libro. título. fragmento), el texto original en latín y su traducción. Si no encuentras una cita clara, responde "NULL". No añadas explicaciones.
-
---- TEXTO DEL DIGESTO ---
-${contextoDigesto}
---- FIN DEL TEXTO ---`;
-
-        const payload = { 
-            contents: [{ parts: [{ text: promptParaFuente }] }],
-            safetySettings 
-        };
+        const payload = { contents: [{ parts: [{ text: promptParaFuente }] }], safetySettings };
         const respuestaFuente = await callGeminiWithRetries(payload);
         res.json({ fuente: respuestaFuente });
     } catch (error) {
@@ -188,16 +164,61 @@ app.post('/api/derecho-moderno', async (req, res) => {
     try {
         const { termino } = req.body;
         if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
-        const promptParaModerno = `Explica de forma muy concisa (máximo un párrafo) la herencia del concepto romano "${termino}" en el derecho español moderno.`;
+        const promptParaModerno = `Explica muy concisamente (máx un párrafo) la herencia del concepto romano "${termino}" en el derecho español moderno.`;
         
-        const payload = { 
-            contents: [{ parts: [{ text: promptParaModerno }] }],
-            safetySettings 
-        };
+        const payload = { contents: [{ parts: [{ text: promptParaModerno }] }], safetySettings };
         const respuestaModerno = await callGeminiWithRetries(payload);
         res.json({ moderno: respuestaModerno });
     } catch (error) {
         handleApiError(error, res);
+    }
+});
+
+// --- ENDPOINT PARA BUSCAR EN EL ÍNDICE (VERSIÓN CORREGIDA Y MEJORADA) ---
+app.post('/api/buscar-pagina', (req, res) => {
+    try {
+        const { termino } = req.body;
+        if (!termino) {
+            return res.status(400).json({ error: 'No se ha proporcionado un término.' });
+        }
+
+        const terminoLower = termino.toLowerCase().trim();
+        let mejorCoincidencia = null;
+        let maxPuntuacion = 0;
+
+        indiceJson.forEach(tema => {
+            let puntuacionActual = 0;
+            const tituloLower = tema.titulo.toLowerCase();
+            
+            // Puntuación máxima si el término es una palabra clave exacta
+            if (tema.palabrasClave.some(p => p.toLowerCase() === terminoLower)) {
+                puntuacionActual += 10;
+            }
+
+            // Puntuación alta si el título contiene el término
+            if (tituloLower.includes(terminoLower)) {
+                puntuacionActual += 5;
+            }
+
+            // Puntuación media si alguna palabra clave contiene el término
+            if (tema.palabrasClave.some(p => p.toLowerCase().includes(terminoLower))) {
+                puntuacionActual += 3;
+            }
+
+            if (puntuacionActual > maxPuntuacion) {
+                maxPuntuacion = puntuacionActual;
+                mejorCoincidencia = tema;
+            }
+        });
+
+        if (mejorCoincidencia) {
+            res.json({ pagina: mejorCoincidencia.pagina, titulo: mejorCoincidencia.titulo });
+        } else {
+            res.json({ pagina: null });
+        }
+    } catch (error) {
+        console.error("Error en /api/buscar-pagina:", error);
+        res.status(500).json({ error: 'Error interno del servidor al buscar la página.' });
     }
 });
 
