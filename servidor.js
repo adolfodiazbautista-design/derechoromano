@@ -67,7 +67,7 @@ async function callGeminiWithRetries(payload) {
     const MAX_RETRIES = 3;
     let RETRY_DELAY = 1000;
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${GEMINI_API_KEY}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-latest:generateContent?key=${GEMINI_API_KEY}`;
 
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
         try {
