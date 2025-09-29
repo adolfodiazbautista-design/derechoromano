@@ -6,7 +6,7 @@ const axios = require('axios');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
-console.log("--- [OK] Ejecutando servidor.js v7.0 con lectura de JSON ---");
+console.log("--- [OK] Ejecutando servidor.js v6.1 con reintentos automáticos ---");
 
 const app = express();
 const port = 3000;
@@ -45,15 +45,15 @@ function validarContenido(req, res, next) {
     next();
 }
 
-// --- LECTURA DEL MANUAL EN FORMATO JSON ---
-const manualJson = JSON.parse(fs.readFileSync('manual.json', 'utf-8'));
-console.log(`Manual JSON cargado. ${manualJson.length} conceptos encontrados.`);
+const manualCompleto = fs.readFileSync('manual.txt', 'utf-8');
+const parrafosDelManual = manualCompleto.split(/\n/);
+console.log(`Manual cargado. ${parrafosDelManual.length} párrafos encontrados.`);
 
 const cache = new Map();
 const TTL = 3600 * 1000;
 
 function handleApiError(error, res) {
-    console.error("Error desde la API de Gemini:", error.response ? error.response.data : error.message);
+    console.error("Error definitivo desde la API de Gemini:", error.response ? error.response.data : error.message);
     if (error.response) {
         if (error.response.data?.promptFeedback?.blockReason) {
             return res.status(400).json({ error: 'CONTENIDO_INAPROPIADO', message: 'La consulta ha sido bloqueada por los filtros de seguridad de Google.' });
@@ -61,7 +61,7 @@ function handleApiError(error, res) {
         const errorData = error.response.data?.error;
         if (errorData) {
             if (errorData.code === 429) return res.status(429).json({ error: 'RATE_LIMIT_EXCEEDED', message: 'Límite de cuota de la API excedido.' });
-            if (errorData.code === 503) return res.status(503).json({ error: 'MODEL_OVERLOADED', message: 'El modelo de IA está sobrecargado.' });
+            if (errorData.code === 503) return res.status(503).json({ error: 'MODEL_OVERLOADED', message: 'Ulpiano parece estar desbordado por el trabajo en este momento (el modelo de IA está sobrecargado). Por favor, dale un minuto de descanso y vuelve a intentarlo.' });
         }
     }
     res.status(500).json({ error: 'INTERNAL_SERVER_ERROR', message: 'Ha ocurrido un error en el servidor.' });
@@ -74,44 +74,58 @@ const safetySettings = [
     { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
 ];
 
-function extractTextFromResponse(geminiResponse) {
-    if (geminiResponse.data && geminiResponse.data.candidates && geminiResponse.data.candidates.length > 0) {
-        const candidate = geminiResponse.data.candidates[0];
-        if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0) {
-            return candidate.content.parts[0].text;
+async function callGeminiWithRetries(payload) {
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY = 1500;
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+        try {
+            const geminiResponse = await axios.post(url, payload, { headers: { 'Content-Type': 'application/json' } });
+            
+            if (geminiResponse.data && geminiResponse.data.candidates && geminiResponse.data.candidates.length > 0) {
+                const candidate = geminiResponse.data.candidates[0];
+                if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0) {
+                    return candidate.content.parts[0].text;
+                }
+            }
+            throw new Error('Respuesta de la IA inválida o vacía.');
+
+        } catch (error) {
+            if (error.response && error.response.status === 503 && attempt < MAX_RETRIES) {
+                console.log(`Intento ${attempt} fallido (Modelo Sobrecargado). Reintentando en ${RETRY_DELAY / 1000}s...`);
+                await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+            } else {
+                throw error;
+            }
         }
     }
-    return "La IA no ha podido generar una respuesta para esta consulta. Puede deberse a los filtros de seguridad. Intenta reformular la pregunta.";
 }
 
-// --- FUNCIÓN DE BÚSQUEDA DE CONTEXTO MEJORADA CON JSON ---
-function getContextoRelevante(termino) {
-    if (!termino) return '';
-    const terminoBusqueda = termino.toLowerCase().trim();
-    
-    // Búsqueda 1: Coincidencia exacta del término principal
-    let encontrado = manualJson.find(item => item.termino.toLowerCase() === terminoBusqueda);
-    
-    // Búsqueda 2: Coincidencia en sinónimos
-    if (!encontrado) {
-        encontrado = manualJson.find(item => item.sinonimos && item.sinonimos.some(s => s.toLowerCase() === terminoBusqueda));
-    }
-    
-    // Búsqueda 3: Coincidencia parcial (inclusión) en el término principal
-    if (!encontrado) {
-        encontrado = manualJson.find(item => item.termino.toLowerCase().includes(terminoBusqueda));
-    }
 
-    return encontrado ? encontrado.definicion : '';
+function getContextoRelevante(termino) {
+    let contexto = '';
+    if (termino && termino.toLowerCase().includes('posesión')) {
+        console.log("Consulta específica sobre 'posesión' detectada. Usando contexto manual forzado.");
+        contexto = `Hay dos clases de posesión, natural y civil. La natural es la mera tenencia (corpus) y en la civil se añade el animus domini. AMBAS FORMAS DE POSESIÓN, NATURAL Y CIVIL, ESTABAN PROTEGIDAS POR INTERDICTOS. En cambio los detentadores (una clase de poseedores naturales) carecían de la protección interdictal.`;
+    } else if (termino) {
+        const parrafosEncontrados = parrafosDelManual.filter(p => p.toLowerCase().includes(termino.toLowerCase()));
+        if (parrafosEncontrados.length > 0) { 
+            contexto = parrafosEncontrados.join('\n\n');
+        }
+    }
+    return contexto;
 }
 
 app.post('/api/consulta', validarContenido, async (req, res) => {
-    const { promptOriginal, termino, currentCaseText } = req.body;
-    const cacheKey = `consulta-${promptOriginal}-${termino}-${currentCaseText}`;
-    if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) {
-        return res.json({ respuesta: cache.get(cacheKey).data });
-    }
     try {
+        const { promptOriginal, termino, currentCaseText } = req.body;
+        const cacheKey = `consulta-${promptOriginal}-${termino}-${currentCaseText}`;
+        if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) {
+            return res.json({ respuesta: cache.get(cacheKey).data });
+        }
+        
         if (!promptOriginal) return res.status(400).json({ error: 'No se ha proporcionado un prompt.' });
         
         const contextoRelevante = getContextoRelevante(termino);
@@ -119,14 +133,15 @@ app.post('/api/consulta', validarContenido, async (req, res) => {
         let promptFinalParaIA = '';
 
         if (currentCaseText) {
-            promptFinalParaIA = `Tu único rol es ser un juez romano dictando una solución concisa para un caso.
-**Instrucción Inviolable:** Tu tarea es resolver el siguiente caso práctico, aplicando los principios del derecho romano a los hechos presentados: "${currentCaseText}".
-**Reglas Estrictas:**
-1.  **NO** des una introducción teórica sobre los conceptos.
-2.  Ve **directamente al grano**: analiza las acciones legales de cada personaje y responde a las preguntas del caso.
-3.  Basa tu solución en el siguiente contexto del manual si es relevante: "${contextoRelevante}".
-4.  Tu respuesta debe ser una solución legal al caso, no una lección de historia.`;
+            // PROMPT PARA LA SOLUCIÓN DEL CASO (SIMPLIFICADO)
+            promptFinalParaIA = `Tu único rol es ser un juez romano resolviendo un caso.
+**Tarea:** Resuelve el siguiente caso práctico aplicando los principios del derecho romano a los hechos presentados: "${currentCaseText}".
+**Instrucciones:**
+1.  Ve directamente al grano y responde a las preguntas del caso.
+2.  Basa tu solución en este contexto si es relevante: "${contextoRelevante}".
+3.  Tu respuesta debe ser una solución legal y concisa, no una lección teórica.`;
         } else if (promptOriginal.includes("crear un breve supuesto de hecho")) {
+            // PROMPT PARA GENERAR UN CASO
             promptFinalParaIA = `Tu único rol es ser un profesor de derecho romano creando un caso práctico.
 **Instrucción Inviolable:** Crea un breve supuesto de hecho (máximo 3 frases) sobre el concepto de "${termino}".
 **Reglas Estrictas:**
@@ -138,43 +153,76 @@ app.post('/api/consulta', validarContenido, async (req, res) => {
 6.  NO uses palabras como "solución", "resolvió", o "sentencia".
 Crea SOLO el problema.`;
         } else {
+            // PROMPT PARA ULPIANO IA
             promptFinalParaIA = `Tu rol es ser Ulpiano, un jurista romano experto y didáctico. Para responder a la pregunta del usuario, te proporciono un 'Contexto Clave' extraído de su manual de estudio. Este texto es tu fuente de verdad principal y tiene la máxima autoridad.
-
 **Regla de Oro (inviolable):** Tu respuesta final NUNCA debe contradecir la información o la interpretación presentada en el 'Contexto Clave'. Sé breve y didáctico. Limita tu explicación a no más de dos párrafos cortos.
-
 Puedes usar tu conocimiento general para ampliar la información, ofrecer ejemplos o dar más detalles, siempre que enriquezcan, no contradigan la explicación del manual y mantengan la brevedad.
-
 --- CONTEXTO CLAVE ---
-${contextoRelevante || ""}
+${contextoRelevante || "Sin contexto específico del manual para esta consulta."}
 --- FIN DEL CONTEXTO ---
-
 Basándote en tu conocimiento y respetando siempre la Regla de Oro sobre el Contexto Clave, responde de forma concisa a la siguiente pregunta: "${termino}".
-
 Si encuentras un concepto relevante en el índice del manual, finaliza tu respuesta mencionando la página correspondiente, pero no comentes sobre si lo encuentras o no.`;
         }
-        
-        const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+
         const payload = { 
             contents: [{ parts: [{ text: promptFinalParaIA }] }],
             safetySettings 
         };
-        const geminiResponse = await axios.post(url, payload, { headers: { 'Content-Type': 'application/json' } });
-        const respuestaIA = extractTextFromResponse(geminiResponse);
+
+        const respuestaIA = await callGeminiWithRetries(payload);
+        
         cache.set(cacheKey, { data: respuestaIA, timestamp: Date.now() });
         res.json({ respuesta: respuestaIA });
+
     } catch (error) {
         handleApiError(error, res);
     }
 });
 
 app.post('/api/buscar-fuente', validarContenido, async (req, res) => {
-    // ... (sin cambios en esta función)
+    try {
+        const { termino } = req.body;
+        const cacheKey = `fuente-${termino}`;
+        if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) { return res.json({ fuente: cache.get(cacheKey).data }); }
+        if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
+        
+        const promptParaFuente = `Tu única y OBLIGATORIA tarea es actuar como un historiador del derecho y devolver una fuente jurídica relevante para el término "${termino}". Sé conciso.
+1.  Busca la fuente más directa y relevante del Corpus Iuris Civilis o Gayo.
+2.  Utiliza siempre la nomenclatura académica moderna para las citas (ej: D. libro. título. fragmento; C. libro. título. ley; I. libro. título. párrafo).
+3.  Tu respuesta final debe contener únicamente la cita en formato académico, el texto original en latín y su traducción al español. NO añadas explicaciones.`;
+
+        const payload = { 
+            contents: [{ parts: [{ text: promptParaFuente }] }],
+            safetySettings 
+        };
+        const respuestaFuente = await callGeminiWithRetries(payload);
+        cache.set(cacheKey, { data: respuestaFuente, timestamp: Date.now() });
+        res.json({ fuente: respuestaFuente });
+    } catch (error) {
+        handleApiError(error, res);
+    }
 });
 
 app.post('/api/derecho-moderno', validarContenido, async (req, res) => {
-    // ... (sin cambios en esta función)
+    try {
+        const { termino } = req.body;
+        const cacheKey = `moderno-${termino}`;
+        if (cache.has(cacheKey) && (Date.now() - cache.get(cacheKey).timestamp < TTL)) { return res.json({ moderno: cache.get(cacheKey).data }); }
+        if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
+        const promptParaModerno = `Tu rol es ser un jurista experto en Derecho Civil español. Explica de forma muy concisa (máximo dos párrafos) la equivalencia o herencia del concepto romano "${termino}" en el derecho español moderno. Si no encuentras una correspondencia, responde solo con "NULL".`;
+        
+        const payload = { 
+            contents: [{ parts: [{ text: promptParaModerno }] }],
+            safetySettings 
+        };
+        const respuestaModerno = await callGeminiWithRetries(payload);
+        cache.set(cacheKey, { data: respuestaModerno, timestamp: Date.now() });
+        res.json({ moderno: respuestaModerno });
+    } catch (error) {
+        handleApiError(error, res);
+    }
 });
+
 
 app.listen(port, () => {
     console.log(`Servidor de Derecho Romano escuchando en http://localhost:${port}`);
