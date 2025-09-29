@@ -45,7 +45,7 @@ function validarContenido(req, res, next) {
     next();
 }
 
-// --- NUEVA LECTURA DEL MANUAL EN FORMATO JSON ---
+// --- LECTURA DEL MANUAL EN FORMATO JSON ---
 const manualJson = JSON.parse(fs.readFileSync('manual.json', 'utf-8'));
 console.log(`Manual JSON cargado. ${manualJson.length} conceptos encontrados.`);
 
@@ -84,22 +84,22 @@ function extractTextFromResponse(geminiResponse) {
     return "La IA no ha podido generar una respuesta para esta consulta. Puede deberse a los filtros de seguridad. Intenta reformular la pregunta.";
 }
 
-// --- NUEVA FUNCIÓN DE BÚSQUEDA DE CONTEXTO ---
+// --- FUNCIÓN DE BÚSQUEDA DE CONTEXTO MEJORADA CON JSON ---
 function getContextoRelevante(termino) {
     if (!termino) return '';
-    const terminoBusqueda = termino.toLowerCase();
+    const terminoBusqueda = termino.toLowerCase().trim();
     
-    // Búsqueda exacta primero
+    // Búsqueda 1: Coincidencia exacta del término principal
     let encontrado = manualJson.find(item => item.termino.toLowerCase() === terminoBusqueda);
     
-    // Si no, buscar en sinónimos
+    // Búsqueda 2: Coincidencia en sinónimos
     if (!encontrado) {
         encontrado = manualJson.find(item => item.sinonimos && item.sinonimos.some(s => s.toLowerCase() === terminoBusqueda));
     }
     
-    // Si no, buscar si el término está contenido en alguna definición (menos preciso)
+    // Búsqueda 3: Coincidencia parcial (inclusión) en el término principal
     if (!encontrado) {
-        encontrado = manualJson.find(item => item.definicion.toLowerCase().includes(terminoBusqueda));
+        encontrado = manualJson.find(item => item.termino.toLowerCase().includes(terminoBusqueda));
     }
 
     return encontrado ? encontrado.definicion : '';
@@ -139,12 +139,17 @@ app.post('/api/consulta', validarContenido, async (req, res) => {
 Crea SOLO el problema.`;
         } else {
             promptFinalParaIA = `Tu rol es ser Ulpiano, un jurista romano experto y didáctico. Para responder a la pregunta del usuario, te proporciono un 'Contexto Clave' extraído de su manual de estudio. Este texto es tu fuente de verdad principal y tiene la máxima autoridad.
+
 **Regla de Oro (inviolable):** Tu respuesta final NUNCA debe contradecir la información o la interpretación presentada en el 'Contexto Clave'. Sé breve y didáctico. Limita tu explicación a no más de dos párrafos cortos.
+
 Puedes usar tu conocimiento general para ampliar la información, ofrecer ejemplos o dar más detalles, siempre que enriquezcan, no contradigan la explicación del manual y mantengan la brevedad.
+
 --- CONTEXTO CLAVE ---
-${contextoRelevante || "Sin contexto específico del manual para esta consulta."}
+${contextoRelevante || ""}
 --- FIN DEL CONTEXTO ---
+
 Basándote en tu conocimiento y respetando siempre la Regla de Oro sobre el Contexto Clave, responde de forma concisa a la siguiente pregunta: "${termino}".
+
 Si encuentras un concepto relevante en el índice del manual, finaliza tu respuesta mencionando la página correspondiente, pero no comentes sobre si lo encuentras o no.`;
         }
         

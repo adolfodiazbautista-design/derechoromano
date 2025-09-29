@@ -1,222 +1,226 @@
 [
   {
     "termino": "Ius",
-    [cite_start]"definicion": "Término con el que los romanos designaban al derecho en sentido propio, como el conjunto de normas creadas por y para los hombres, diferenciándolo del 'Fas' o norma religiosa. [cite: 3, 6] [cite_start]Ulpiano, citando a Celso, lo definió como 'el arte de lo bueno y de lo equitativo' (ius est ars boni et aequi). [cite: 8]",
+    "definicion": "Término con el que los romanos designaban al derecho en sentido propio, como el conjunto de normas creadas por y para los hombres, diferenciándolo del 'Fas' o norma religiosa. Ulpiano, citando a Celso, lo definió como 'el arte de lo bueno y de lo equitativo' (ius est ars boni et aequi).",
     "tema": 1
   },
   {
     "termino": "Fas",
-    "definicion": "Era la norma religiosa en la Roma arcaica, aquello que estaba permitido por los dioses y cuya violación constituía un 'nefas' (lo prohibido). [cite_start]Representa la íntima conexión inicial entre el derecho y la religión. [cite: 4, 5]",
+    "definicion": "Era la norma religiosa en la Roma arcaica, aquello que estaba permitido por los dioses y cuya violación constituía un 'nefas' (lo prohibido). Representa la íntima conexión inicial entre el derecho y la religión.",
     "tema": 1
   },
   {
     "termino": "Jurisprudencia",
-    "definicion": "Definida por Ulpiano como 'el conocimiento de las cosas divinas y humanas, la ciencia de lo justo y de lo injusto'. [cite_start]En la época clásica, se refería a la ciencia del Derecho elaborada por los juristas, cuya labor era el 'respondere' (emitir dictámenes), 'agere' (asesorar en litigios) y 'cavere' (preparar negocios jurídicos). [cite: 7, 99]",
+    "definicion": "Definida por Ulpiano como 'el conocimiento de las cosas divinas y humanas, la ciencia de lo justo y de lo injusto'. En la época clásica, se refería a la ciencia del Derecho elaborada por los juristas, cuya labor era el 'respondere' (emitir dictámenes), 'agere' (asesorar en litigios) y 'cavere' (preparar negocios jurídicos).",
     "tema": 1
   },
   {
     "termino": "Preceptos del Derecho",
-    [cite_start]"definicion": "Son los tres principios fundamentales del derecho formulados a partir de la obra de Ulpiano: 1. Vivir honestamente (honeste vivere), 2. No dañar a otro (alterum non laedere), y 3. Dar a cada uno lo suyo (suum cuique tribuere). [cite: 9, 10, 11]",
+    "definicion": "Son los tres principios fundamentales del derecho formulados a partir de la obra de Ulpiano: 1. Vivir honestamente (honeste vivere), 2. No dañar a otro (alterum non laedere), y 3. Dar a cada uno lo suyo (suum cuique tribuere).",
     "tema": 1
   },
   {
     "termino": "Derecho Objetivo",
-    "definicion": "Es el conjunto de normas jurídicas que regulan la vida en sociedad (norma agendi). [cite_start]Ejemplos son el 'ius civile' (derecho de los ciudadanos) y el 'ius honorarium' (derecho de los pretores). [cite: 13, 14]",
+    "definicion": "Es el conjunto de normas jurídicas que regulan la vida en sociedad (norma agendi). Ejemplos son el 'ius civile' (derecho de los ciudadanos) y el 'ius honorarium' (derecho de los pretores).",
     "tema": 1
   },
   {
     "termino": "Derecho Subjetivo",
-    "definicion": "Es la facultad o poder que el ordenamiento jurídico concede a una persona para actuar o exigir un comportamiento (facultas agendi). [cite_start]Los romanos se referían a él con expresiones como 'ius utendi' (derecho de usar). [cite: 15, 16]",
+    "definicion": "Es la facultad o poder que el ordenamiento jurídico concede a una persona para actuar o exigir un comportamiento (facultas agendi). Los romanos se referían a él con expresiones como 'ius utendi' (derecho de usar).",
     "tema": 1
   },
   {
     "termino": "Derecho Público",
-    "definicion": "Según Ulpiano, es el que se refiere a la organización y funcionamiento del Estado romano ('quod ad statum rei Romanae spectat'). [cite_start]Regula las magistraturas, el culto, etc., y sus normas son imperativas ('ius cogens'). [cite: 18, 19, 24]",
+    "definicion": "Según Ulpiano, es el que se refiere a la organización y funcionamiento del Estado romano ('quod ad statum rei Romanae spectat'). Regula las magistraturas, el culto, etc., y sus normas son imperativas ('ius cogens').",
     "tema": 1
   },
   {
     "termino": "Derecho Privado",
-    "definicion": "Según Ulpiano, es el que atañe a la utilidad de los particulares ('quod ad singulorum utilitatem pertinet'). Regula relaciones como la propiedad, las obligaciones o la familia. [cite_start]Sus normas suelen ser dispositivas ('ius dispositivum'). [cite: 20, 21, 28]",
+    "definicion": "Según Ulpiano, es el que atañe a la utilidad de los particulares ('quod ad singulorum utilitatem pertinet'). Regula relaciones como la propiedad, las obligaciones o la familia. Sus normas suelen ser dispositivas ('ius dispositivum').",
     "tema": 1
   },
   {
     "termino": "Ley de las XII Tablas",
-    "definicion": "Fue la primera codificación del derecho en Roma (451-449 a.C.), creada tras las luchas entre patricios y plebeyos. Estableció el principio de igualdad ante la ley y separó parcialmente el derecho de la religión. [cite_start]Es considerada la fuente de todo el derecho público y privado. [cite: 49, 51, 54, 56]",
+    "definicion": "Fue la primera codificación del derecho en Roma (451-449 a.C.), creada tras las luchas entre patricios y plebeyos. Estableció el principio de igualdad ante la ley y separó parcialmente el derecho de la religión. Es considerada la fuente de todo el derecho público y privado.",
     "tema": 2
   },
   {
     "termino": "Edicto del Pretor",
-    "definicion": "Era un bando que el magistrado Pretor publicaba al inicio de su mandato, exponiendo los remedios procesales que concedería. [cite_start]Fue el principal instrumento de creación del 'ius honorarium', que ayudaba, suplía o corregía al rígido 'ius civile' por causa de utilidad pública. [cite: 77, 78, 79]",
+    "definicion": "Era un bando que el magistrado Pretor publicaba al inicio de su mandato, exponiendo los remedios procesales que concedería. Fue el principal instrumento de creación del 'ius honorarium', que ayudaba, suplía o corregía al rígido 'ius civile' por causa de utilidad pública.",
     "tema": 2
   },
   {
     "termino": "Principado",
-    "definicion": "Régimen político instaurado por Augusto tras las guerras civiles que acabaron con la República. [cite_start]Aunque formalmente se mantenían las instituciones republicanas, el Príncipe (Princeps) concentraba los poderes más importantes, como el 'imperium' proconsular y la potestad tribunicia. [cite: 92, 93]",
+    "definicion": "Régimen político instaurado por Augusto tras las guerras civiles que acabaron con la República. Aunque formalmente se mantenían las instituciones republicanas, el Príncipe (Princeps) concentraba los poderes más importantes, como el 'imperium' proconsular y la potestad tribunicia.",
     "tema": 3
   },
   {
     "termino": "Constituciones Imperiales",
-    "definicion": "Eran las decisiones del Emperador, que progresivamente se consolidaron como la fuente más importante del Derecho. [cite_start]Podían ser 'edicta' (normas generales), 'decreta' (sentencias), 'rescripta' (respuestas a consultas) o 'mandata' (instrucciones a funcionarios). [cite: 111, 112]",
+    "definicion": "Eran las decisiones del Emperador, que progresivamente se consolidaron como la fuente más importante del Derecho. Podían ser 'edicta' (normas generales), 'decreta' (sentencias), 'rescripta' (respuestas a consultas) o 'mandata' (instrucciones a funcionarios).",
     "tema": 5
   },
   {
     "termino": "Ley de Citas",
-    "definicion": "Promulgada en el 426 d.C. por Teodosio II y Valentiniano III para poner orden en el uso de la jurisprudencia clásica ('iura'). Establecía que en los juicios solo se podían alegar las opiniones de cinco juristas: Papiniano, Paulo, Ulpiano, Gayo y Modestino. [cite_start]En caso de empate, prevalecía la opinión de Papiniano. [cite: 138, 139]",
+    "definicion": "Promulgada en el 426 d.C. por Teodosio II y Valentiniano III para poner orden en el uso de la jurisprudencia clásica ('iura'). Establecía que en los juicios solo se podían alegar las opiniones de cinco juristas: Papiniano, Paulo, Ulpiano, Gayo y Modestino. En caso de empate, prevalecía la opinión de Papiniano.",
     "tema": 6
   },
   {
     "termino": "Corpus Iuris Civilis",
-    "definicion": "Es la monumental compilación del derecho romano realizada bajo el emperador Justiniano I (s. VI d.C.). [cite_start]Es la base de la tradición jurídica occidental y consta de cuatro partes: Código (leyes imperiales), Digesto (jurisprudencia clásica), Instituciones (manual para estudiantes) y Novelas (nuevas leyes de Justiniano). [cite: 146, 148]",
+    "definicion": "Es la monumental compilación del derecho romano realizada bajo el emperador Justiniano I (s. VI d.C.). Es la base de la tradición jurídica occidental y consta de cuatro partes: Código (leyes imperiales), Digesto (jurisprudencia clásica), Instituciones (manual para estudiantes) y Novelas (nuevas leyes de Justiniano).",
     "tema": 7
   },
   {
     "termino": "Recepción del Derecho Romano",
-    [cite_start]"definicion": "Fenómeno ocurrido en la Baja Edad Media (a partir del s. XI) por el cual el derecho romano justinianeo, redescubierto y estudiado en las universidades (especialmente Bolonia), se difundió por toda Europa, convirtiéndose en un 'Ius Commune' o derecho común supletorio a los derechos locales. [cite: 161, 167]",
+    "definicion": "Fenómeno ocurrido en la Baja Edad Media (a partir del s. XI) por el cual el derecho romano justinianeo, redescubierto y estudiado en las universidades (especialmente Bolonia), se difundió por toda Europa, convirtiéndose en un 'Ius Commune' o derecho común supletorio a los derechos locales.",
     "tema": 8
   },
   {
     "termino": "Persona",
-    "definicion": "En sentido jurídico, es todo ser o entidad capaz de ser titular de derechos y obligaciones. [cite_start]Para tener plena capacidad jurídica en Roma, una persona física debía ostentar tres 'status': ser libre ('status libertatis'), ciudadano ('status civitatis') y jefe de familia ('status familiae'). [cite: 176, 178]",
+    "definicion": "En sentido jurídico, es todo ser o entidad capaz de ser titular de derechos y obligaciones. Para tener plena capacidad jurídica en Roma, una persona física debía ostentar tres 'status': ser libre ('status libertatis'), ciudadano ('status civitatis') y jefe de familia ('status familiae').",
     "tema": 9
   },
   {
     "termino": "Esclavo",
-    [cite_start]"definicion": "Jurídicamente, el esclavo ('servus') no era considerado persona, sino una cosa ('res') bajo la potestad de su dueño ('dominica potestas'). [cite: 180] [cite_start]Podía ser liberado mediante 'manumissio', convirtiéndose en un liberto. [cite: 183]",
+    "definicion": "Jurídicamente, el esclavo ('servus') no era considerado persona, sino una cosa ('res') bajo la potestad de su dueño ('dominica potestas'). Podía ser liberado mediante 'manumissio', convirtiéndose en un liberto.",
     "tema": 9
   },
   {
     "termino": "Paterfamilias",
-    "definicion": "Era el ciudadano romano 'sui iuris' (jurídicamente independiente) que ostentaba la jefatura de la familia. [cite_start]Tenía poder sobre todos los miembros, incluyendo la 'patria potestas' sobre los hijos, la 'manus' sobre la esposa y la 'dominica potestas' sobre los esclavos. [cite: 193, 604]",
+    "definicion": "Era el ciudadano romano 'sui iuris' (jurídicamente independiente) que ostentaba la jefatura de la familia. Tenía poder sobre todos los miembros, incluyendo la 'patria potestas' sobre los hijos, la 'manus' sobre la esposa y la 'dominica potestas' sobre los esclavos.",
     "tema": 9
   },
   {
     "termino": "Capacidad jurídica",
-    "definicion": "Es la aptitud para ser titular de derechos y obligaciones. En Roma dependía de los tres 'status' (libertad, ciudadanía y familia). [cite_start]Solo el 'paterfamilias' tenía plena capacidad jurídica. [cite: 219, 220]",
+    "definicion": "Es la aptitud para ser titular de derechos y obligaciones. En Roma dependía de los tres 'status' (libertad, ciudadanía y familia). Solo el 'paterfamilias' tenía plena capacidad jurídica.",
     "tema": 10
   },
   {
     "termino": "Capacidad de obrar",
-    "definicion": "Es la aptitud para realizar actos jurídicos válidos por sí mismo. [cite_start]La plena capacidad de obrar se alcanzaba con la pubertad (12 años para mujeres, 14 para varones) y podía estar limitada por razones de edad, sexo (tutela de las mujeres), enfermedad mental o prodigalidad. [cite: 221, 223]",
+    "definicion": "Es la aptitud para realizar actos jurídicos válidos por sí mismo. La plena capacidad de obrar se alcanzaba con la pubertad (12 años para mujeres, 14 para varones) y podía estar limitada por razones de edad, sexo (tutela de las mujeres), enfermedad mental o prodigalidad.",
     "tema": 10
   },
   {
     "termino": "Negocio jurídico",
-    "definicion": "Es un acto de autonomía privada, una manifestación de voluntad reconocida por el derecho para producir efectos jurídicos (crear, modificar o extinguir derechos). [cite_start]Sus elementos esenciales son la voluntad, el objeto y la causa. [cite: 234, 236]",
+    "definicion": "Es un acto de autonomía privada, una manifestación de voluntad reconocida por el derecho para producir efectos jurídicos (crear, modificar o extinguir derechos). Sus elementos esenciales son la voluntad, el objeto y la causa.",
     "tema": 11
   },
   {
     "termino": "Vicios de la voluntad",
-    "definicion": "Son circunstancias que afectan a la voluntad del negocio jurídico, pudiendo hacerlo anulable. [cite_start]Los principales son el error (falso conocimiento), el dolo (engaño malicioso) y la violencia o intimidación ('metus'). [cite: 241, 243, 245]",
+    "definicion": "Son circunstancias que afectan a la voluntad del negocio jurídico, pudiendo hacerlo anulable. Los principales son el error (falso conocimiento), el dolo (engaño malicioso) y la violencia o intimidación ('metus').",
     "tema": 11
   },
   {
     "termino": "Fórmula",
-    "definicion": "Era un documento escrito que resumía los términos de un litigio en el procedimiento formulario. Redactada por el Pretor, servía como instrucción para el juez. [cite_start]Sus partes principales eran la 'intentio' (pretensión del demandante) y la 'condemnatio' (orden de condenar o absolver). [cite: 303, 314]",
+    "definicion": "Era un documento escrito que resumía los términos de un litigio en el procedimiento formulario. Redactada por el Pretor, servía como instrucción para el juez. Sus partes principales eran la 'intentio' (pretensión del demandante) y la 'condemnatio' (orden de condenar o absolver).",
     "tema": 15
   },
   {
     "termino": "Litis contestatio",
-    "definicion": "Era el momento procesal que cerraba la fase 'in iure' ante el Pretor. Consistía en el acuerdo de las partes sobre la fórmula, que quedaba fijada definitivamente. [cite_start]Su efecto principal era la 'consumición' de la acción, impidiendo volver a litigar sobre el mismo asunto. [cite: 330, 331, 334]",
+    "definicion": "Era el momento procesal que cerraba la fase 'in iure' ante el Pretor. Consistía en el acuerdo de las partes sobre la fórmula, que quedaba fijada definitivamente. Su efecto principal era la 'consumición' de la acción, impidiendo volver a litigar sobre el mismo asunto.",
     "tema": 16
   },
   {
     "termino": "Interdicto",
-    "definicion": "Era una orden expedita del magistrado (Pretor) para proteger situaciones de hecho, especialmente la posesión. [cite_start]No decidía sobre el derecho de propiedad, sino que buscaba mantener la paz social, ordenando restituir una cosa o prohibiendo un comportamiento. [cite: 356, 357]",
+    "definicion": "Era una orden expedita del magistrado (Pretor) para proteger situaciones de hecho, especialmente la posesión. No decidía sobre el derecho de propiedad, sino que buscaba mantener la paz social, ordenando restituir una cosa o prohibiendo un comportamiento.",
     "tema": 17
   },
   {
     "termino": "Res mancipi",
-    "definicion": "En el derecho arcaico, eran las cosas de mayor valor en una economía agraria (fundos itálicos, esclavos, animales de tiro y carga). [cite_start]Su propiedad solo podía transmitirse por modos solemnes como la 'mancipatio' o la 'in iure cessio'. [cite: 391, 392]",
+    "definicion": "En el derecho arcaico, eran las cosas de mayor valor en una economía agraria (fundos itálicos, esclavos, animales de tiro y carga). Su propiedad solo podía transmitirse por modos solemnes como la 'mancipatio' o la 'in iure cessio'.",
     "tema": 19
   },
   {
     "termino": "Posesión",
-    "definicion": "Es la tenencia material de una cosa ('corpus') con la intención de tenerla como propia ('animus'). Es una situación de hecho protegida por interdictos. [cite_start]Según el manual, tanto la posesión natural (mera tenencia) como la civil (con 'animus domini') estaban protegidas, a diferencia de la mera detentación (ej. arrendatario), que no tenía protección. [cite: 403, 410]",
+    "sinonimos": ["possessio", "tenencia", "posesion"],
+    "definicion": "Es la tenencia material de una cosa ('corpus') con la intención de tenerla como propia ('animus'). Es una situación de hecho protegida por interdictos. Según el manual, tanto la posesión natural (mera tenencia) como la civil (con 'animus domini') estaban protegidas, a diferencia de la mera detentación (ej. arrendatario), que no tenía protección.",
     "tema": 20
   },
   {
     "termino": "Propiedad",
-    "definicion": "Es el señorío jurídico pleno sobre una cosa, que otorga las facultades de usar, disfrutar y disponer de ella. Era protegida por la 'actio reivindicatoria'. [cite_start]La forma principal era el 'dominium ex iure Quiritium', propia de los ciudadanos romanos. [cite: 421, 474]",
+    "definicion": "Es el señorío jurídico pleno sobre una cosa, que otorga las facultades de usar, disfrutar y disponer de ella. Era protegida por la 'actio reivindicatoria'. La forma principal era el 'dominium ex iure Quiritium', propia de los ciudadanos romanos.",
     "tema": 21
   },
   {
     "termino": "Mancipatio",
-    "definicion": "Era un negocio jurídico solemne y abstracto del 'ius civile' para transmitir la propiedad de las 'res mancipi'. [cite_start]Se realizaba mediante el ritual del cobre y la balanza ('per aes et libram') ante cinco testigos. [cite: 436, 437]",
+    "definicion": "Era un negocio jurídico solemne y abstracto del 'ius civile' para transmitir la propiedad de las 'res mancipi'. Se realizaba mediante el ritual del cobre y la balanza ('per aes et libram') ante cinco testigos.",
     "tema": 22
   },
   {
     "termino": "Traditio",
-    "definicion": "Es el modo no formal más común de adquirir la propiedad. Consiste en la entrega material de una 'res nec mancipi' basada en una 'justa causa' (ej. una compraventa). [cite_start]Con el tiempo, se admitieron formas de entrega ficticia ('traditio ficta'). [cite: 463]",
+    "definicion": "Es el modo no formal más común de adquirir la propiedad. Consiste en la entrega material de una 'res nec mancipi' basada en una 'justa causa' (ej. una compraventa). Con el tiempo, se admitieron formas de entrega ficticia ('traditio ficta').",
     "tema": 24
   },
   {
     "termino": "Usucapión",
-    "definicion": "Es la adquisición de la propiedad por la posesión continuada de una cosa durante el tiempo fijado por la ley, requiriendo buena fe y justa causa. [cite_start]Es la forma de subsanar un vicio en la adquisición de la propiedad. [cite: 464, 466]",
+    "sinonimos": ["usucapio"],
+    "definicion": "Es la adquisición de la propiedad por la posesión continuada de una cosa durante el tiempo fijado por la ley, requiriendo buena fe y justa causa. Es la forma de subsanar un vicio en la adquisición de la propiedad.",
     "tema": 24
   },
   {
     "termino": "Acción Publiciana",
-    "definicion": "Era una acción pretoria y ficticia que protegía al propietario bonitario (quien había adquirido una 'res mancipi' por simple 'traditio'). [cite_start]El Pretor fingía que el plazo de la usucapión ya había transcurrido, permitiéndole reclamar la cosa como si ya fuera propietario civil. [cite: 481, 482]",
+    "definicion": "Era una acción pretoria y ficticia que protegía al propietario bonitario (quien había adquirido una 'res mancipi' por simple 'traditio'). El Pretor fingía que el plazo de la usucapión ya había transcurrido, permitiéndole reclamar la cosa como si ya fuera propietario civil.",
     "tema": 26
   },
   {
     "termino": "Servidumbre",
-    "definicion": "Es un derecho real sobre cosa ajena que permite a su titular usar un fundo ajeno (fundo sirviente) en beneficio de un fundo propio (fundo dominante). [cite_start]Ejemplos son las servidumbres de paso o de acueducto. [cite: 497, 504]",
+    "definicion": "Es un derecho real sobre cosa ajena que permite a su titular usar un fundo ajeno (fundo sirviente) en beneficio de un fundo propio (fundo dominante). Ejemplos son las servidumbres de paso o de acueducto.",
     "tema": 28
   },
   {
     "termino": "Usufructo",
-    "definicion": "Es un derecho real personalísimo y temporal sobre cosa ajena que permite usar y disfrutar de los frutos de una cosa no consumible, sin alterar su sustancia. [cite_start]Nació para asegurar el sustento de la viuda. [cite: 509, 510]",
+    "definicion": "Es un derecho real personalísimo y temporal sobre cosa ajena que permite usar y disfrutar de los frutos de una cosa no consumible, sin alterar su sustancia. Nació para asegurar el sustento de la viuda.",
     "tema": 29
   },
   {
     "termino": "Hipoteca",
-    "definicion": "Es un derecho real de garantía que se constituye por un simple pacto, sin traspaso de la posesión de la cosa. [cite_start]Permite al acreedor, en caso de impago, tomar posesión del bien y venderlo para cobrarse la deuda. [cite: 525, 527]",
+    "definicion": "Es un derecho real de garantía que se constituye por un simple pacto, sin traspaso de la posesión de la cosa. Permite al acreedor, en caso de impago, tomar posesión del bien y venderlo para cobrarse la deuda.",
     "tema": 29
   },
   {
     "termino": "Obligación",
-    [cite_start]"definicion": "Es un vínculo jurídico por el cual un deudor está constreñido a realizar una prestación (de dar, hacer o no hacer) a favor de un acreedor. [cite: 529, 530]",
+    "sinonimos": ["obligatio"],
+    "definicion": "Es un vínculo jurídico por el cual un deudor está constreñido a realizar una prestación (de dar, hacer o no hacer) a favor de un acreedor.",
     "tema": 30
   },
   {
     "termino": "Contrato",
-    "definicion": "Es un acuerdo de voluntades reconocido por el 'ius civile' como fuente de obligaciones. [cite_start]Se clasifican en reales (se perfeccionan con la entrega de la cosa), consensuales (con el mero consentimiento), formales (requieren una solemnidad) e innominados. [cite: 543, 565, 581, 575]",
+    "definicion": "Es un acuerdo de voluntades reconocido por el 'ius civile' como fuente de obligaciones. Se clasifican en reales (se perfeccionan con la entrega de la cosa), consensuales (con el mero consentimiento), formales (requieren una solemnidad) e innominados.",
     "tema": 31
   },
   {
     "termino": "Delito",
-    "definicion": "Es un acto ilícito que causa un daño a un particular y genera la obligación de pagar una pena pecuniaria a la víctima. [cite_start]Los principales delitos privados eran el hurto ('furtum'), el daño ('damnum iniuria datum') y las lesiones u ofensas ('iniuriae'). [cite: 544, 555]",
+    "definicion": "Es un acto ilícito que causa un daño a un particular y genera la obligación de pagar una pena pecuniaria a la víctima. Los principales delitos privados eran el hurto ('furtum'), el daño ('damnum iniuria datum') y las lesiones u ofensas ('iniuriae').",
     "tema": 32
   },
   {
     "termino": "Stipulatio",
-    "definicion": "Es el contrato verbal por excelencia del Derecho Romano. Se perfeccionaba mediante una pregunta solemne del acreedor y una respuesta congruente e inmediata del deudor. [cite_start]Era un negocio abstracto, cuya validez no dependía de la causa. [cite: 576, 577, 578]",
+    "definicion": "Es el contrato verbal por excelencia del Derecho Romano. Se perfeccionaba mediante una pregunta solemne del acreedor y una respuesta congruente e inmediata del deudor. Era un negocio abstracto, cuya validez no dependía de la causa.",
     "tema": 35
   },
   {
     "termino": "Compraventa",
-    "definicion": "Contrato consensual por el que un vendedor se obliga a entregar la posesión pacífica de una cosa a un comprador, y este a pagar un precio en dinero. [cite_start]El vendedor respondía por evicción (si el comprador era privado de la cosa) y por vicios ocultos. [cite: 582, 583]",
+    "sinonimos": ["emptio venditio"],
+    "definicion": "Contrato consensual por el que un vendedor se obliga a entregar la posesión pacífica de una cosa a un comprador, y este a pagar un precio en dinero. El vendedor respondía por evicción (si el comprador era privado de la cosa) y por vicios ocultos.",
     "tema": 36
   },
   {
     "termino": "Matrimonio",
-    "definicion": "La unión legítima ('iustae nuptiae') requería capacidad legal ('conubium') y consentimiento duradero ('affectio maritalis'). [cite_start]Podía ser 'cum manu', donde la mujer pasaba a la familia del marido, o 'sine manu', donde mantenía su estatus en su familia de origen, siendo esta la forma más común en la época clásica. [cite: 606, 609, 610]",
+    "definicion": "La unión legítima ('iustae nuptiae') requería capacidad legal ('conubium') y consentimiento duradero ('affectio maritalis'). Podía ser 'cum manu', donde la mujer pasaba a la familia del marido, o 'sine manu', donde mantenía su estatus en su familia de origen, siendo esta la forma más común en la época clásica.",
     "tema": 40
   },
   {
     "termino": "Testamento",
-    "definicion": "Acto jurídico solemne, unilateral y revocable por el que una persona nombra heredero para después de su muerte. [cite_start]Su elemento esencial era la institución de heredero ('heredis institutio'), sin la cual el testamento era nulo. [cite: 641, 642]",
+    "definicion": "Acto jurídico solemne, unilateral y revocable por el que una persona nombra heredero para después de su muerte. Su elemento esencial era la institución de heredero ('heredis institutio'), sin la cual el testamento era nulo.",
     "tema": 47
   },
   {
     "termino": "Legado",
-    "definicion": "Disposición 'mortis causa' a título particular contenida en un testamento. [cite_start]El testador atribuye bienes o derechos concretos a una persona (legatario) sin nombrarla heredera. [cite: 647]",
+    "definicion": "Disposición 'mortis causa' a título particular contenida en un testamento. El testador atribuye bienes o derechos concretos a una persona (legatario) sin nombrarla heredera.",
     "tema": 49
   },
   {
     "termino": "Legítima",
-    "definicion": "Es el derecho de ciertos parientes próximos ('legitimarios') a recibir una porción de la herencia, de la que no podían ser privados sin una justa causa de desheredación. [cite_start]La cuota se fijó en una cuarta parte de lo que les correspondería por sucesión intestada. [cite: 650, 654]",
+    "definicion": "Es el derecho de ciertos parientes próximos ('legitimarios') a recibir una porción de la herencia, de la que no podían ser privados sin una justa causa de desheredación. La cuota se fijó en una cuarta parte de lo que les correspondería por sucesión intestada.",
     "tema": 50
   }
 ]
