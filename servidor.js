@@ -6,10 +6,35 @@ const axios = require('axios');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
-console.log("--- [OK] Ejecutando servidor.js v12.0 (Modelo Gemini Corregido) ---");
+console.log("--- [OK] Ejecutando servidor.js v14.0 (Búsqueda Bilingüe en Digesto) ---");
 
 const app = express();
 const port = 3000;
+
+// --- DICCIONARIO BILINGÜE PARA BÚSQUEDA ---
+const diccionarioLatin = {
+    'usufructo': 'usus fructus',
+    'compraventa': 'emptio venditio',
+    'arrendamiento': 'locatio conductio',
+    'sociedad': 'societas',
+    'mandato': 'mandatum',
+    'mutuo': 'mutuum',
+    'comodato': 'commodatum',
+    'deposito': 'depositum',
+    'prenda': 'pignus',
+    'hurto': 'furtum',
+    'daño': 'damnum',
+    'herencia': 'hereditas',
+    'testamento': 'testamentum',
+    'legado': 'legatum',
+    'dote': 'dos',
+    'matrimonio': 'matrimonium',
+    'tutela': 'tutela',
+    'curatela': 'cura',
+    'propiedad': 'proprietas',
+    'posesion': 'possessio',
+    'obligacion': 'obligatio'
+};
 
 // --- CONFIGURACIÓN DE SEGURIDAD ---
 app.use(cors());
@@ -33,23 +58,16 @@ console.log(`Manual JSON cargado. ${manualJson.length} conceptos encontrados.`);
 const indiceJson = JSON.parse(fs.readFileSync('indice.json', 'utf-8'));
 console.log(`Índice JSON cargado. ${indiceJson.length} temas encontrados.`);
 
-// --- CORRECCIÓN FINAL Y MÁS ROBUSTA PARA CARGA DE DIGESTO ---
 const digestoCompleto = fs.readFileSync('digest.txt', 'utf-8');
-const textoNormalizado = digestoCompleto.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-const parrafosDelDigesto = textoNormalizado.split(/\n{2,}/).filter(p => p.trim() !== '');
+const parrafosDelDigesto = digestoCompleto.split(/\r?\n/).filter(linea => linea.trim() !== '');
 console.log(`Digesto cargado (método por línea). ${parrafosDelDigesto.length} párrafos encontrados.`);
-// --- FIN CORRECCIÓN ---
-
 
 function handleApiError(error, res) {
     console.error("Error definitivo desde la API de Gemini:", error.response ? error.response.data : error.message);
     let errorMessage = 'Ha ocurrido un error en el servidor.';
-    if (error.response) {
-        const errorData = error.response.data?.error;
-        if (errorData && errorData.code === 503) {
-            errorMessage = 'Ulpiano parece estar desbordado por el trabajo en este momento (el modelo de IA está sobrecargado). Por favor, dale un minuto de descanso y vuelve a intentarlo.';
-            return res.status(503).json({ error: 'MODEL_OVERLOADED', message: errorMessage });
-        }
+    if (error.response?.data?.error?.code === 503) {
+        errorMessage = 'Ulpiano parece estar desbordado por el trabajo en este momento (el modelo de IA está sobrecargado). Por favor, dale un minuto de descanso y vuelve a intentarlo.';
+        return res.status(503).json({ error: 'MODEL_OVERLOADED', message: errorMessage });
     }
     res.status(500).json({ error: 'INTERNAL_SERVER_ERROR', message: errorMessage });
 }
@@ -65,7 +83,6 @@ async function callGeminiWithRetries(payload) {
     const MAX_RETRIES = 3;
     let RETRY_DELAY = 1000;
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-    // --- NOMBRE DEL MODELO CORREGIDO ---
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-latest:generateContent?key=${GEMINI_API_KEY}`;
 
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
@@ -95,8 +112,6 @@ function getContextoRelevante(termino) {
                      manualJson.find(item => item.termino.toLowerCase().includes(terminoBusqueda));
     return encontrado ? encontrado.definicion : '';
 }
-
-// --- ENDPOINTS DE LA API ---
 
 app.post('/api/consulta', async (req, res) => {
     try {
@@ -130,20 +145,35 @@ app.post('/api/consulta', async (req, res) => {
     }
 });
 
+// --- ENDPOINT DE BÚSQUEDA EN DIGESTO (ACTUALIZADO) ---
 app.post('/api/buscar-fuente', async (req, res) => {
     try {
         const { termino } = req.body;
         if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
-        
         if (parrafosDelDigesto.length === 0) {
             console.log("Advertencia: No hay párrafos en el Digesto para buscar.");
             return res.json({ fuente: "NULL" });
         }
 
-        const terminoLower = termino.toLowerCase();
-        const resultadosBusqueda = parrafosDelDigesto.filter(p => p.toLowerCase().includes(terminoLower));
+        const terminoLower = termino.toLowerCase().trim();
+        
+        // --- LÓGICA DE BÚSQUEDA BILINGÜE ---
+        const terminosDeBusqueda = [terminoLower];
+        const traduccionLatin = diccionarioLatin[terminoLower];
+        
+        if (traduccionLatin) {
+            terminosDeBusqueda.push(traduccionLatin);
+        }
+        console.log(`Buscando en Digesto con los términos: [${terminosDeBusqueda.join(', ')}]`);
+        
+        const resultadosBusqueda = parrafosDelDigesto.filter(p => {
+            const parrafoLower = p.toLowerCase();
+            return terminosDeBusqueda.some(t => parrafoLower.includes(t));
+        });
+        // --- FIN DE LA LÓGICA BILINGÜE ---
         
         if (resultadosBusqueda.length === 0) {
+            console.log("No se encontraron coincidencias en el Digesto.");
             return res.json({ fuente: "NULL" });
         }
 
@@ -175,9 +205,7 @@ app.post('/api/derecho-moderno', async (req, res) => {
 app.post('/api/buscar-pagina', (req, res) => {
     try {
         const { termino } = req.body;
-        if (!termino) {
-            return res.status(400).json({ error: 'No se ha proporcionado un término.' });
-        }
+        if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
 
         const terminoLower = termino.toLowerCase().trim();
         let mejorCoincidencia = null;
@@ -190,11 +218,9 @@ app.post('/api/buscar-pagina', (req, res) => {
             if (tema.palabrasClave.some(p => p.toLowerCase() === terminoLower)) {
                 puntuacionActual += 10;
             }
-
             if (tituloLower.includes(terminoLower)) {
                 puntuacionActual += 5;
             }
-
             if (tema.palabrasClave.some(p => p.toLowerCase().includes(terminoLower))) {
                 puntuacionActual += 3;
             }
