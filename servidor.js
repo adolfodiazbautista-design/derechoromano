@@ -6,7 +6,7 @@ const axios = require('axios');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
-console.log("--- [OK] Ejecutando servidor.js v10.0 (Corrección definitiva) ---");
+console.log("--- [OK] Ejecutando servidor.js v12.0 (Modelo Gemini Corregido) ---");
 
 const app = express();
 const port = 3000;
@@ -33,13 +33,11 @@ console.log(`Manual JSON cargado. ${manualJson.length} conceptos encontrados.`);
 const indiceJson = JSON.parse(fs.readFileSync('indice.json', 'utf-8'));
 console.log(`Índice JSON cargado. ${indiceJson.length} temas encontrados.`);
 
-// --- CORRECCIÓN DEFINITIVA CARGA DIGESTO ---
+// --- CORRECCIÓN FINAL Y MÁS ROBUSTA PARA CARGA DE DIGESTO ---
 const digestoCompleto = fs.readFileSync('digest.txt', 'utf-8');
-// Paso 1: Normaliza TODOS los tipos de saltos de línea a un único formato (\n)
 const textoNormalizado = digestoCompleto.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-// Paso 2: Divide por dos o más saltos de línea (párrafos separados por una o más líneas en blanco)
 const parrafosDelDigesto = textoNormalizado.split(/\n{2,}/).filter(p => p.trim() !== '');
-console.log(`Digesto cargado. ${parrafosDelDigesto.length} párrafos encontrados.`);
+console.log(`Digesto cargado (método por línea). ${parrafosDelDigesto.length} párrafos encontrados.`);
 // --- FIN CORRECCIÓN ---
 
 
@@ -67,6 +65,7 @@ async function callGeminiWithRetries(payload) {
     const MAX_RETRIES = 3;
     let RETRY_DELAY = 1000;
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+    // --- NOMBRE DEL MODELO CORREGIDO ---
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-latest:generateContent?key=${GEMINI_API_KEY}`;
 
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
@@ -136,7 +135,6 @@ app.post('/api/buscar-fuente', async (req, res) => {
         const { termino } = req.body;
         if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
         
-        // Esta condición ahora funcionará porque parrafosDelDigesto tendrá contenido
         if (parrafosDelDigesto.length === 0) {
             console.log("Advertencia: No hay párrafos en el Digesto para buscar.");
             return res.json({ fuente: "NULL" });
@@ -174,7 +172,6 @@ app.post('/api/derecho-moderno', async (req, res) => {
     }
 });
 
-// --- ENDPOINT PARA BUSCAR EN EL ÍNDICE (VERSIÓN CORREGIDA Y MEJORADA) ---
 app.post('/api/buscar-pagina', (req, res) => {
     try {
         const { termino } = req.body;
@@ -190,17 +187,14 @@ app.post('/api/buscar-pagina', (req, res) => {
             let puntuacionActual = 0;
             const tituloLower = tema.titulo.toLowerCase();
             
-            // Puntuación máxima si el término es una palabra clave exacta
             if (tema.palabrasClave.some(p => p.toLowerCase() === terminoLower)) {
                 puntuacionActual += 10;
             }
 
-            // Puntuación alta si el título contiene el término
             if (tituloLower.includes(terminoLower)) {
                 puntuacionActual += 5;
             }
 
-            // Puntuación media si alguna palabra clave contiene el término
             if (tema.palabrasClave.some(p => p.toLowerCase().includes(terminoLower))) {
                 puntuacionActual += 3;
             }
