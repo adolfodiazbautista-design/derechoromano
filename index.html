@@ -134,24 +134,40 @@ const API_BASE_URL = 'https://derechoromano-aema.onrender.com';
         // COMUNICACIÓN CON EL SERVIDOR
         // ========================================
         
-        async function callApiAndHandleErrors(endpoint, payload) {
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 30000);
-               const response = await fetch(`${API_BASE_URL}/api/${endpoint}`, { /* ... */ });
-                clearTimeout(timeoutId);
-                if (!response.ok) { 
-                    const errorData = await response.json().catch(() => ({})); 
-                    return { error: errorData.message || "Error de comunicación con el servidor." }; 
-                }
-                return await response.json();
-            } catch (error) {
-                if (error.name === 'AbortError') {
-                    return { error: "La solicitud ha tardado demasiado tiempo. Por favor, inténtalo de nuevo." };
-                }
-                return { error: "No se ha podido establecer conexión con el servidor." }; 
-            }
+       // ========================================
+// REEMPLAZA TODA ESTA FUNCIÓN
+// ========================================
+async function callApiAndHandleErrors(endpoint, payload) {
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+        // CONFIGURACIÓN CORRECTA DE FETCH
+        const response = await fetch(`${API_BASE_URL}/api/${endpoint}`, {
+            method: 'POST', // Especificamos que es una petición POST
+            headers: {
+                'Content-Type': 'application/json' // Indicamos que enviamos datos JSON
+            },
+            body: JSON.stringify(payload), // Convertimos el objeto de datos a texto JSON
+            signal: controller.signal // Para manejar el timeout
+        });
+
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) { 
+            const errorData = await response.json().catch(() => ({})); 
+            return { error: errorData.message || "Error de comunicación con el servidor." }; 
         }
+        
+        return await response.json();
+
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            return { error: "La solicitud ha tardado demasiado tiempo. Por favor, inténtalo de nuevo." };
+        }
+        return { error: "No se ha podido establecer conexión con el servidor." }; 
+    }
+}
         
         async function callGeminiAPI(promptOriginal, termino = null, currentCaseText = null) {
             if (termino && termino.length > 100) return { error: "El término es demasiado largo (máximo 100 caracteres)." };
