@@ -12,22 +12,9 @@ const port = process.env.PORT || 3000;
 // Variables globales para almacenar los datos
 let manualJson = [];
 let indiceJson = [];
-let parrafosDelDigesto = [];
+// Variable 'parrafosDelDigesto' eliminada.
 
-// --- DICCIONARIO BILINGÜE PARA BÚSQUEDA ---
-const diccionarioLatin = {
-    'usufructo': 'usus fructus', 'compraventa': 'emptio venditio',
-    'arrendamiento': 'locatio conductio', 'sociedad': 'societas',
-    'mandato': 'mandatum', 'mutuo': 'mutuum',
-    'comodato': 'commodatum', 'deposito': 'depositum',
-    'prenda': 'pignus', 'hurto': 'furtum',
-    'daño': 'damnum', 'herencia': 'hereditas',
-    'testamento': 'testamentum', 'legado': 'legatum',
-    'dote': 'dos', 'matrimonio': 'matrimonium',
-    'tutela': 'tutela', 'curatela': 'cura',
-    'propiedad': 'proprietas', 'posesion': 'possessio',
-    'obligacion': 'obligatio'
-};
+// Objeto 'diccionarioLatin' eliminado.
 
 // --- CONFIGURACIÓN DE MIDDLEWARE Y SEGURIDAD ---
 app.use(cors());
@@ -109,10 +96,13 @@ app.post('/api/consulta', async (req, res) => {
 
         let promptFinalParaIA;
         if (currentCaseText) {
+             // Lógica para RESOLVER el caso
              promptFinalParaIA = `Rol: Juez romano. Tarea: Resolver el caso "${currentCaseText}" aplicando principios del derecho romano. Instrucciones: Solución legal, clara y concisa. Basa tu solución en este contexto si es relevante: "${contextoFinal}".`;
-        } else if (promptOriginal.includes("crear un breve supuesto de hecho")) {
+        } else if (promptOriginal.includes("generar caso")) {
+            // Lógica para CREAR el caso (CORREGIDO)
             promptFinalParaIA = `Rol: Profesor de derecho romano. Tarea: Crear un caso práctico (máx 3 frases) sobre "${termino}". Reglas: Nombres romanos. Terminar con preguntas legales. Sin explicaciones ni soluciones. Basar lógica en: "${contextoFinal}".`;
         } else {
+            // Lógica para CONSULTA teórica (UlpianoIA)
             promptFinalParaIA = `Rol: Jurista Ulpiano. Tarea: Responder a la pregunta sobre "${termino}" (máx 2 párrafos). Contexto principal: "${contextoFinal}". No lo contradigas. Si está vacío, usa tu conocimiento general.`;
         }
 
@@ -124,33 +114,7 @@ app.post('/api/consulta', async (req, res) => {
     }
 });
 
-app.post('/api/buscar-fuente', async (req, res) => {
-    try {
-        const { termino } = req.body;
-        if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
-        if (parrafosDelDigesto.length === 0) return res.json({ fuente: "NULL" });
-
-        const terminoLower = termino.toLowerCase().trim();
-        const terminosDeBusqueda = [terminoLower];
-        if (diccionarioLatin[terminoLower]) {
-            terminosDeBusqueda.push(diccionarioLatin[terminoLower]);
-        }
-        
-        console.log(`Buscando en Digesto con los términos: [${terminosDeBusqueda.join(', ')}]`);
-        const resultadosBusqueda = parrafosDelDigesto.filter(p => terminosDeBusqueda.some(t => p.toLowerCase().includes(t)));
-        
-        if (resultadosBusqueda.length === 0) return res.json({ fuente: "NULL" });
-
-        const contextoDigesto = resultadosBusqueda.slice(0, 5).join('\n---\n');
-        const promptParaFuente = `Tarea: Bibliotecario jurídico. Instrucción: Analiza este texto del Digesto y extrae la cita más relevante para "${termino}". Regla: Tu respuesta DEBE ser únicamente la cita (ej: D. libro. título. fragmento), el texto en latín y su traducción. Si no hay cita clara, responde "NULL". Sin explicaciones. Texto: --- ${contextoDigesto} ---`;
-
-        const payload = { contents: [{ parts: [{ text: promptParaFuente }] }], safetySettings };
-        const respuestaFuente = await callGeminiWithRetries(payload);
-        res.json({ fuente: respuestaFuente });
-    } catch (error) {
-        handleApiError(error, res);
-    }
-});
+// El endpoint /api/buscar-fuente ha sido eliminado.
 
 app.post('/api/derecho-moderno', async (req, res) => {
     try {
@@ -206,9 +170,7 @@ const startServer = async () => {
         indiceJson = JSON.parse(indiceData);
         console.log(`✓ Índice JSON cargado: ${indiceJson.length} temas.`);
 
-        const digestoCompleto = await fs.readFile('digest.txt', 'utf-8');
-        parrafosDelDigesto = digestoCompleto.split(/\r?\n/).filter(linea => linea.trim() !== '');
-        console.log(`✓ Digesto cargado: ${parrafosDelDigesto.length} párrafos.`);
+        // Se ha eliminado la carga del archivo 'digest.txt'.
         
         app.listen(port, () => {
             console.log(`🚀 Servidor de Derecho Romano escuchando en http://localhost:${port}`);
@@ -220,5 +182,5 @@ const startServer = async () => {
     }
 };
 
-console.log("--- [OK] Ejecutando servidor.js v14.0 (Búsqueda Bilingüe en Digesto) ---");
+console.log("--- [OK] Ejecutando servidor.js v15.1 (Casos y Digesto eliminados) ---");
 startServer();
