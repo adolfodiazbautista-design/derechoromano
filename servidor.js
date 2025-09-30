@@ -348,8 +348,21 @@ app.post('/api/buscar-fuente', async (req, res) => {
             return res.json({ fuente: "NULL" });
         }
 
-        const contextoDigesto = resultadosBusqueda.slice(0, 5).join('\n---\n');
-        const promptParaFuente = `Tarea: Bibliotecario jurídico. Instrucción: Analiza este texto del Digesto y extrae la cita más relevante para "${termino}". Regla: Tu respuesta DEBE ser únicamente la cita (ej: D. libro. título. fragmento), el texto en latín y su traducción. Si no hay cita clara, responde "NULL". Sin explicaciones. Texto: --- ${contextoDigesto} ---`;
+const promptParaFuente = `Tu tarea es localizar y extraer una cita del Digesto del texto que te proporciono.
+
+1.  **Busca**: Examina el texto y encuentra el primer párrafo que comience con un formato de cita (ej: "D. 1.2.3.").
+2.  **Extrae**: Si encuentras una cita, tu respuesta DEBE CONTENER ÚNICAMENTE Y EN ESTE ORDEN:
+    - La cita completa (ej: "D. 1.2.3.").
+    - El texto original en latín que sigue a esa cita.
+    - Una traducción al español de ese texto.
+3.  **Regla estricta**: Si NO encuentras ningún párrafo que comience con ese formato de cita en el texto proporcionado, responde EXACTAMENTE con la palabra "NULL" y nada más.
+
+No añadas explicaciones, resúmenes ni busques en tu conocimiento general. Limítate estrictamente al texto que te doy.
+
+Texto de búsqueda:
+---
+${contextoDigesto}
+---`;
 
         const payload = { 
             contents: [{ parts: [{ text: promptParaFuente }] }], 
