@@ -199,41 +199,60 @@ async function startServer() {
         }
     });
 
-    app.post('/api/buscar-fuente', async (req, res) => {
-        try {
-            const { termino } = req.body;
-            const validation = validateInput(termino, 100, 'término');
-            if (!validation.valid) return res.status(400).json({ error: 'VALIDATION_ERROR', message: validation.error });
-            
-            if (parrafosDelDigesto.length === 0) return res.json({ fuente: null });
+   // REEMPLAZA TODA ESTA FUNCIÓN EN servidor.js
 
-            const terminoLower = validation.value.toLowerCase();
-            const terminosDeBusqueda = [terminoLower];
-            if (diccionarioLatin[terminoLower]) terminosDeBusqueda.push(diccionarioLatin[terminoLower]);
-            
-            console.log(`→ Buscando en Digesto: [${terminosDeBusqueda.join(', ')}]`);
-            const resultadosBusqueda = parrafosDelDigesto.filter(p => terminosDeBusqueda.some(t => p.toLowerCase().includes(t)));
-            
-            if (resultadosBusqueda.length === 0) {
-                console.log("○ No se encontraron coincidencias en el Digesto.");
-                return res.json({ fuente: null });
-            }
+app.post('/api/buscar-fuente', async (req, res) => {
+    try {
+        const { termino } = req.body;
+        const validation = validateInput(termino, 100, 'término');
+        if (!validation.valid) return res.status(400).json({ error: 'VALIDATION_ERROR', message: validation.error });
+        
+        if (parrafosDelDigesto.length === 0) return res.json({ fuente: null });
 
-            const contextoDigesto = resultadosBusqueda.slice(0, 5).join('\n---\n');
-            const promptParaFuente = `Tu tarea es localizar y extraer una cita del Digesto del texto que te proporciono. 1. Busca: Examina el texto y encuentra un párrafo que contenga el término buscado. Localiza al principio de ese párrafo o en los inmediatamente anteriores un formato de cita (ej: "1.2.3."). 2. Extrae: Si encuentras una cita, tu respuesta DEBE CONTENER ÚNICAMENTE Y EN ESTE ORDEN: La cita completa precedida de la letra "D." seguida de los números que identifican al párrafo o conjunto de párrafos, el texto original en latín que contiene la cita y una traducción al español. 3. Regla estricta: Si NO encuentras ningún párrafo con ese formato, responde EXACTAMENTE con la palabra "NULL". No añadas explicaciones ni busques en tu conocimiento general. Texto de búsqueda: --- ${contextoDigesto} ---`;
+        const terminoLower = validation.value.toLowerCase();
+        const terminosDeBusqueda = [terminoLower];
+        if (diccionarioLatin[terminoLower]) terminosDeBusqueda.push(diccionarioLatin[terminoLower]);
+        
+        console.log(`→ Buscando en Digesto: [${terminosDeBusqueda.join(', ')}]`);
+        
+        const resultadosParciales = parrafosDelDigesto.filter(p => terminosDeBusqueda.some(t => p.toLowerCase().includes(t)));
 
-            const payload = { contents: [{ parts: [{ text: promptParaFuente }] }], safetySettings };
-            let respuestaFuente = await callGeminiWithRetries(payload);
-
-            if (respuestaFuente.trim().toUpperCase() === "NULL") {
-                respuestaFuente = null;
-            }
-            
-            res.json({ fuente: respuestaFuente });
-        } catch (error) {
-            handleApiError(error, res);
+        if (resultadosParciales.length === 0) {
+            console.log("○ No se encontraron coincidencias en el Digesto para los términos.");
+            return res.json({ fuente: null });
         }
-    });
+
+        const resultadoFinal = resultadosParciales.find(p => p.trim().match(/^D\./i));
+
+        if (!resultadoFinal) {
+            console.log("○ Se encontraron menciones del término, pero ninguna en un fragmento con cita formal.");
+            return res.json({ fuente: null });
+        }
+
+        // --- ✅ NUEVA LÓGICA DE TRUNCAMIENTO ---
+        const MAX_CONTEXT_LENGTH = 8000; // Límite de seguridad de 8000 caracteres
+        let contextoDigesto = resultadoFinal;
+
+        if (contextoDigesto.length > MAX_CONTEXT_LENGTH) {
+            console.log(`⚠  Fragmento del Digesto demasiado largo (${contextoDigesto.length} caracteres). Truncando a ${MAX_CONTEXT_LENGTH}.`);
+            contextoDigesto = contextoDigesto.substring(0, MAX_CONTEXT_LENGTH);
+        }
+        // --- FIN DE LA NUEVA LÓGICA ---
+
+        const promptParaFuente = `Tu tarea es localizar y extraer una cita del Digesto del texto que te proporciono. 1. Busca: Examina el texto y encuentra el primer párrafo que comience con un formato de cita (ej: "D.1.2.3."). 2. Extrae: Si encuentras una cita, tu respuesta DEBE CONTENER ÚNICAMENTE Y EN ESTE ORDEN: La cita completa, el texto original en latín que sigue y una traducción al español. 3. Regla estricta: Si NO encuentras ningún párrafo con ese formato, responde EXACTAMENTE con la palabra "NULL". No añadas explicaciones ni busques en tu conocimiento general. Texto de búsqueda: --- ${contextoDigesto} ---`;
+
+        const payload = { contents: [{ parts: [{ text: promptParaFuente }] }], safetySettings };
+        let respuestaFuente = await callGeminiWithRetries(payload);
+
+        if (respuestaFuente.trim().toUpperCase() === "NULL") {
+            respuestaFuente = null;
+        }
+        
+        res.json({ fuente: respuestaFuente });
+    } catch (error) {
+        handleApiError(error, res);
+    }
+});
 
     app.post('/api/derecho-moderno', async (req, res) => {
         try {
