@@ -347,57 +347,56 @@
             });
         }
         
-        function initializeUlpianoScripts() {
-            const submitQueryBtn = document.getElementById('submitQueryBtn');
-            const queryInput = document.getElementById('queryInput');
-            const queryResult = document.getElementById('queryResult');
-            const queryResultText = document.getElementById('queryResultText');
-            
-            if (submitQueryBtn) submitQueryBtn.addEventListener('click', async () => {
-                const userQuery = queryInput.value.trim();
-                if (!userQuery) return;
-                
-                queryResult.classList.remove('hidden');
-                showLoading(queryResultText, 'Ulpiano está consultando las fuentes...');
+       // REEMPLAZA LA FUNCIÓN ENTERA EN index.html
 
-                await handleButtonLoading(
-                    submitQueryBtn,
-                    document.getElementById('submit-btn-loader'),
-                    document.getElementById('submit-btn-text'),
-                    async () => {
-                        const [
-                            respuestaPrincipalResult, 
-                            respuestaFuente, 
-                            respuestaModerno,
-                            respuestaPagina
-                        ] = await Promise.all([
-                            callGeminiAPI(`pregunta teórica`, userQuery), 
-                            callApiAndHandleErrors('buscar-fuente', { termino: userQuery }),                
-                            callApiAndHandleErrors('derecho-moderno', { termino: userQuery }),
-                            callApiAndHandleErrors('buscar-pagina', { termino: userQuery })
-                        ]);
-                        
-                        let resultadoFinal = [];
-                        resultadoFinal.push(`**Respuesta Jurídica:**\n${respuestaPrincipalResult.respuesta || `Error: ${respuestaPrincipalResult.error}`}`);
-                        
-                        if (respuestaFuente && respuestaFuente.fuente) {
-                            resultadoFinal.push(`**Fuente Clásica:**\n${respuestaFuente.fuente}`);
-                        }
-                        
-                        if (respuestaModerno && respuestaModerno.moderno) {
-                            resultadoFinal.push(`**Vigencia en el Derecho Moderno:**\n${respuestaModerno.moderno}`);
-                        }
-                        
-                        if (respuestaPagina && respuestaPagina.pagina) {
-                            resultadoFinal.push(`**Para saber más:**\nPuedes consultar el tema "${respuestaPagina.titulo}" en la página ${respuestaPagina.pagina} del manual.`);
-                        }
-                        
-                        const textoFinal = resultadoFinal.join('\n\n');
-                        queryResultText.innerHTML = sanitizeHTML(textoFinal).replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                    }
-                );
-            });
-        }
+function initializeUlpianoScripts() {
+    const submitQueryBtn = document.getElementById('submitQueryBtn');
+    const queryInput = document.getElementById('queryInput');
+    const queryResult = document.getElementById('queryResult');
+    const queryResultText = document.getElementById('queryResultText');
+    
+    if (submitQueryBtn) submitQueryBtn.addEventListener('click', async () => {
+        const userQuery = queryInput.value.trim();
+        if (!userQuery) return;
+        
+        queryResult.classList.remove('hidden');
+        showLoading(queryResultText, 'Ulpiano está consultando las fuentes...');
+
+        await handleButtonLoading(
+            submitQueryBtn,
+            document.getElementById('submit-btn-loader'),
+            document.getElementById('submit-btn-text'),
+            async () => {
+                // Se elimina 'respuestaFuente' y la llamada a 'buscar-fuente'
+                const [
+                    respuestaPrincipalResult, 
+                    respuestaModerno,
+                    respuestaPagina
+                ] = await Promise.all([
+                    callGeminiAPI(`pregunta teórica`, userQuery),              
+                    callApiAndHandleErrors('derecho-moderno', { termino: userQuery }),
+                    callApiAndHandleErrors('buscar-pagina', { termino: userQuery })
+                ]);
+                
+                let resultadoFinal = [];
+                resultadoFinal.push(`**Respuesta Jurídica:**\n${respuestaPrincipalResult.respuesta || `Error: ${respuestaPrincipalResult.error}`}`);
+                
+                // Se elimina el bloque 'if' que comprobaba la fuente clásica
+                
+                if (respuestaModerno && respuestaModerno.moderno) {
+                    resultadoFinal.push(`**Vigencia en el Derecho Moderno:**\n${respuestaModerno.moderno}`);
+                }
+                
+                if (respuestaPagina && respuestaPagina.pagina) {
+                    resultadoFinal.push(`**Para saber más:**\nPuedes consultar el tema "${respuestaPagina.titulo}" en la página ${respuestaPagina.pagina} del manual.`);
+                }
+                
+                const textoFinal = resultadoFinal.join('\n\n');
+                queryResultText.innerHTML = sanitizeHTML(textoFinal).replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            }
+        );
+    });
+}
     </script>
 </body>
 </html>
