@@ -1,51 +1,48 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs').promises; // Usamos la versión de promesas de fs
+const fs = require('fs').promises;
 const axios = require('axios');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
-console.log("--- [OK] Ejecutando servidor.js v16.0 (Versión Final Corregida) ---");
+console.log("--- [OK] Ejecutando servidor.js v17.0 (Caché Integrada) ---");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 // ========================================
-// DICCIONARIO BILINGÜE
+// CACHÉ Y DICCIONARIO
 // ========================================
+const apiCache = new Map();
+
 const diccionarioLatin = {
     'usufructo': 'usus fructus', 'compraventa': 'emptio venditio', 'arrendamiento': 'locatio conductio',
     'sociedad': 'societas', 'mandato': 'mandatum', 'mutuo': 'mutuum', 'comodato': 'commodatum',
-    'deposito': 'depositum', 'prenda': 'pignus', 'hurto': 'furtum', 'daño': 'damnum', 'herencia': 'hereditas',
+    'deposito': 'depositum', 'prenda': 'pignus', 'daño': 'damnum', 'herencia': 'hereditas',
     'testamento': 'testamentum', 'legado': 'legatum', 'dote': 'dos', 'matrimonio': 'matrimonium',
     'tutela': 'tutela', 'curatela': 'cura', 'propiedad': 'proprietas', 'posesion': 'possessio',
     'obligacion': 'obligatio', 'hipoteca': 'pignus conventum', 'servidumbre': 'servitus',
-    'esclavo': 'servus', 'juez': 'iudex', 'derecho': 'ius', 'cosa': 'res', 'bien': 'res'
+    'esclavo': 'servus', 'juez': 'iudex', 'derecho': 'ius', 'cosa': 'res', 'bien': 'res', 'robo': 'furtum', 'hurto': 'furtum', 'injuria': 'iniuria', 'jurisdicción': 'iurisdictio',
 };
 
 // ========================================
 // CONFIGURACIÓN DE SEGURIDAD
 // ========================================
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutos
-    max: 100, // 100 peticiones por IP
+    windowMs: 15 * 60 * 1000,
+    max: 100,
     standardHeaders: true,
     legacyHeaders: false,
 });
 
 app.set('trust proxy', 1);
-
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-        ? ['https://derechoromano.netlify.app'] 
-        : '*',
+    origin: process.env.NODE_ENV === 'production' ? ['https://derechoromano.netlify.app'] : '*',
     methods: ['GET', 'POST'],
     credentials: true
 }));
-
 app.use(express.json({ limit: "1mb" }));
-
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
@@ -60,7 +57,6 @@ app.use(helmet({
         }
     }
 }));
-
 app.use('/api/', limiter);
 
 // ========================================
@@ -77,9 +73,9 @@ function validateInput(input, maxLength = 500, fieldName = 'campo') {
 
 function handleApiError(error, res) {
     console.error("Error en API de Gemini:", error.response ? error.response.data : error.message);
-    if (error.response?.status === 503) return res.status(503).json({ error: 'MODEL_OVERLOADED', message: 'El modelo de IA está sobrecargado. Inténtalo de nuevo.' });
-    if (error.response?.status === 429) return res.status(429).json({ error: 'RATE_LIMIT', message: 'Demasiadas consultas. Espera un momento.' });
-    if (error.code === 'ECONNABORTED') return res.status(504).json({ error: 'TIMEOUT', message: 'La consulta ha tardado demasiado.' });
+    if (error.response?.status === 503) return res.status(503).json({ error: 'MODEL_OVERLOADED', message: 'Ulpiano está desbordado. El modelo de IA está sobrecargado. Inténtalo de nuevo.' });
+    if (error.response?.status === 429) return res.status(429).json({ error: 'RATE_LIMIT', message: 'Ulpiano ha ido a la letrina. Demasiadas consultas. Espera un momento.' });
+    if (error.code === 'ECONNABORTED') return res.status(504).json({ error: 'TIMEOUT', message: 'Ulpiano se ha quedado dormido. La consulta ha tardado demasiado.' });
     res.status(500).json({ error: 'INTERNAL_SERVER_ERROR', message: 'Error interno del servidor.' });
 }
 
@@ -91,6 +87,13 @@ const safetySettings = [
 ];
 
 async function callGeminiWithRetries(payload, maxRetries = 4) {
+    const cacheKey = JSON.stringify(payload.contents);
+    if (apiCache.has(cacheKey)) {
+        console.log("✓ [CACHE] Respuesta encontrada. Sirviendo desde la caché.");
+        return apiCache.get(cacheKey);
+    }
+
+    console.log("→ [API] No hay caché para esta consulta. Llamando a la API de Gemini...");
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
     if (!GEMINI_API_KEY) throw new Error('GEMINI_API_KEY no está configurada.');
     
@@ -101,7 +104,9 @@ async function callGeminiWithRetries(payload, maxRetries = 4) {
         try {
             const geminiResponse = await axios.post(url, payload, { headers: { 'Content-Type': 'application/json' }, timeout: 35000 });
             if (geminiResponse.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-                return geminiResponse.data.candidates[0].content.parts[0].text;
+                const apiResult = geminiResponse.data.candidates[0].content.parts[0].text;
+                apiCache.set(cacheKey, apiResult);
+                return apiResult;
             }
             throw new Error('Respuesta de la IA inválida o vacía.');
         } catch (error) {
@@ -123,7 +128,6 @@ async function callGeminiWithRetries(payload, maxRetries = 4) {
 async function startServer() {
     let manualJson = [], indiceJson = [], parrafosDelDigesto = [];
 
-    // --- CARGA ASÍNCRONA DE DATOS ---
     try {
         const manualData = await fs.readFile('manual.json', 'utf-8');
         manualJson = JSON.parse(manualData);
@@ -136,13 +140,11 @@ async function startServer() {
         const digestoData = await fs.readFile('digest.txt', 'utf-8');
         parrafosDelDigesto = digestoData.split('\n').filter(p => p.trim() !== '');
         console.log(`✓ Digesto cargado. ${parrafosDelDigesto.length} párrafos encontrados.`);
-
     } catch (error) {
         console.error('✗ Error crítico cargando archivos de datos:', error.message);
-        process.exit(1); // Detiene el servidor si los archivos esenciales no se pueden cargar
+        process.exit(1);
     }
     
-    // --- FUNCIÓN DE CONTEXTO (NECESITA manualJson) ---
     function getContextoRelevante(termino) {
         if (!termino) return '';
         const terminoBusqueda = termino.toLowerCase().trim();
@@ -153,11 +155,10 @@ async function startServer() {
     }
 
     // ========================================
-    // ENDPOINTS DE LA API (DENTRO DE startServer)
+    // ENDPOINTS DE LA API
     // ========================================
-
     app.get('/health', (req, res) => {
-        res.json({ status: 'ok', timestamp: new Date().toISOString(), version: '16.0' });
+        res.json({ status: 'ok', timestamp: new Date().toISOString(), version: '17.0' });
     });
 
     app.post('/api/consulta', async (req, res) => {
@@ -186,7 +187,7 @@ async function startServer() {
             } else if (promptOriginal.includes("crear un breve supuesto de hecho")) {
                 promptFinalParaIA = `Rol: Profesor de derecho romano. Tarea: Crear un caso práctico (máx 3 frases) sobre "${terminoValidado}". Reglas: Nombres romanos. Terminar con preguntas legales. Sin explicaciones ni soluciones. Basar lógica en: "${contextoFinal}".`;
             } else {
-                promptFinalParaIA = `Actúa como el jurista romano Ulpiano. Responde a la pregunta sobre "${terminoValidado}" en un máximo de dos párrafos. Basa tu respuesta principalmente en este contexto: "${contextoFinal}". Si el contexto está vacío, usa tu conocimiento general.`;
+                promptFinalParaIA = `Responde a la pregunta sobre "${terminoValidado}" en un máximo de dos párrafos. Basa tu respuesta principalmente en este contexto: "${contextoFinal}". Si el contexto está vacío, usa tu conocimiento general.`;
             }
 
             const payload = { contents: [{ parts: [{ text: promptFinalParaIA }] }], safetySettings };
@@ -218,7 +219,7 @@ async function startServer() {
             }
 
             const contextoDigesto = resultadosBusqueda.slice(0, 5).join('\n---\n');
-            const promptParaFuente = `Tu tarea es localizar y extraer una cita del Digesto del texto que te proporciono. 1. Busca: Examina el texto y encuentra el primer párrafo que comience con un formato de cita (ej: "D. 1.2.3."). 2. Extrae: Si encuentras una cita, tu respuesta DEBE CONTENER ÚNICAMENTE Y EN ESTE ORDEN: La cita completa, el texto original en latín que sigue y una traducción al español. 3. Regla estricta: Si NO encuentras ningún párrafo con ese formato, responde EXACTAMENTE con la palabra "NULL". No añadas explicaciones ni busques en tu conocimiento general. Texto de búsqueda: --- ${contextoDigesto} ---`;
+            const promptParaFuente = `Tu tarea es localizar y extraer una cita del Digesto del texto que te proporciono. 1. Busca: Examina el texto y encuentra el primer párrafo o conjunto de párrafos que comience con un formato de cita (ej: "D. 1.2.3."). 2. Extrae: Si encuentras una cita, tu respuesta DEBE CONTENER ÚNICAMENTE Y EN ESTE ORDEN: La cita completa, el texto original en latín que sigue y una traducción al español. 3. Regla estricta: Si NO encuentras ningún párrafo con ese formato, responde EXACTAMENTE con la palabra "NULL". No añadas explicaciones ni busques en tu conocimiento general. Texto de búsqueda: --- ${contextoDigesto} ---`;
 
             const payload = { contents: [{ parts: [{ text: promptParaFuente }] }], safetySettings };
             let respuestaFuente = await callGeminiWithRetries(payload);
@@ -290,12 +291,10 @@ async function startServer() {
         }
     });
 
-    // --- MANEJO DE ERRORES 404 (AL FINAL DE LAS RUTAS) ---
     app.use((req, res) => {
         res.status(404).json({ error: 'NOT_FOUND', message: 'Endpoint no encontrado' });
     });
 
-    // --- INICIO DEL SERVIDOR (DENTRO DE startServer) ---
     app.listen(port, () => {
         console.log(`\n✓ Servidor de Derecho Romano escuchando en http://localhost:${port}`);
         console.log(`✓ Entorno: ${process.env.NODE_ENV || 'development'}`);
