@@ -138,7 +138,8 @@ async function startServer() {
         console.log(`✓ Índice JSON cargado. ${indiceJson.length} temas encontrados.`);
 
         const digestoData = await fs.readFile('digest.txt', 'utf-8');
-        parrafosDelDigesto = digestoData.split('\n').filter(p => p.trim() !== '');
+        parrafosDelDigesto = digestoData.split(/(?=D\.\s\d{1,2}\.\d{1,2}\.\d{1,3})/).filter(p => p.trim() !== '');
+
         console.log(`✓ Digesto cargado. ${parrafosDelDigesto.length} párrafos encontrados.`);
     } catch (error) {
         console.error('✗ Error crítico cargando archivos de datos:', error.message);
