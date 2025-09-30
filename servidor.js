@@ -187,7 +187,7 @@ async function startServer() {
             } else if (promptOriginal.includes("crear un breve supuesto de hecho")) {
                 promptFinalParaIA = `Tarea: Crear un caso práctico (máx 3 frases) sobre "${terminoValidado}". Reglas: Nombres romanos. Terminar con preguntas legales. Sin explicaciones ni soluciones. Basar lógica en: "${contextoFinal}".`;
             } else {
-                promptFinalParaIA = `Responde a la pregunta sobre "${terminoValidado}" en un máximo de dos párrafos. Basa tu respuesta principalmente en este contexto: "${contextoFinal}". Si el contexto está vacío, usa tu conocimiento general.`;
+                promptFinalParaIA = `Responde a la pregunta sobre "${terminoValidado}" en términos jurídicos, aplicando principios y reglas de derecho romano, en un máximo de dos párrafos. Basa tu respuesta en este contexto: "${contextoFinal}". Si el contexto está vacío, usa tu conocimiento general.`;
             }
 
             const payload = { contents: [{ parts: [{ text: promptFinalParaIA }] }], safetySettings };
@@ -219,7 +219,7 @@ async function startServer() {
             }
 
             const contextoDigesto = resultadosBusqueda.slice(0, 5).join('\n---\n');
-            const promptParaFuente = `Tu tarea es localizar y extraer una cita del Digesto del texto que te proporciono. 1. Busca: Examina el texto y encuentra un párrafo que contenga el término buscado. Localiza al principio de ese párrafo o en los inmediatamente anteriores un formato de cita (ej: "1.2.3."). 2. Extrae: Si encuentras una cita, tu respuesta DEBE CONTENER ÚNICAMENTE Y EN ESTE ORDEN: La cita completa precedida de la numeración "D." seguida de los números que identifican al párrafo o conjunto de párrafos, el texto original en latín que contiene la cita y una traducción al español. 3. Regla estricta: Si NO encuentras ningún párrafo con ese formato, responde EXACTAMENTE con la palabra "NULL". No añadas explicaciones ni busques en tu conocimiento general. Texto de búsqueda: --- ${contextoDigesto} ---`;
+            const promptParaFuente = `Tu tarea es localizar y extraer una cita del Digesto del texto que te proporciono. 1. Busca: Examina el texto y encuentra un párrafo que contenga el término buscado. Localiza al principio de ese párrafo o en los inmediatamente anteriores un formato de cita (ej: "1.2.3."). 2. Extrae: Si encuentras una cita, tu respuesta DEBE CONTENER ÚNICAMENTE Y EN ESTE ORDEN: La cita completa precedida de la letra "D." seguida de los números que identifican al párrafo o conjunto de párrafos, el texto original en latín que contiene la cita y una traducción al español. 3. Regla estricta: Si NO encuentras ningún párrafo con ese formato, responde EXACTAMENTE con la palabra "NULL". No añadas explicaciones ni busques en tu conocimiento general. Texto de búsqueda: --- ${contextoDigesto} ---`;
 
             const payload = { contents: [{ parts: [{ text: promptParaFuente }] }], safetySettings };
             let respuestaFuente = await callGeminiWithRetries(payload);
