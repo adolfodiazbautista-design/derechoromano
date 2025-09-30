@@ -178,14 +178,14 @@ async function startServer() {
 
             if (/posesion/.test(terminoNormalizado)) {
                 console.log("→ Detectado término 'posesión'. Usando contexto específico.");
-                contextoFinal = "La posesión es la tenencia material de una cosa (corpus) con la intención de tenerla como propia (animus). Se diferencia de la propiedad, que es el derecho legal. La posesión está protegida por interdictos, que son órdenes del pretor para mantener la paz y resolver disputas sobre la tenencia de forma rápida.";
+                contextoFinal = "La posesión es la tenencia material de una cosa (corpus) con la intención de tenerla como propia (animus). Hay dos clases de posesión: natural (solo corpus) y civil (corpus y animus). AMBAS CLASES DE POSESIÓN TIENEN LA PROTECCIÓN DE LOS INTERDICTOS CONCEDIDOS POR EL PRETOR. Hay en cambio un grupo, llamados 'detentadores' que, aunque tienen el corpus no son considerados poseedores y por tanto carecen de interdictos (por ejemplo, los arrendatarios). La posesión se diferencia de la propiedad, que es el derecho legal a poseer, usar, disfrutar y disponer de un bien. La posesión (tanto natural como civil) está protegida por interdictos, que son órdenes del pretor para mantener la paz y resolver disputas sobre la tenencia de forma rápida.";
             }
 
             let promptFinalParaIA;
             if (currentCaseText) {
-                promptFinalParaIA = `Rol: Juez romano. Tarea: Resolver el caso "${currentCaseText}" aplicando principios de derecho romano. Solución legal, breve, clara y concisa. Basa tu solución en este contexto si es relevante: "${contextoFinal}".`;
+                promptFinalParaIA = `Tarea: Resolver el caso "${currentCaseText}" aplicando principios de derecho romano. Solución legal, breve, clara y concisa. Basa tu solución en este contexto si es relevante: "${contextoFinal}".`;
             } else if (promptOriginal.includes("crear un breve supuesto de hecho")) {
-                promptFinalParaIA = `Rol: Profesor de derecho romano. Tarea: Crear un caso práctico (máx 3 frases) sobre "${terminoValidado}". Reglas: Nombres romanos. Terminar con preguntas legales. Sin explicaciones ni soluciones. Basar lógica en: "${contextoFinal}".`;
+                promptFinalParaIA = `Tarea: Crear un caso práctico (máx 3 frases) sobre "${terminoValidado}". Reglas: Nombres romanos. Terminar con preguntas legales. Sin explicaciones ni soluciones. Basar lógica en: "${contextoFinal}".`;
             } else {
                 promptFinalParaIA = `Responde a la pregunta sobre "${terminoValidado}" en un máximo de dos párrafos. Basa tu respuesta principalmente en este contexto: "${contextoFinal}". Si el contexto está vacío, usa tu conocimiento general.`;
             }
@@ -219,7 +219,7 @@ async function startServer() {
             }
 
             const contextoDigesto = resultadosBusqueda.slice(0, 5).join('\n---\n');
-            const promptParaFuente = `Tu tarea es localizar y extraer una cita del Digesto del texto que te proporciono. 1. Busca: Examina el texto y encuentra el primer párrafo o conjunto de párrafos que comience con un formato de cita (ej: "D. 1.2.3."). 2. Extrae: Si encuentras una cita, tu respuesta DEBE CONTENER ÚNICAMENTE Y EN ESTE ORDEN: La cita completa, el texto original en latín que sigue y una traducción al español. 3. Regla estricta: Si NO encuentras ningún párrafo con ese formato, responde EXACTAMENTE con la palabra "NULL". No añadas explicaciones ni busques en tu conocimiento general. Texto de búsqueda: --- ${contextoDigesto} ---`;
+            const promptParaFuente = `Tu tarea es localizar y extraer una cita del Digesto del texto que te proporciono. 1. Busca: Examina el texto y encuentra un párrafo que contenga el término buscado. Localiza al principio de ese párrafo o en los inmediatamente anteriores un formato de cita (ej: "1.2.3."). 2. Extrae: Si encuentras una cita, tu respuesta DEBE CONTENER ÚNICAMENTE Y EN ESTE ORDEN: La cita completa precedida de la numeración "D." seguida de los números que identifican al párrafo o conjunto de párrafos, el texto original en latín que contiene la cita y una traducción al español. 3. Regla estricta: Si NO encuentras ningún párrafo con ese formato, responde EXACTAMENTE con la palabra "NULL". No añadas explicaciones ni busques en tu conocimiento general. Texto de búsqueda: --- ${contextoDigesto} ---`;
 
             const payload = { contents: [{ parts: [{ text: promptParaFuente }] }], safetySettings };
             let respuestaFuente = await callGeminiWithRetries(payload);
