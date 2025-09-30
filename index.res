@@ -325,7 +325,7 @@
                     </ul>
                     <h3 class="text-2xl font-semibold text-secondary mt-8 mb-2">Recursos Adicionales</h3>
                     <ul class="list-disc list-inside space-y-2">
-                       
+                        <li><a href="cronograma-curso.csv" download class="text-amber-700 hover:text-amber-800 font-semibold">Descargar Cronograma del Curso (CSV)</a></li>
                         <li><a href="https://webs.um.es/jal/" class="text-amber-700 hover:text-amber-800 font-semibold">CIVILizándonos. Web del profesor Joaquín Ataz López</a></li>
                         <li><a href="https://derecho-romano.blogspot.com/" class="text-amber-700 hover:text-amber-800 font-semibold">Blog de Derecho Romano</a></li>
                         <li><a href="https://www.youtube.com/playlist?list=PLhqyfgIdoGr2SrQMeLPg9Bdl4ThnF16a3" class="text-amber-700 hover:text-amber-800 font-semibold">Roma, un Imperio sin Límites con Mary Beard (YouTube)</a></li>
@@ -440,23 +440,7 @@
                 const caseText = result.respuesta || result.error;
                 
                 caseStudyResult.dataset.caseText = caseText;
-               function sanitizeHTML(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-// FUNCIÓN PARA MOSTRAR ERRORES
-function showError(element, errorMsg) {
-    element.innerHTML = `
-        <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; padding: 1rem;">
-            <p style="color: #991b1b; margin: 0;">
-                <strong>Error:</strong> ${sanitizeHTML(errorMsg)}
-            </p>
-        </div>
-    `;
-}
-
-caseStudyResult.innerHTML = `<p>${sanitizeHTML(caseText).replace(/\n/g, '<br>')}</p>`;
+                caseStudyResult.innerHTML = `<p>${caseText.replace(/\n/g, '<br>')}</p>`;
                 if(btnText) btnText.classList.remove('hidden');
                 if(btnLoader) btnLoader.classList.add('hidden');
                 generateCaseBtn.disabled = false;
