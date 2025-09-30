@@ -168,7 +168,7 @@ const safetySettings = [
     { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
 ];
 
-async function callGeminiWithRetries(payload, maxRetries = 3) {
+async function callGeminiWithRetries(payload, maxRetries = 4) {
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
     
     if (!GEMINI_API_KEY) {
@@ -182,7 +182,7 @@ async function callGeminiWithRetries(payload, maxRetries = 3) {
         try {
             const geminiResponse = await axios.post(url, payload, { 
                 headers: { 'Content-Type': 'application/json' },
-                timeout: 25000 // 25 segundos
+                timeout: 35000 // 35 segundos
             });
             
             if (geminiResponse.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
@@ -286,11 +286,11 @@ app.post('/api/consulta', async (req, res) => {
         let promptFinalParaIA = '';
         
         if (currentCaseText) {
-            promptFinalParaIA = `Rol: Juez romano. Tarea: Resolver el caso "${currentCaseText}" aplicando principios del derecho romano. Instrucciones: Solución legal, clara y concisa. Basa tu solución en este contexto si es relevante: "${contextoFinal}".`;
+            promptFinalParaIA = `Rol: Juez romano. Tarea: Resolver el caso "${currentCaseText}" aplicando principios del derecho romano. Instrucciones: Solución legal, breve, clara y concisa. Basa tu solución en este contexto si es relevante: "${contextoFinal}".`;
         } else if (promptOriginal.includes("crear un breve supuesto de hecho")) {
             promptFinalParaIA = `Rol: Profesor de derecho romano. Tarea: Crear un caso práctico (máx 3 frases) sobre "${termino}". Reglas: Nombres romanos. Terminar con preguntas legales. Sin explicaciones ni soluciones. Basar lógica en: "${contextoFinal}".`;
         } else {
-            promptFinalParaIA = `Rol: Jurista Ulpiano. Tarea: Responder a la pregunta sobre "${termino}" (máx 2 párrafos). Contexto principal: "${contextoFinal}". No lo contradigas. Si está vacío, usa tu conocimiento general.`;
+            promptFinalParaIA = `Rol: Jurista romano. Tarea: Dar una respuesta breve, concisa y precisa a la pregunta sobre "${termino}" (máx 2 párrafos). Contexto principal: "${contextoFinal}". No lo contradigas. Si está vacío, usa tu conocimiento general. Si encuentras referencias seguras a textos de fuentes clásicas indícalas en latín y español con notación académica (por ejemplo Dig. 4.5.6)`;
         }
 
         const payload = { 
