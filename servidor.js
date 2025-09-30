@@ -21,6 +21,9 @@ app.use(cors({ origin: process.env.NODE_ENV === 'production' ? ['https://derecho
 app.use(express.json({ limit: "1mb" }));
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use('/api/', limiter);
+app.options('*', cors()); // Habilita las peticiones preflight para todas las rutas
+
+app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 function validateInput(input, maxLength = 500, fieldName = 'campo') { if (!input || typeof input !== 'string' || input.trim().length === 0 || input.trim().length > maxLength) { return { valid: false }; } return { valid: true, value: input.trim() }; }
 function handleApiError(error, res) { console.error("Error en API:", error.message); res.status(500).json({ error: 'INTERNAL_SERVER_ERROR', message: 'Ulpiano no está disponible.' }); }
