@@ -35,17 +35,15 @@ const diccionarioLatin = {
     'curatela': 'cura',
     'propiedad': 'proprietas',
     'posesion': 'possessio',
-    'obligacion': 'obligatio'
-    'prenda': 'pignus'
-    'hipoteca': 'pignus conventum'
-    'servidumbre': 'servitus'
-    'esclavo': 'servus'
-    'juez': 'iudex'
-    'derecho': 'ius'
-    'cosa': 'res'
+    'obligacion': 'obligatio', 
+    'hipoteca': 'pignus conventum',
+    'servidumbre': 'servitus',
+    'esclavo': 'servus',
+    'juez': 'iudex',
+    'derecho': 'ius',
+    'cosa': 'res',
     'bien': 'res'
 };
-
 // ========================================
 // CONFIGURACIÓN DE SEGURIDAD
 // ========================================

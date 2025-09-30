@@ -603,8 +603,8 @@
                 
                 submitQueryBtn.disabled = true;
                 submitBtnText.classList.add('hidden');
-                submitBtnLoader.classList.add('hidden');
-                queryResult.classList.remove('hidden');
+		submitBtnLoader.classList.remove('hidden'); 
+		queryResult.classList.remove('hidden');;
                 queryResultText.innerHTML = '<div class="loader mx-auto"></div>';
 
                 const promptPrincipal = `pregunta teórica`;
