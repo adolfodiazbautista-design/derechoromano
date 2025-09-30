@@ -8,6 +8,12 @@
     <meta name="description" content="Guía interactiva de Derecho Romano para estudiantes de la Universidad de Murcia, con un diseño moderno, herramientas de IA, infografías detalladas y casos prácticos.">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Guía Interactiva de Derecho Romano">
+    <meta property="og:description" content="Recursos didácticos de Derecho Romano con IA - Universidad de Murcia">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://derechoromano.netlify.app">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
@@ -15,7 +21,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
-        /* --- ESTILOS DEL DISEÑO MODERNO --- */
         body { 
             font-family: 'Lato', sans-serif; 
             color: #334155;
@@ -122,18 +127,29 @@
             border-top: 1px solid #e5e7eb;
             background-color: #f8fafc;
         }
+        .error-box {
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 0.5rem;
+        }
+        .error-box p {
+            color: #991b1b;
+            margin: 0;
+        }
     </style>
 </head>
 <body class="flex min-h-screen">
 
     <header class="md:hidden p-4 bg-slate-800 text-white flex items-center justify-between shadow-lg z-30 fixed top-0 left-0 right-0">
         <h1 class="font-heading text-2xl font-bold text-amber-500">Derecho Romano</h1>
-        <button id="menu-button" class="text-white focus:outline-none" aria-label="Abrir menú">
+        <button id="menu-button" class="text-white focus:outline-none focus:ring-2 focus:ring-amber-500" aria-label="Abrir menú" aria-expanded="false">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
     </header>
 
-    <aside id="sidebar" class="w-64 bg-slate-800 text-white p-6 shadow-lg fixed md:relative top-0 left-0 h-full transform -translate-x-full transition-transform duration-300 ease-in-out z-20 flex-col md:flex md:translate-x-0 pt-20 overflow-y-auto">
+    <aside id="sidebar" class="w-64 bg-slate-800 text-white p-6 shadow-lg fixed md:relative top-0 left-0 h-full transform -translate-x-full transition-transform duration-300 ease-in-out z-20 flex-col md:flex md:translate-x-0 pt-20 overflow-y-auto" role="navigation" aria-label="Navegación principal">
         <h1 class="font-heading text-3xl font-bold text-amber-500 mb-8 hidden md:block">Derecho Romano</h1>
         <nav class="flex-grow">
             <ul class="space-y-1">
@@ -151,44 +167,123 @@
             </ul>
         </nav>
         <div class="mt-8 text-sm text-slate-400">
-            <p>© 2025. <a href="https://webs.um.es/adiaz-bautista/" target="_blank" class="hover:underline text-amber-500">Adolfo A. Díaz-Bautista Cremades</a>. Universidad de Murcia</p>
+            <p>© 2025. <a href="https://webs.um.es/adiaz-bautista/" target="_blank" rel="noopener noreferrer" class="hover:underline text-amber-500">Adolfo A. Díaz-Bautista Cremades</a>. Universidad de Murcia</p>
         </div>
     </aside>
 
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden"></div>
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden" aria-hidden="true"></div>
 
-    <main id="content-area" class="flex-1 p-6 sm:p-8 overflow-y-auto pt-20 md:pt-8"></main>
+    <main id="content-area" class="flex-1 p-6 sm:p-8 overflow-y-auto pt-20 md:pt-8" role="main"></main>
 
-    <div id="video-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 hidden z-50" role="dialog" aria-modal="true">
+    <div id="video-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 hidden z-50" role="dialog" aria-modal="true" aria-labelledby="video-modal-title">
         <div class="bg-slate-800 rounded-lg shadow-2xl p-4 max-w-4xl w-full relative">
+            <h2 id="video-modal-title" class="sr-only">Video: El ADN del Derecho Romano</h2>
             <video id="modal-video-player" class="w-full rounded-lg" controls>
                 <source src="El_ADN_del_Derecho_Romano.mp4" type="video/mp4">
                 Tu navegador no soporta el elemento de video.
             </video>
-            <button id="close-video-modal-btn" class="absolute -top-4 -right-4 bg-white rounded-full p-1 text-slate-800 hover:bg-amber-400 focus:outline-none focus:ring-2 focus:ring-white">
+            <button id="close-video-modal-btn" class="absolute -top-4 -right-4 bg-white rounded-full p-1 text-slate-800 hover:bg-amber-400 focus:outline-none focus:ring-2 focus:ring-white" aria-label="Cerrar video">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
         </div>
     </div>
-    
-    <div id="explanation-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50" role="dialog" aria-modal="true" aria-labelledby="explanation-modal-title" aria-hidden="true">
-        <div class="bg-white rounded-lg shadow-2xl p-6 max-w-md w-full">
-            <h3 id="explanation-modal-title" class="text-2xl font-bold text-[#900C3F] mb-4 infographic-font">Explicación Sencilla</h3>
-            <div id="explanation-modal-content" class="min-h-[100px]"><div class="loader mx-auto"></div></div>
-            <button id="close-explanation-modal-btn" class="mt-6 bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-400 transition-colors w-full">Cerrar</button>
-        </div>
-    </div>
 
     <script>
+        // ========================================
+        // FUNCIONES DE UTILIDAD Y SEGURIDAD
+        // ========================================
+        
+        function sanitizeHTML(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showError(element, errorMsg) {
+            element.innerHTML = `
+                <div class="error-box" role="alert">
+                    <p><strong>Error:</strong> ${sanitizeHTML(errorMsg)}</p>
+                </div>
+            `;
+        }
+
+        function showLoading(element, message = 'Cargando...') {
+            element.innerHTML = `
+                <div class="flex flex-col items-center gap-2 py-4">
+                    <div class="loader" aria-hidden="true"></div>
+                    <p class="text-sm text-gray-500">${sanitizeHTML(message)}</p>
+                </div>
+            `;
+        }
+
+        async function handleButtonLoading(btnElement, loaderElement, textElement, asyncFunction) {
+            textElement.classList.add('hidden');
+            loaderElement.classList.remove('hidden');
+            btnElement.disabled = true;
+            btnElement.setAttribute('aria-busy', 'true');
+            
+            try {
+                return await asyncFunction();
+            } finally {
+                textElement.classList.remove('hidden');
+                loaderElement.classList.add('hidden');
+                btnElement.disabled = false;
+                btnElement.setAttribute('aria-busy', 'false');
+            }
+        }
+
+        // ========================================
+        // COMUNICACIÓN CON EL SERVIDOR
+        // ========================================
+        
+        async function callApiAndHandleErrors(endpoint, payload) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000);
+                
+                const response = await fetch(`/api/${endpoint}`, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify(payload),
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) { 
+                    const errorData = await response.json().catch(() => ({})); 
+                    return { error: errorData.message || "Error de comunicación con el servidor." }; 
+                }
+                return await response.json();
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    return { error: "La solicitud ha tardado demasiado tiempo. Por favor, inténtalo de nuevo." };
+                }
+                return { error: "No se ha podido establecer conexión con el servidor." }; 
+            }
+        }
+        
+        async function callGeminiAPI(promptOriginal, termino = null, currentCaseText = null) {
+            if (termino && termino.length > 100) {
+                return { error: "El término es demasiado largo (máximo 100 caracteres)." };
+            }
+            return await callApiAndHandleErrors('consulta', { promptOriginal, termino, currentCaseText });
+        }
+
+        // ========================================
+        // ELEMENTOS DOM Y VARIABLES GLOBALES
+        // ========================================
+        
         const contentArea = document.getElementById('content-area');
         const sidebar = document.getElementById('sidebar');
         const menuButton = document.getElementById('menu-button');
         const sidebarOverlay = document.getElementById('sidebar-overlay');
-        const body = document.body;
-        
-        const palabrasProhibidas = ['tonto', 'tonta', 'sexo', 'idiota', 'imbecil', 'puta', 'mierda', 'gilipollas', 'franco', 'hitler', 'mussolini', 'stalin', 'polla', 'picha', 'acho', 'puto', 'zorra', 'zorras', 'tetas', 'pollas', 'cabron', 'cabrón', 'teta', 'coño', 'examen', 'test'];
-        const respuestaCiceron = `Quo usque tandem abutere, Catilina, patientia nostra? ...`;
 
+        // ========================================
+        // CONTENIDO DE LAS PÁGINAS
+        // ========================================
+        
         const contentMap = {
             '#home': {
                 title: 'Presentación',
@@ -198,12 +293,12 @@
                                 <h2 class="text-3xl font-bold text-secondary mb-4 !mt-0">Bienvenida al curso de Derecho Romano</h2>
                                 <p class="text-secondary">Esta asignatura es vuestra primera toma de contacto con el razonamiento jurídico. El objetivo principal es que aprendáis a identificar problemas, a encontrar la norma o principio aplicable y a argumentar una solución.</p>
                                 <p class="text-secondary mb-6">Este enfoque será la base de vuestra evaluación y de vuestra formación como juristas.</p>
-                                <a href="0. presentacion.pdf" target="_blank" class="no-prose inline-block bg-amber-600 text-white font-bold py-2 px-5 rounded-lg hover:bg-amber-700 transition-colors no-underline mb-8">
+                                <a href="0. presentacion.pdf" target="_blank" rel="noopener noreferrer" class="no-prose inline-block bg-amber-600 text-white font-bold py-2 px-5 rounded-lg hover:bg-amber-700 transition-colors no-underline mb-8">
                                     Ver Presentación de la Asignatura
                                 </a>
                             </div>
                             <div class="not-prose mt-6 md:mt-0">
-                                <button id="open-video-modal-btn" class="relative w-full max-w-md mx-auto rounded-lg overflow-hidden group focus:outline-none focus:ring-4 focus:ring-amber-500 shadow-xl">
+                                <button id="open-video-modal-btn" class="relative w-full max-w-md mx-auto rounded-lg overflow-hidden group focus:outline-none focus:ring-4 focus:ring-amber-500 shadow-xl" aria-label="Ver video de presentación">
                                     <img src="video_preview.jpg" alt="Vista previa del vídeo sobre Derecho Romano" class="w-full h-auto">
                                     <div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
                                         <svg class="w-16 h-16 text-white opacity-80 group-hover:opacity-100 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg>
@@ -217,31 +312,57 @@
             },
             '#caselab': {
                 title: 'Laboratorio de Casos',
-                html: `<section class="infographic-font bg-white rounded-lg shadow-md p-6"><h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">Laboratorio de Casos Romanos</h2><p class="text-center max-w-4xl mx-auto mb-6">Introduce un concepto de derecho romano (ej: usufructo, dote, compraventa) y la IA generará un caso de estudio para que lo analices.</p><div class="text-center text-sm text-gray-500 mb-6 bg-amber-50 border border-amber-200 rounded-lg p-3 max-w-xl mx-auto"><p><strong>Advertencia:</strong> Los casos y soluciones son generados por la IA de Google (Gemini) y no han sido supervisados por el profesor. Úsalos como una herramienta de práctica y no como una fuente autorizada.</p></div><div class="max-w-xl mx-auto"><div class="flex flex-col sm:flex-row gap-2"><input type="text" id="case-study-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5733]" placeholder="Ej: Usufructo"><button id="generate-case-btn" class="bg-[#C70039] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#900C3F] transition-colors flex items-center justify-center"><span id="btn-text">✨ Generar Caso</span><div id="btn-loader" class="loader hidden"></div></button></div><div id="case-study-result" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[100px]"><p class="text-gray-500">Aquí aparecerá tu caso de estudio...</p></div><div class="text-center mt-4"><button id="solve-case-btn" class="hidden bg-[#FF5733] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#C70039] transition-colors flex items-center justify-center mx-auto"><span id="solve-btn-text">Ver Solución</span><div id="solve-btn-loader" class="loader hidden"></div></button></div><div id="case-solution-result" class="hidden mt-6 p-4 bg-green-50 rounded-lg border border-green-200"></div>
-                </div></section>`
+                html: `<section class="infographic-font bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">Laboratorio de Casos Romanos</h2>
+                    <p class="text-center max-w-4xl mx-auto mb-6">Introduce un concepto de derecho romano (ej: usufructo, dote, compraventa) y la IA generará un caso de estudio para que lo analices.</p>
+                    <div class="text-center text-sm text-gray-500 mb-6 bg-amber-50 border border-amber-200 rounded-lg p-3 max-w-xl mx-auto">
+                        <p><strong>Advertencia:</strong> Los casos y soluciones son generados por la IA de Google (Gemini) y no han sido supervisados por el profesor. Úsalos como una herramienta de práctica y no como una fuente autorizada.</p>
+                    </div>
+                    <div class="max-w-xl mx-auto">
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <input type="text" id="case-study-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5733]" placeholder="Ej: Usufructo" maxlength="100" aria-label="Concepto de derecho romano">
+                            <button id="generate-case-btn" class="bg-[#C70039] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#900C3F] transition-colors flex items-center justify-center" aria-busy="false">
+                                <span id="btn-text">✨ Generar Caso</span>
+                                <div id="btn-loader" class="loader hidden" style="width:20px; height:20px; border-width:3px;" aria-hidden="true"></div>
+                            </button>
+                        </div>
+                        <div id="case-study-result" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[100px]" role="region" aria-live="polite" aria-atomic="true">
+                            <p class="text-gray-500">Aquí aparecerá tu caso de estudio...</p>
+                        </div>
+                        <div class="text-center mt-4">
+                            <button id="solve-case-btn" class="hidden bg-[#FF5733] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#C70039] transition-colors flex items-center justify-center mx-auto" aria-busy="false">
+                                <span id="solve-btn-text">Ver Solución</span>
+                                <div id="solve-btn-loader" class="loader hidden" style="width:20px; height:20px; border-width:3px;" aria-hidden="true"></div>
+                            </button>
+                        </div>
+                        <div id="case-solution-result" class="hidden mt-6 p-4 bg-green-50 rounded-lg border border-green-200" role="region" aria-live="polite" aria-atomic="true"></div>
+                    </div>
+                </section>`
             },
             '#ulpiano': {
                 title: 'Consulta a UlpianoIA',
                 html: `<section class="infographic-font bg-white rounded-lg shadow-md p-6" style="color: #333;">
                         <h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">Consulta a UlpianoIA</h2>
                         <p class="text-center max-w-4xl mx-auto mb-6">Hazle una pregunta a UlpianoIA sobre cualquier tema de Derecho Romano.</p>
-                        <div class="text-center text-sm text-gray-500 mb-6 bg-amber-50 border border-amber-200 rounded-lg p-3 max-w-xl mx-auto"><p><strong>Advertencia:</strong> Las respuestas de Ulpiano son generadas por la IA de Google (Gemini) y no han sido supervisadas por el profesor. Úsalas como una herramienta de apoyo y no como una fuente autorizada para tus exámenes.</p></div>
+                        <div class="text-center text-sm text-gray-500 mb-6 bg-amber-50 border border-amber-200 rounded-lg p-3 max-w-xl mx-auto">
+                            <p><strong>Advertencia:</strong> Las respuestas de Ulpiano son generadas por la IA de Google (Gemini) y no han sido supervisadas por el profesor. Úsalas como una herramienta de apoyo y no como una fuente autorizada para tus exámenes.</p>
+                        </div>
                         <div class="max-w-xl mx-auto">
                             <div class="flex flex-col sm:flex-row gap-2">
-                                <textarea id="queryInput" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5733]"></textarea>
-                                <button id="submitQueryBtn" class="bg-[#C70039] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#900C3F] transition-colors flex items-center justify-center">
+                                <textarea id="queryInput" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5733]" placeholder="Escribe tu pregunta aquí..." maxlength="500" aria-label="Tu pregunta sobre Derecho Romano"></textarea>
+                                <button id="submitQueryBtn" class="bg-[#C70039] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#900C3F] transition-colors flex items-center justify-center" aria-busy="false">
                                     <span id="submit-btn-text">✨ Enviar consulta</span>
-                                    <div id="submit-btn-loader" class="loader hidden" style="border-top-color: #fff; width:20px; height:20px;"></div>
+                                    <div id="submit-btn-loader" class="loader hidden" style="border-top-color: #fff; width:20px; height:20px; border-width:3px;" aria-hidden="true"></div>
                                 </button>
                             </div>
-                            <div id="queryResult" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 hidden">
+                            <div id="queryResult" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 hidden" role="region" aria-live="polite" aria-atomic="true">
                                 <h3 class="text-xl font-semibold mb-2 text-[#900C3F]">Respuesta de UlpianoIA:</h3>
-                                <p id="queryResultText"></p>
+                                <div id="queryResultText"></div>
                             </div>
                         </div>
                        </section>`
             },
-            '#bloque1': {
+                   '#bloque1': {
                 title: 'Bloque I: Fundamentos',
                 html: `<div class="prose"><p class="text-secondary">Este bloque introduce los conceptos más básicos para comprender el Derecho. Exploraremos la diferencia entre los distintos tipos de normas de conducta, la aportación fundamental de Roma al Derecho y su evolución histórica, así como su pervivencia hasta nuestros días.</p></div>
                 <details class="infografia-container"><summary><span>📊 Ver Infografía: Las Fuentes del Derecho Romano</span><svg class="w-6 h-6 infografia-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path></svg></summary><div class="infografia-content grid grid-cols-1 md:grid-cols-4 gap-6 text-center"><div class="bg-slate-100 p-4 rounded-lg"><h4 class="font-bold text-sm text-primary">MONARQUÍA</h4><p class="text-xs mt-1 text-secondary"><strong>Mores Maiorum:</strong> Costumbres de los antepasados. Derecho no escrito y tradicional.</p></div><div class="bg-slate-100 p-4 rounded-lg"><h4 class="font-bold text-sm text-primary">REPÚBLICA</h4><p class="text-xs mt-1 text-secondary"><strong>Ley XII Tablas:</strong> Primera codificación. <strong>Leyes y Plebiscitos.</strong> <strong>Edicto del Pretor.</strong></p></div><div class="bg-slate-100 p-4 rounded-lg"><h4 class="font-bold text-sm text-primary">PRINCIPADO</h4><p class="text-xs mt-1 text-secondary"><strong>Jurisprudencia:</strong> Dictámenes de los juristas. <strong>Senadoconsultos.</strong></p></div><div class="bg-slate-100 p-4 rounded-lg"><h4 class="font-bold text-sm text-primary">DOMINADO</h4><p class="text-xs mt-1 text-secondary"><strong>Constituciones Imperiales.</strong> <strong>Corpus Iuris Civilis.</strong></p></div></div></details>
@@ -325,7 +446,7 @@
                     </ul>
                     <h3 class="text-2xl font-semibold text-secondary mt-8 mb-2">Recursos Adicionales</h3>
                     <ul class="list-disc list-inside space-y-2">
-                       
+                        <li><a href="cronograma-curso.csv" download class="text-amber-700 hover:text-amber-800 font-semibold">Descargar Cronograma del Curso (CSV)</a></li>
                         <li><a href="https://webs.um.es/jal/" class="text-amber-700 hover:text-amber-800 font-semibold">CIVILizándonos. Web del profesor Joaquín Ataz López</a></li>
                         <li><a href="https://derecho-romano.blogspot.com/" class="text-amber-700 hover:text-amber-800 font-semibold">Blog de Derecho Romano</a></li>
                         <li><a href="https://www.youtube.com/playlist?list=PLhqyfgIdoGr2SrQMeLPg9Bdl4ThnF16a3" class="text-amber-700 hover:text-amber-800 font-semibold">Roma, un Imperio sin Límites con Mary Beard (YouTube)</a></li>
@@ -440,23 +561,7 @@
                 const caseText = result.respuesta || result.error;
                 
                 caseStudyResult.dataset.caseText = caseText;
-               function sanitizeHTML(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-// FUNCIÓN PARA MOSTRAR ERRORES
-function showError(element, errorMsg) {
-    element.innerHTML = `
-        <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; padding: 1rem;">
-            <p style="color: #991b1b; margin: 0;">
-                <strong>Error:</strong> ${sanitizeHTML(errorMsg)}
-            </p>
-        </div>
-    `;
-}
-
-caseStudyResult.innerHTML = `<p>${sanitizeHTML(caseText).replace(/\n/g, '<br>')}</p>`;
+                caseStudyResult.innerHTML = `<p>${caseText.replace(/\n/g, '<br>')}</p>`;
                 if(btnText) btnText.classList.remove('hidden');
                 if(btnLoader) btnLoader.classList.add('hidden');
                 generateCaseBtn.disabled = false;
