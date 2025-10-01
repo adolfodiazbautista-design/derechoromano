@@ -1,59 +1,62 @@
 import re
 import json
 
-def procesar_digesto(input_file='digest.txt', output_file='digest.json'):
+def procesar_digesto(archivo_entrada, archivo_salida):
     """
-    Lee un archivo de texto del Digesto codificado en UTF-16-LE (Little Endian),
-    agrupa los fragmentos y lo guarda como un archivo JSON en UTF-8.
-    """
-    print(f"○ Iniciando el procesamiento de '{input_file}'...")
-    MAX_LENGTH = 8000 # Límite de caracteres por fragmento.
+    Lee un archivo de texto del Digesto, extrae los fragmentos con su
+    numeración canónica y los guarda en un archivo JSON.
 
+    Args:
+        archivo_entrada (str): La ruta al archivo de texto del Digesto.
+        archivo_salida (str): La ruta donde se guardará el archivo JSON resultante.
+    """
     try:
-        # ✅ LA CORRECCIÓN FINAL: Especificar 'utf-16-le' para leer sin necesitar el BOM.
-        with open(input_file, 'r', encoding='utf-16-le') as f:
-            lineas = f.readlines()
+        with open(archivo_entrada, 'r', encoding='utf-8') as f:
+            contenido = f.read()
     except FileNotFoundError:
-        print(f"✗ ERROR: No se encontró el archivo '{input_file}'.")
+        print(f"Error: No se pudo encontrar el archivo '{archivo_entrada}'")
+        print("Asegúrate de que el script y 'digesto.txt' estén en la misma carpeta.")
         return
     except Exception as e:
-        print(f"✗ ERROR: No se pudo leer el archivo. Causa: {e}")
+        print(f"Ocurrió un error al leer el archivo: {e}")
         return
 
-    fragmentos = []
-    fragmento_actual = []
+    # Expresión regular para encontrar las citas del Digesto (ej. "Dig.1.1.0.")
+    # y capturar todo el texto hasta la siguiente cita.
+    # re.DOTALL (o re.S) hace que el '.' también coincida con saltos de línea.
+    patron = re.compile(r'(Dig\.\d+\.\d+\.\d+\.?\d*)', re.DOTALL)
     
-    regex_cita = re.compile(r'^D\.\s*[\d\w]', re.IGNORECASE)
+    # Dividimos el texto usando la expresión regular. El resultado es una lista
+    # donde los elementos impares son las citas y los pares son los textos.
+    partes = patron.split(contenido)
+    
+    fragmentos = []
+    # Empezamos en el índice 1, ya que el primer elemento es el texto antes de la primera cita.
+    for i in range(1, len(partes), 2):
+        cita = partes[i].strip()
+        # El texto correspondiente es el siguiente elemento en la lista.
+        texto_fragmento = partes[i+1].strip()
+        
+        # Omitimos fragmentos vacíos que puedan resultar del parseo.
+        if texto_fragmento:
+            fragmentos.append({
+                "cita": cita,
+                "texto": texto_fragmento
+            })
 
-    for linea in lineas:
-        linea_limpia = linea.strip()
-        if not linea_limpia:
-            continue
-
-        if regex_cita.match(linea_limpia):
-            if fragmento_actual:
-                texto_completo = '\n'.join(fragmento_actual)
-                if len(texto_completo) > MAX_LENGTH:
-                    texto_completo = texto_completo[:MAX_LENGTH] + "\n\n[FRAGMENTO TRUNCADO]"
-                fragmentos.append(texto_completo)
-            fragmento_actual = [linea_limpia]
-        elif fragmento_actual:
-            fragmento_actual.append(linea_limpia)
-
-    if fragmento_actual:
-        texto_completo = '\n'.join(fragmento_actual)
-        if len(texto_completo) > MAX_LENGTH:
-            texto_completo = texto_completo[:MAX_LENGTH] + "\n\n[FRAGMENTO TRUNCADO]"
-        fragmentos.append(texto_completo)
-
-    print(f"✓ Se han procesado y agrupado {len(fragmentos)} fragmentos.")
-
+    # Guardar la lista de fragmentos en un archivo JSON
     try:
-        with open(output_file, 'w', encoding='utf-8') as f:
-            json.dump(fragmentos, f, ensure_ascii=False, indent=2)
-        print(f"✓ Archivo '{output_file}' creado con éxito.")
+        with open(archivo_salida, 'w', encoding='utf-8') as f:
+            # indent=4 formatea el JSON para que sea legible.
+            # ensure_ascii=False permite que se guarden caracteres como tildes correctamente.
+            json.dump(fragmentos, f, indent=4, ensure_ascii=False)
+        print(f"¡Proceso completado! Se han guardado {len(fragmentos)} fragmentos.")
+        print(f"El resultado está en el archivo: '{archivo_salida}'")
     except Exception as e:
-        print(f"✗ ERROR: No se pudo escribir el archivo JSON. Causa: {e}")
+        print(f"Ocurrió un error al escribir el archivo JSON: {e}")
 
+# --- Ejecución del script ---
 if __name__ == "__main__":
-    procesar_digesto()
+    nombre_archivo_texto = 'digesto.txt'
+    nombre_archivo_json = 'digesto_completo.json'
+    procesar_digesto(nombre_archivo_texto, nombre_archivo_json)
