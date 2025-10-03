@@ -30,9 +30,10 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 // --- FUNCIONES DE BÚSQUEDA ---
-
 function buscarEnDigesto(consulta) {
-    if (!digestoJson || digestoJson.length === 0) return [];
+    if (!consulta || typeof consulta !== 'string' || !digestoJson || digestoJson.length === 0) {
+        return [];
+    }
     
     const stopwords = new Set(['de', 'la', 'el', 'en', 'y', 'a', 'los', 'las', 'un', 'una', 'o', 'e', 'con', 'por', 'para', 'su', 'se', 'del']);
     const terminos = consulta.toLowerCase().split(/\s+/).filter(t => !stopwords.has(t) && t.length > 2);
@@ -51,29 +52,35 @@ function buscarEnDigesto(consulta) {
     return resultados.slice(0, 4);
 }
 
+// --- FUNCIÓN CORREGIDA ---
 function buscarEnManual(consulta) {
-    if (!indiceJson || indiceJson.length === 0) return null;
+    // CORRECCIÓN: Se añade esta línea para evitar fallos con consultas vacías o inválidas.
+    if (!consulta || typeof consulta !== 'string' || !indiceJson || indiceJson.length === 0) {
+        return null;
+    }
 
     const terminos = consulta.toLowerCase().split(/\s+/);
     let mejorCoincidencia = null;
     let maxPuntuacion = 0;
 
     indiceJson.forEach(tema => {
-        let puntuacionActual = 0;
-        const titulo = tema.titulo.toLowerCase();
-        terminos.forEach(termino => {
-            if (titulo.includes(termino)) puntuacionActual++;
-        });
-        if (puntuacionActual > maxPuntuacion) {
-            maxPuntuacion = puntuacionActual;
-            mejorCoincidencia = tema;
+        if (tema && typeof tema.titulo === 'string') {
+            let puntuacionActual = 0;
+            const titulo = tema.titulo.toLowerCase();
+            terminos.forEach(termino => {
+                if (titulo.includes(termino)) puntuacionActual++;
+            });
+            if (puntuacionActual > maxPuntuacion) {
+                maxPuntuacion = puntuacionActual;
+                mejorCoincidencia = tema;
+            }
         }
     });
     return mejorCoincidencia;
 }
 
-// --- ENDPOINTS DE LA API ---
 
+// --- ENDPOINTS DE LA API ---
 app.post('/api/consulta-gemini', async (req, res) => {
     const { accion, termino, contexto } = req.body;
     const apiKey = process.env.GEMINI_API_KEY;
@@ -83,7 +90,6 @@ app.post('/api/consulta-gemini', async (req, res) => {
     }
 
     let prompt;
-
     try {
         if (accion === 'consulta') {
             const parrafosDigesto = buscarEnDigesto(termino);
@@ -93,9 +99,7 @@ app.post('/api/consulta-gemini', async (req, res) => {
             promptContexto += `1. **Explicación jurídica:** Ofrece una definición clara y sucinta del concepto desde la perspectiva del Derecho Romano.\n\n`;
 
             if (parrafosDigesto.length > 0) {
-                 const parrafosTexto = parrafosDigesto.map(p => 
-                    `Cita: ${p.cita}\nTexto en Latín: "${p.texto_latin}"`
-                ).join('\n\n');
+                 const parrafosTexto = parrafosDigesto.map(p => `Cita: ${p.cita}\nTexto en Latín: "${p.texto_latin}"`).join('\n\n');
                  promptContexto += `2. **Fuentes del Digesto:** Incluye los siguientes textos del Digesto. Para cada uno, proporciona una traducción al español moderna y precisa. Cita la fuente de cada texto (Ej: Dig. X.Y.Z).\n--- Textos a traducir e integrar ---\n${parrafosTexto}\n---\n\n`;
             } else {
                  promptContexto += `2. **Fuentes del Digesto:** No se encontraron textos directamente relevantes en el Digesto para esta consulta específica. Menciona este hecho.\n\n`;
@@ -108,7 +112,6 @@ app.post('/api/consulta-gemini', async (req, res) => {
             }
             
             promptContexto += `4. **Relevancia en el Derecho Moderno:** Concluye con un breve párrafo explicando cómo ha evolucionado esta institución o cuál es su equivalente o influencia en los ordenamientos jurídicos actuales.`;
-            
             prompt = promptContexto;
         
         } else if (accion === 'resolver caso') {
@@ -118,17 +121,14 @@ app.post('/api/consulta-gemini', async (req, res) => {
             return res.status(400).json({ error: 'Acción no válida.' });
         }
 
-        // --- LLAMADA A LA API DE GEMINI CON LA CORRECCIÓN ---
         const requestBody = {
             contents: [{ parts: [{ text: prompt }] }],
-            // INICIO DE LA CORRECCIÓN 1: Añadir configuración de seguridad
             safetySettings: [
                 { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
                 { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
                 { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
                 { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
             ]
-            // FIN DE LA CORRECCIÓN 1
         };
 
         const response = await axios.post(
@@ -137,7 +137,6 @@ app.post('/api/consulta-gemini', async (req, res) => {
             { headers: { 'Content-Type': 'application/json' } }
         );
 
-        // INICIO DE LA CORRECCIÓN 2: Validar la respuesta antes de usarla
         const candidate = response.data.candidates && response.data.candidates[0];
 
         if (candidate && candidate.content && candidate.content.parts && candidate.content.parts[0].text) {
@@ -149,11 +148,23 @@ app.post('/api/consulta-gemini', async (req, res) => {
             const userMessage = `La API no pudo generar una respuesta. Razón: ${finishReason}. Intenta reformular la consulta.`;
             res.status(500).json({ error: userMessage });
         }
-        // FIN DE LA CORRECCIÓN 2
 
     } catch (error) {
-        console.error("Error en /api/consulta-gemini:", error.response ? error.response.data : error.message);
-        res.status(500).json({ error: 'Error al comunicarse con la API de Gemini.' });
+        console.error("----------- ERROR DETALLADO EN LA LLAMADA A GEMINI -----------");
+        if (error.response) {
+            console.error("Status del Error:", error.response.status);
+            console.error("Respuesta de la API:", JSON.stringify(error.response.data, null, 2));
+            const apiErrorMessage = error.response.data?.error?.message || 'Error desconocido de la API.';
+            res.status(500).json({ error: `Error de la API de Gemini (${error.response.status}): ${apiErrorMessage}` });
+        } else if (error.request) {
+            console.error("La petición a la API no obtuvo respuesta:", error.request);
+            res.status(500).json({ error: 'No se recibió respuesta de la API de Gemini.' });
+        } else {
+            console.error('Error de configuración de Axios:', error.message);
+            res.status(500).json({ error: 'Error al configurar la petición a la API de Gemini.' });
+        }
+        console.error("Prompt que causó el error:", prompt);
+        console.error("---------------------------------------------------------");
     }
 });
 
