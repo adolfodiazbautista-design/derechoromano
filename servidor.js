@@ -48,7 +48,7 @@ function buscarEnDigesto(consulta) {
     }).filter(p => p.puntuacion > 0);
 
     resultados.sort((a, b) => b.puntuacion - a.puntuacion);
-    return resultados.slice(0, 4); // Devolvemos los 4 mejores
+    return resultados.slice(0, 4);
 }
 
 function buscarEnManual(consulta) {
@@ -69,9 +69,8 @@ function buscarEnManual(consulta) {
             mejorCoincidencia = tema;
         }
     });
-    return mejorCoincidencia; // Devuelve el objeto completo (titulo, pagina)
+    return mejorCoincidencia;
 }
-
 
 // --- ENDPOINTS DE LA API ---
 
@@ -86,7 +85,6 @@ app.post('/api/consulta-gemini', async (req, res) => {
     let prompt;
 
     try {
-        // RUTA PARA LA CONSULTA INTEGRADA
         if (accion === 'consulta') {
             const parrafosDigesto = buscarEnDigesto(termino);
             const paginaManual = buscarEnManual(termino);
@@ -113,27 +111,45 @@ app.post('/api/consulta-gemini', async (req, res) => {
             
             prompt = promptContexto;
         
-        // RUTA PARA EL LABORATORIO DE CASOS (INTACTA)
         } else if (accion === 'resolver caso') {
             prompt = `Como UlpianoIA, un experto jurista romano, analiza el siguiente caso práctico y ofrece una solución detallada, citando los principios e instituciones jurídicas aplicables del Derecho Romano:\n\n${contexto}`;
         
-        // RUTA PARA LA CREACIÓN DE CASOS (ASUMIENDO QUE EXISTE O SE MANEJA EN EL FRONT-END)
-        // Si la creación de casos también la hace Gemini, aquí iría un 'else if (accion === 'crear caso')'
-        
         } else {
-            // Fallback para cualquier otra acción no definida
             return res.status(400).json({ error: 'Acción no válida.' });
         }
 
-        // --- LLAMADA A LA API DE GEMINI ---
+        // --- LLAMADA A LA API DE GEMINI CON LA CORRECCIÓN ---
+        const requestBody = {
+            contents: [{ parts: [{ text: prompt }] }],
+            // INICIO DE LA CORRECCIÓN 1: Añadir configuración de seguridad
+            safetySettings: [
+                { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+            ]
+            // FIN DE LA CORRECCIÓN 1
+        };
+
         const response = await axios.post(
             `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
-            { contents: [{ parts: [{ text: prompt }] }] },
+            requestBody,
             { headers: { 'Content-Type': 'application/json' } }
         );
 
-        const respuesta = response.data.candidates[0].content.parts[0].text;
-        res.json({ respuesta });
+        // INICIO DE LA CORRECCIÓN 2: Validar la respuesta antes de usarla
+        const candidate = response.data.candidates && response.data.candidates[0];
+
+        if (candidate && candidate.content && candidate.content.parts && candidate.content.parts[0].text) {
+            const respuesta = candidate.content.parts[0].text;
+            res.json({ respuesta });
+        } else {
+            const finishReason = candidate ? candidate.finishReason : 'UNKNOWN_REASON';
+            console.warn(`Respuesta de Gemini sin contenido. Razón: ${finishReason}`);
+            const userMessage = `La API no pudo generar una respuesta. Razón: ${finishReason}. Intenta reformular la consulta.`;
+            res.status(500).json({ error: userMessage });
+        }
+        // FIN DE LA CORRECCIÓN 2
 
     } catch (error) {
         console.error("Error en /api/consulta-gemini:", error.response ? error.response.data : error.message);
@@ -141,7 +157,6 @@ app.post('/api/consulta-gemini', async (req, res) => {
     }
 });
 
-// Endpoint para la búsqueda simple del manual (INTACTO)
 app.post('/api/buscar-pagina', async (req, res) => {
     try {
         const { query } = req.body;
@@ -152,7 +167,6 @@ app.post('/api/buscar-pagina', async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor.' });
     }
 });
-
 
 // --- FUNCIÓN DE ARRANQUE DEL SERVIDOR ---
 const startServer = async () => {
