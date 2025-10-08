@@ -12,7 +12,7 @@ const port = process.env.PORT || 3000;
 // Variables globales para almacenar los datos
 let manualJson = [];
 let indiceJson = [];
-let digestoJson = []; // *** MODIFICACIÓN PARA DIGESTO: Nueva variable para el Digesto ***
+let digestoJson = []; 
 // Variable 'parrafosDelDigesto' eliminada.
 
 // Objeto 'diccionarioLatin' eliminado.
@@ -83,7 +83,7 @@ function getContextoRelevante(termino) {
     return encontrado ? encontrado.definicion : '';
 }
 
-// *** MODIFICACIÓN PARA DIGESTO: Función de búsqueda en el Digesto ***
+// Función de búsqueda en el Digesto (SIN CAMBIOS)
 const buscarDigesto = (term) => {
     if (!term || !digestoJson.length) {
         return [];
@@ -108,7 +108,6 @@ const buscarDigesto = (term) => {
     }
     return matches;
 };
-// -----------------------------------------------------------------
 
 
 // --- ENDPOINTS DE LA API ---
@@ -125,7 +124,6 @@ app.post('/api/consulta', async (req, res) => {
 
         let promptFinalParaIA;
         
-        // **Lógica del Digesto se aplica solo a la consulta teórica (el 'else' final)**
         let digestoPrompt = "";
         let coincidenciasDigesto = [];
 
@@ -138,15 +136,15 @@ app.post('/api/consulta', async (req, res) => {
         } else {
             // Lógica para CONSULTA teórica (UlpianoIA) - MODIFICADA
 
-            // *** MODIFICACIÓN PARA DIGESTO: Búsqueda y preparación del prompt ***
+            // *** MODIFICACIÓN PARA DIGESTO y BREVEDAD ***
             coincidenciasDigesto = buscarDigesto(termino);
             
             if (coincidenciasDigesto.length > 0) {
                 digestoPrompt = "\n\n--- FUENTE ADICIONAL: DIGESTO DE JUSTINIANO ---\n" +
-                                "He encontrado las siguientes citas del Digesto relacionadas con la consulta. Tu tarea es:\n" +
-                                "1. Seleccionar la **cita más relevante** entre ellas.\n" +
+                                "He encontrado las siguientes citas del Digesto. Tu tarea es:\n" +
+                                "1. **Seleccionar la cita más relevante** a la consulta sobre el concepto de **\"${termino}\"**. **PRIORIZA CITAS QUE CONTENGAN DEFINICIONES JURÍDICAS FUNDAMENTALES** (como las de Ulpiano o Paulo) y que encajen mejor con el término buscado.\n" +
                                 "2. Realizar una **traducción al español profesional y mejorada** del texto latino (la traducción que acompaño es de baja calidad y no sirve).\n" +
-                                "3. Incluir la cita completa (referencia, latín y tu traducción profesional) en la respuesta final, **destacándola** con el formato `# APUNTE DE ULPIANOIA: IUS ROMANUM #` antes de la conclusión. **IGNORA la traducción original pobre**.\n\n";
+                                "3. Incluir la cita completa (referencia, latín y tu traducción profesional) en la respuesta final, **destacándola** con el formato `# APUNTE DE ULPIANOIA: IUS ROMANUM #` justo antes de tu conclusión. **IGNORA la traducción original pobre**.\n\n";
                 
                 coincidenciasDigesto.forEach((match, index) => {
                     digestoPrompt += `--- Cita ${index + 1} (${match.cita}) ---\n`;
@@ -154,12 +152,12 @@ app.post('/api/consulta', async (req, res) => {
                     digestoPrompt += `TRADUCCIÓN ORIGINAL POBRE (IGNORAR): "${match.espanol_original}"\n\n`;
                 });
                 
-                // Se combinan las instrucciones originales con las nuevas del Digesto
-                promptFinalParaIA = `Rol: Jurista Ulpiano. Tarea: Responder a la pregunta sobre "${termino}" (máx 2 párrafos) y aplicar la cita del Digesto (ver abajo). Contexto principal: "${contextoFinal}". No lo contradigas. Si está vacío, usa tu conocimiento general. **INSTRUCCIONES ADICIONALES DEL DIGESTO AL FINAL**: \n\n${digestoPrompt}`;
+                // Instrucción combinada para la consulta teórica (incluye brevedad y didáctica)
+                promptFinalParaIA = `Rol: Jurista Ulpiano (experto en Derecho Romano). Tarea: Explica el concepto de "${termino}" de forma **breve y concisa** (máx. 2 párrafos) y **didáctica**, ideal para un estudiante, y aplica la cita del Digesto (ver abajo). Contexto principal: "${contextoFinal}". No lo contradigas. Si está vacío, usa tu conocimiento general. **INSTRUCCIONES ADICIONALES DEL DIGESTO AL FINAL**: \n\n${digestoPrompt}`;
 
             } else {
-                // Lógica original si no hay Digesto
-                promptFinalParaIA = `Rol: Jurista Ulpiano. Tarea: Responder a la pregunta sobre "${termino}" (máx 2 párrafos). Contexto principal: "${contextoFinal}". No lo contradigas. Si está vacío, usa tu conocimiento general.`;
+                // Lógica original si no hay Digesto (incluye brevedad y didáctica)
+                promptFinalParaIA = `Rol: Jurista Ulpiano (experto en Derecho Romano). Tarea: Explica el concepto de "${termino}" de forma **breve y concisa** (máx. 2 párrafos) y **didáctica**, ideal para un estudiante. Contexto principal: "${contextoFinal}". No lo contradigas. Si está vacío, usa tu conocimiento general.`;
             }
             // -------------------------------------------------------------------
         }
@@ -228,13 +226,10 @@ const startServer = async () => {
         indiceJson = JSON.parse(indiceData);
         console.log(`✓ Índice JSON cargado: ${indiceJson.length} temas.`);
 
-        // *** MODIFICACIÓN PARA DIGESTO: Carga del archivo de Digesto ***
+        // Carga del archivo de Digesto (SIN CAMBIOS)
         const digestoData = await fs.readFile('digesto_traducido_final.json', 'utf-8');
         digestoJson = JSON.parse(digestoData);
         console.log(`✓ Digesto JSON cargado: ${digestoJson.length} citas.`);
-        // -------------------------------------------------------------------
-
-        // Se ha eliminado la carga del archivo 'digest.txt'.
         
         app.listen(port, () => {
             console.log(`🚀 Servidor de Derecho Romano escuchando en http://localhost:${port}`);
@@ -246,5 +241,5 @@ const startServer = async () => {
     }
 };
 
-console.log("--- [OK] Ejecutando servidor.js v15.1 (Casos y Digesto eliminados) ---");
+console.log("--- [OK] Ejecutando servidor.js v15.2 (Prompt Pulido y Digesto Reforzado) ---");
 startServer();
