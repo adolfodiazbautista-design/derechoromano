@@ -12,6 +12,7 @@ const port = process.env.PORT || 3000;
 // Variables globales para almacenar los datos
 let manualJson = [];
 let indiceJson = [];
+let digestoJson = []; // *** MODIFICACIÓN PARA DIGESTO: Nueva variable para el Digesto ***
 // Variable 'parrafosDelDigesto' eliminada.
 
 // Objeto 'diccionarioLatin' eliminado.
@@ -82,6 +83,34 @@ function getContextoRelevante(termino) {
     return encontrado ? encontrado.definicion : '';
 }
 
+// *** MODIFICACIÓN PARA DIGESTO: Función de búsqueda en el Digesto ***
+const buscarDigesto = (term) => {
+    if (!term || !digestoJson.length) {
+        return [];
+    }
+
+    const termLower = term.toLowerCase().trim();
+    const matches = [];
+    const maxMatches = 3;
+
+    for (const entry of digestoJson) {
+        // Buscamos en el texto en español para encontrar coincidencias con el término del usuario
+        if (entry.texto_espanol && entry.texto_espanol.toLowerCase().includes(termLower)) {
+            matches.push({
+                cita: entry.cita,
+                latin: entry.texto_latin.trim(),
+                espanol_original: entry.texto_espanol.trim()
+            });
+            if (matches.length >= maxMatches) {
+                break; // Máximo 3 coincidencias
+            }
+        }
+    }
+    return matches;
+};
+// -----------------------------------------------------------------
+
+
 // --- ENDPOINTS DE LA API ---
 
 app.post('/api/consulta', async (req, res) => {
@@ -95,15 +124,44 @@ app.post('/api/consulta', async (req, res) => {
             : getContextoRelevante(termino);
 
         let promptFinalParaIA;
+        
+        // **Lógica del Digesto se aplica solo a la consulta teórica (el 'else' final)**
+        let digestoPrompt = "";
+        let coincidenciasDigesto = [];
+
         if (currentCaseText) {
-             // Lógica para RESOLVER el caso
+             // Lógica para RESOLVER el caso (SIN CAMBIOS)
              promptFinalParaIA = `Rol: Juez romano. Tarea: Resolver el caso "${currentCaseText}" aplicando principios del derecho romano. Instrucciones: Solución legal, clara y concisa. Basa tu solución en este contexto si es relevante: "${contextoFinal}".`;
         } else if (promptOriginal.includes("generar caso")) {
-            // Lógica para CREAR el caso (CORREGIDO)
+            // Lógica para CREAR el caso (SIN CAMBIOS)
             promptFinalParaIA = `Rol: Profesor de derecho romano. Tarea: Crear un caso práctico (máx 3 frases) sobre "${termino}". Reglas: Nombres romanos. Terminar con preguntas legales. Sin explicaciones ni soluciones. Basar lógica en: "${contextoFinal}".`;
         } else {
-            // Lógica para CONSULTA teórica (UlpianoIA)
-            promptFinalParaIA = `Rol: Jurista Ulpiano. Tarea: Responder a la pregunta sobre "${termino}" (máx 2 párrafos). Contexto principal: "${contextoFinal}". No lo contradigas. Si está vacío, usa tu conocimiento general.`;
+            // Lógica para CONSULTA teórica (UlpianoIA) - MODIFICADA
+
+            // *** MODIFICACIÓN PARA DIGESTO: Búsqueda y preparación del prompt ***
+            coincidenciasDigesto = buscarDigesto(termino);
+            
+            if (coincidenciasDigesto.length > 0) {
+                digestoPrompt = "\n\n--- FUENTE ADICIONAL: DIGESTO DE JUSTINIANO ---\n" +
+                                "He encontrado las siguientes citas del Digesto relacionadas con la consulta. Tu tarea es:\n" +
+                                "1. Seleccionar la **cita más relevante** entre ellas.\n" +
+                                "2. Realizar una **traducción al español profesional y mejorada** del texto latino (la traducción que acompaño es de baja calidad y no sirve).\n" +
+                                "3. Incluir la cita completa (referencia, latín y tu traducción profesional) en la respuesta final, **destacándola** con el formato `# APUNTE DE ULPIANOIA: IUS ROMANUM #` antes de la conclusión. **IGNORA la traducción original pobre**.\n\n";
+                
+                coincidenciasDigesto.forEach((match, index) => {
+                    digestoPrompt += `--- Cita ${index + 1} (${match.cita}) ---\n`;
+                    digestoPrompt += `TEXTO LATÍN: "${match.latin}"\n`;
+                    digestoPrompt += `TRADUCCIÓN ORIGINAL POBRE (IGNORAR): "${match.espanol_original}"\n\n`;
+                });
+                
+                // Se combinan las instrucciones originales con las nuevas del Digesto
+                promptFinalParaIA = `Rol: Jurista Ulpiano. Tarea: Responder a la pregunta sobre "${termino}" (máx 2 párrafos) y aplicar la cita del Digesto (ver abajo). Contexto principal: "${contextoFinal}". No lo contradigas. Si está vacío, usa tu conocimiento general. **INSTRUCCIONES ADICIONALES DEL DIGESTO AL FINAL**: \n\n${digestoPrompt}`;
+
+            } else {
+                // Lógica original si no hay Digesto
+                promptFinalParaIA = `Rol: Jurista Ulpiano. Tarea: Responder a la pregunta sobre "${termino}" (máx 2 párrafos). Contexto principal: "${contextoFinal}". No lo contradigas. Si está vacío, usa tu conocimiento general.`;
+            }
+            // -------------------------------------------------------------------
         }
 
         const payload = { contents: [{ parts: [{ text: promptFinalParaIA }] }], safetySettings };
@@ -169,6 +227,12 @@ const startServer = async () => {
         const indiceData = await fs.readFile('indice.json', 'utf-8');
         indiceJson = JSON.parse(indiceData);
         console.log(`✓ Índice JSON cargado: ${indiceJson.length} temas.`);
+
+        // *** MODIFICACIÓN PARA DIGESTO: Carga del archivo de Digesto ***
+        const digestoData = await fs.readFile('digesto_traducido_final.json', 'utf-8');
+        digestoJson = JSON.parse(digestoData);
+        console.log(`✓ Digesto JSON cargado: ${digestoJson.length} citas.`);
+        // -------------------------------------------------------------------
 
         // Se ha eliminado la carga del archivo 'digest.txt'.
         

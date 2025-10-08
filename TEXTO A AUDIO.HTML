@@ -1,0 +1,275 @@
+!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen en Audio: El Evangelio de Gayo</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos personalizados para la estética y la adaptabilidad */
+        body {
+            background-color: #f7f9fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+        /* Animación de carga para el botón */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            width: 1.5rem;
+            height: 1.5rem;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+    </style>
+</head>
+<body class="font-sans">
+
+    <div class="container bg-white shadow-2xl rounded-xl p-8 md:p-12">
+        
+        <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
+            Resumen en Audio de "TÍTULO"
+        </h1>
+        <p class="text-lg text-indigo-600 mb-8 border-b pb-4">
+            Generación de audio de alta calidad (TTS) usando Gemini.
+        </p>
+
+        <!-- Área de Controles -->
+        <div class="space-y-4 mb-8">
+            <button id="tts-button" 
+                    class="w-full flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out disabled:opacity-50"
+                    onclick="generateAudio()">
+                <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.26a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div id="loading-spinner" class="hidden spinner mr-3"></div>
+                <span id="button-text">Escuchar Resumen (Máx 5 min)</span>
+            </button>
+            <audio id="audio-player" controls class="w-full rounded-lg shadow-inner"></audio>
+            <p id="status-message" class="text-sm text-center text-gray-500 hidden"></p>
+        </div>
+
+        <!-- Área del Resumen (Texto Base) -->
+        <h2 class="text-2xl font-bold text-gray-800 mb-3">Texto del Resumen:</h2>
+        <div id="summary-text" class="prose max-w-none p-4 bg-gray-50 rounded-lg shadow-inner text-gray-700">
+            <p>ESTO ES TEXTO
+            <h3 class="font-semibold text-xl mt-4 mb-2">esto es un título</h3>
+            <p>ESTO ES TEXTO</p>
+                  </div>
+
+    </div>
+
+    <script>
+        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent";
+        const apiKey = ""; // La clave se proporcionará en el entorno de Canvas
+        const textToSpeak = document.getElementById('summary-text').innerText;
+        
+        const audioPlayer = document.getElementById('audio-player');
+        const ttsButton = document.getElementById('tts-button');
+        const buttonText = document.getElementById('button-text');
+        const playIcon = document.getElementById('play-icon');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const statusMessage = document.getElementById('status-message');
+
+        // Función auxiliar para convertir base64 a ArrayBuffer
+        function base64ToArrayBuffer(base64) {
+            const binary_string = window.atob(base64);
+            const len = binary_string.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binary_string.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        // Función auxiliar para convertir PCM a WAV (necesario para el navegador)
+        function pcmToWav(pcm16, sampleRate) {
+            const numChannels = 1;
+            const bitsPerSample = 16;
+            const byteRate = sampleRate * numChannels * (bitsPerSample / 8);
+            const blockAlign = numChannels * (bitsPerSample / 8);
+
+            // Tamaño de los datos PCM en bytes
+            const dataSize = pcm16.byteLength;
+            // Tamaño total del archivo WAV, menos el chunk ID y el tamaño del archivo
+            const fileSize = dataSize + 44 - 8;
+
+            const buffer = new ArrayBuffer(dataSize + 44);
+            const view = new DataView(buffer);
+            let offset = 0;
+
+            // Escribe una cadena en el DataView
+            function writeString(view, offset, str) {
+                for (let i = 0; i < str.length; i++) {
+                    view.setUint8(offset + i, str.charCodeAt(i));
+                }
+            }
+
+            // Chunk RIFF
+            writeString(view, offset, 'RIFF'); offset += 4;
+            view.setUint32(offset, fileSize, true); offset += 4;
+            writeString(view, offset, 'WAVE'); offset += 4;
+
+            // Chunk FMT
+            writeString(view, offset, 'fmt '); offset += 4;
+            view.setUint32(offset, 16, true); offset += 4; // Sub-chunk size (16 for PCM)
+            view.setUint16(offset, 1, true); offset += 2;  // Audio format (1 for PCM)
+            view.setUint16(offset, numChannels, true); offset += 2;
+            view.setUint32(offset, sampleRate, true); offset += 4;
+            view.setUint32(offset, byteRate, true); offset += 4;
+            view.setUint16(offset, blockAlign, true); offset += 2;
+            view.setUint16(offset, bitsPerSample, true); offset += 2;
+
+            // Chunk DATA
+            writeString(view, offset, 'data'); offset += 4;
+            view.setUint32(offset, dataSize, true); offset += 4;
+
+            // Escribe los datos PCM
+            const dataView = new DataView(pcm16.buffer);
+            for (let i = 0; i < pcm16.length; i++) {
+                view.setInt16(offset, dataView.getInt16(i * 2, true), true); // Escribir Int16 con little-endian
+                offset += 2;
+            }
+
+            return new Blob([view], { type: 'audio/wav' });
+        }
+
+
+        // Función para generar el audio
+        async function generateAudio() {
+            // Deshabilitar botón y mostrar spinner
+            ttsButton.disabled = true;
+            playIcon.classList.add('hidden');
+            loadingSpinner.classList.remove('hidden');
+            buttonText.textContent = 'Generando Audio...';
+            statusMessage.textContent = 'Solicitando al modelo TTS. Esto puede tardar unos segundos.';
+            statusMessage.classList.remove('hidden');
+            audioPlayer.removeAttribute('src');
+
+            const payload = {
+                contents: [{
+                    parts: [{ text: `Lee el siguiente texto con un tono informativo y amigable en español de España: ${textToSpeak}` }]
+                }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                        voiceConfig: {
+                            // Usamos una voz adecuada para la lectura de historias informativas
+                            prebuiltVoiceConfig: { voiceName: "Charon" }
+                        }
+                    }
+                },
+                model: "gemini-2.5-flash-preview-tts"
+            };
+
+            const url = `${API_URL}?key=${apiKey}`;
+            let retries = 0;
+            const maxRetries = 5;
+
+            while (retries < maxRetries) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 429) {
+                        retries++;
+                        const delay = Math.pow(2, retries) * 1000;
+                        statusMessage.textContent = `Error de tasa límite (429). Reintentando en ${delay / 1000} segundos...`;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue;
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(`Error HTTP: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    const part = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData && p.inlineData.mimeType.startsWith("audio/"));
+                    const audioData = part?.inlineData?.data;
+                    const mimeType = part?.inlineData?.mimeType;
+
+                    if (audioData && mimeType && mimeType.startsWith("audio/L16")) {
+                        // 1. Extraer la tasa de muestreo del mimeType
+                        const sampleRateMatch = mimeType.match(/rate=(\d+)/);
+                        const sampleRate = sampleRateMatch ? parseInt(sampleRateMatch[1], 10) : 16000; // Asumir 16000 si no se encuentra
+
+                        // 2. Convertir base64 a ArrayBuffer (PCM data)
+                        const pcmData = base64ToArrayBuffer(audioData);
+                        const pcm16 = new Int16Array(pcmData);
+
+                        // 3. Convertir PCM a Blob WAV
+                        const wavBlob = pcmToWav(pcm16, sampleRate);
+                        const audioUrl = URL.createObjectURL(wavBlob);
+                        
+                        // 4. Cargar y reproducir
+                        audioPlayer.src = audioUrl;
+                        audioPlayer.play();
+                        statusMessage.textContent = '¡Audio cargado y reproduciéndose!';
+                        break; // Salir del bucle de reintento
+                    } else {
+                        throw new Error("Respuesta de audio inválida o incompleta.");
+                    }
+                } catch (error) {
+                    console.error('Error al generar audio:', error);
+                    statusMessage.textContent = `Error al generar audio: ${error.message}. Intente de nuevo.`;
+                    break; // Salir del bucle en caso de error no recuperable
+                }
+            }
+            
+            // Habilitar botón y ocultar spinner
+            ttsButton.disabled = false;
+            loadingSpinner.classList.add('hidden');
+            playIcon.classList.remove('hidden');
+            buttonText.textContent = 'Escuchar Resumen (Máx 5 min)';
+        }
+
+        // Asegurar que el reproductor no muestre la URL si no hay fuente
+        window.onload = () => {
+             audioPlayer.removeAttribute('src');
+             // Inicializar la funcionalidad del botón de pausa/reproducción
+             audioPlayer.addEventListener('play', () => {
+                playIcon.classList.add('hidden');
+                buttonText.textContent = 'Reproduciendo...';
+            });
+
+            audioPlayer.addEventListener('pause', () => {
+                playIcon.classList.remove('hidden');
+                buttonText.textContent = 'Escuchar Resumen (Máx 5 min)';
+            });
+
+            audioPlayer.addEventListener('ended', () => {
+                playIcon.classList.remove('hidden');
+                buttonText.textContent = 'Reproducir de Nuevo';
+            });
+        };
+    </script>
+</body>
+</html>
