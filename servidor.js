@@ -58,10 +58,10 @@ async function callGeminiWithRetries(payload) {
 
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
         try {
-            // Aumentar el timeout de axios para evitar que corte la llamada antes que el servidor
+            // *** TIMEOUT AUMENTADO A 4 MINUTOS 50 SEGUNDOS ***
             const geminiResponse = await axios.post(url, payload, { 
                 headers: { 'Content-Type': 'application/json' },
-                timeout: 55000 // 55 segundos. Un poco menos que el timeout del servidor.
+                timeout: 290000 
             }); 
 
             if (geminiResponse.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
@@ -238,10 +238,10 @@ const startServer = async () => {
             console.log(`🚀 Servidor de Derecho Romano escuchando en http://localhost:${port}`);
         });
         
-        // *** CONFIGURACIÓN AÑADIDA V15.12 ***
-        // Aumentar el timeout del servidor a 60 segundos (60000 ms)
-        server.timeout = 60000; 
-        console.log("⏱️ Server Timeout ajustado a 60 segundos."); 
+        // *** CONFIGURACIÓN AÑADIDA V15.13: Timeout máximo para la aplicación ***
+        // Aumentar el timeout del servidor a 300 segundos (5 minutos)
+        server.timeout = 300000; 
+        console.log("⏱️ Server Timeout ajustado a 300 segundos (5 minutos)."); 
 
     } catch (error) {
         console.error("✗ Error fatal durante el arranque del servidor:", error);
@@ -249,5 +249,5 @@ const startServer = async () => {
     }
 };
 
-console.log("--- [OK] Ejecutando servidor.js v15.12 (Estabilidad Mejorada: Timeout 60s) ---");
+console.log("--- [OK] Ejecutando servidor.js v15.13 (Estabilidad Máxima: Timeout 5m) ---");
 startServer();
