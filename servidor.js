@@ -35,6 +35,10 @@ function handleApiError(error, res) {
     if (error.response?.data?.error?.code === 503) {
         return res.status(503).json({ error: 'MODEL_OVERLOADED', message: 'Ulpiano parece estar desbordado. Por favor, dale un minuto y vuelve a intentarlo.' });
     }
+    // Mensaje de timeout modificado para que refleje la causa más probable
+    if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+        return res.status(504).json({ error: 'REQUEST_TIMEOUT', message: 'La solicitud ha tardado demasiado tiempo. El servidor ha abortado la conexión. Por favor, inténtalo de nuevo.' });
+    }
     res.status(500).json({ error: 'INTERNAL_SERVER_ERROR', message: 'Ha ocurrido un error en el servidor o al comunicarse con la IA.' });
 }
 
@@ -54,7 +58,12 @@ async function callGeminiWithRetries(payload) {
 
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
         try {
-            const geminiResponse = await axios.post(url, payload, { headers: { 'Content-Type': 'application/json' } });
+            // Aumentar el timeout de axios para evitar que corte la llamada antes que el servidor
+            const geminiResponse = await axios.post(url, payload, { 
+                headers: { 'Content-Type': 'application/json' },
+                timeout: 55000 // 55 segundos. Un poco menos que el timeout del servidor.
+            }); 
+
             if (geminiResponse.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
                 return geminiResponse.data.candidates[0].content.parts[0].text;
             }
@@ -225,9 +234,14 @@ const startServer = async () => {
         digestoJson = JSON.parse(digestoData);
         console.log(`✓ Digesto JSON cargado: ${digestoJson.length} citas.`);
         
-        app.listen(port, () => {
+        const server = app.listen(port, () => {
             console.log(`🚀 Servidor de Derecho Romano escuchando en http://localhost:${port}`);
         });
+        
+        // *** CONFIGURACIÓN AÑADIDA V15.12 ***
+        // Aumentar el timeout del servidor a 60 segundos (60000 ms)
+        server.timeout = 60000; 
+        console.log("⏱️ Server Timeout ajustado a 60 segundos."); 
 
     } catch (error) {
         console.error("✗ Error fatal durante el arranque del servidor:", error);
@@ -235,5 +249,5 @@ const startServer = async () => {
     }
 };
 
-console.log("--- [OK] Ejecutando servidor.js v15.11 (Priorización de Citas Latín y Restricción de Formato) ---");
+console.log("--- [OK] Ejecutando servidor.js v15.12 (Estabilidad Mejorada: Timeout 60s) ---");
 startServer();
