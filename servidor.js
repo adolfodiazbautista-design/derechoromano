@@ -14,8 +14,6 @@ let manualJson = [];
 let indiceJson = [];
 let digestoJson = []; 
 
-// *** OBJETO DE CITAS PRIORITARIAS ELIMINADO ***
-
 // --- CONFIGURACIÓN DE MIDDLEWARE Y SEGURIDAD ---
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
@@ -82,7 +80,6 @@ function getContextoRelevante(termino) {
     return encontrado ? encontrado.definicion : '';
 }
 
-// *** RESTAURACIÓN Y MEJORA: Búsqueda de 3 coincidencias ***
 const buscarDigesto = (term) => {
     if (!term || !digestoJson.length) {
         return [];
@@ -90,10 +87,9 @@ const buscarDigesto = (term) => {
 
     const termLower = term.toLowerCase().trim();
     const matches = [];
-    const maxMatches = 3; // Buscamos hasta 3 coincidencias
+    const maxMatches = 3; 
 
     for (const entry of digestoJson) {
-        // La búsqueda simple por texto en español debe ser suficiente
         if (entry.texto_espanol && entry.texto_espanol.toLowerCase().includes(termLower)) {
             matches.push({
                 cita: entry.cita,
@@ -107,7 +103,6 @@ const buscarDigesto = (term) => {
     }
     return matches;
 };
-// ----------------------------------------------------
 
 
 // --- ENDPOINTS DE LA API ---
@@ -133,10 +128,10 @@ app.post('/api/consulta', async (req, res) => {
             coincidenciasDigesto = buscarDigesto(termino);
             
             if (coincidenciasDigesto.length > 0) {
-                // *** INSTRUCCIONES ESTRICTAS PARA LA PRIORIZACIÓN DE DEFINICIONES ***
+                // *** INSTRUCCIONES MEJORADAS (V15.11) PARA PRIORIZAR CITA Y FORMATO ***
                 digestoPrompt = "\n\n--- FUENTE ADICIONAL: DIGESTO DE JUSTINIANO ---\n" +
                                 "He encontrado las siguientes citas del Digesto. Tu tarea es:\n" +
-                                "1. **SELECCIONAR LA ÚNICA CITA MÁS RELEVANTE.** DEBES **PRIORIZAR DE FORMA EXTREMA** las **DEFINICIONES JURÍDICAS FUNDAMENTALES** y los textos que expliquen directamente el concepto de **\"${termino}\"**. **EVITA A TODA COSTA** casos prácticos, referencias tangenciales o menciones casuales.\n" +
+                                "1. **SELECCIONAR LA ÚNICA CITA MÁS RELEVANTE Y ACADÉMICA.** Debes **PRIORIZAR DE FORMA EXTREMA** la cita cuyo texto latín se parezca más a una **DEFINICIÓN JURÍDICA FUNDAMENTAL** del concepto (ej: una cita con las palabras 'ius est', 'salva rerum substantia', 'actio est'). **ADVERTENCIA:** Si seleccionas una cita de un caso práctico, interdicto, o que solo menciona el término tangencialmente, el resultado será considerado erróneo. Prioriza la que contenga la DEFINICIÓN CLÁSICA.\n" +
                                 "2. Realizar una **traducción al español profesional y mejorada** del texto latino de la cita seleccionada (la traducción que acompaño es de baja calidad y no sirve).\n" +
                                 "3. Incluir la cita seleccionada (referencia, latín y tu traducción profesional) en la respuesta final, **destacándola** con el formato `# APUNTE DE ULPIANOIA: IUS ROMANUM #` justo antes de tu conclusión. **IGNORA las citas no seleccionadas**.\n\n";
                 
@@ -147,14 +142,16 @@ app.post('/api/consulta', async (req, res) => {
                 });
 
                 promptFinalParaIA = `Rol: Jurista Ulpiano (experto didáctico en Derecho Romano).
-Tarea: Explica "${termino}" de forma breve, concisa y didáctica (máx. 2 párrafos) para un estudiante.
+Instrucción de Formato: **Responde con un máximo de DOS PÁRRAFOS cortos.** No uses saludos, ni metáforas extensas. Ve directo al concepto.
+Tarea: Explica "${termino}" de forma **breve, concisa y didáctica** para un estudiante.
 Contexto de Referencia (Manual): "${contextoFinal}"
 INSTRUCCIONES ADICIONALES DEL DIGESTO AL FINAL: \n\n${digestoPrompt}`.trim();
 
             } else {
                 promptFinalParaIA = `
 Rol: Jurista Ulpiano (experto didáctico en Derecho Romano).
-Tarea: Explica "${termino}" de forma **breve, concisa y didáctica** (máx. 2 párrafos) para un estudiante.
+Instrucción de Formato: **Responde con un máximo de DOS PÁRRAFOS cortos.** No uses saludos, ni metáforas extensas. Ve directo al concepto.
+Tarea: Explica "${termino}" de forma **breve, concisa y didáctica** para un estudiante.
 Contexto de Referencia (Manual): "${contextoFinal}". Si está vacío, usa tu conocimiento general.
 `.trim();
             }
@@ -238,5 +235,5 @@ const startServer = async () => {
     }
 };
 
-console.log("--- [OK] Ejecutando servidor.js v15.9 (Relevancia Mejorada para 3 Fragmentos) ---");
+console.log("--- [OK] Ejecutando servidor.js v15.11 (Priorización de Citas Latín y Restricción de Formato) ---");
 startServer();
