@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs').promises; // Usar la versión asíncrona de fs
+const fs = require('fs').promises; 
 const axios = require('axios');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -12,7 +12,7 @@ const port = process.env.PORT || 3000;
 // Variables globales para almacenar los datos
 let manualJson = [];
 let indiceJson = [];
-let digestoJson = []; // Variable para el contenido del Digesto
+let digestoJson = []; 
 
 // --- CONFIGURACIÓN DE MIDDLEWARE Y SEGURIDAD ---
 app.use(cors());
@@ -30,15 +30,17 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 // --- FUNCIONES DE UTILIDAD Y LÓGICA DE API ---
+
+// *** RESTAURACIÓN: handleApiError ahora toma 'res' y envía la respuesta directamente ***
 function handleApiError(error, res) {
     console.error("Error definitivo desde la API de Gemini:", error.response ? error.response.data : error.message);
     if (error.response?.data?.error?.code === 503) {
-        // Devolvemos el error específico del modelo
         return res.status(503).json({ error: 'MODEL_OVERLOADED', message: 'Ulpiano parece estar desbordado. Por favor, dale un minuto y vuelve a intentarlo.' });
     }
-    // Devolvemos un 500 para errores internos o cualquier otro fallo.
+    // Devolvemos el error en la clave 'error' para que el cliente lo pueda manejar, si no es 503
     res.status(500).json({ error: 'INTERNAL_SERVER_ERROR', message: 'Ha ocurrido un error en el servidor o al comunicarse con la IA.' });
 }
+// -------------------------------------------------------------------------------------
 
 const safetySettings = [
     { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
@@ -82,7 +84,7 @@ function getContextoRelevante(termino) {
     return encontrado ? encontrado.definicion : '';
 }
 
-// *** MODIFICACIÓN DE RENDIMIENTO: SOLO BUSCA LA PRIMERA COINCIDENCIA ***
+// *** Mantenemos la optimización de buscarDigesto (solo 1 coincidencia) ***
 const buscarDigesto = (term) => {
     if (!term || !digestoJson.length) {
         return [];
@@ -92,14 +94,12 @@ const buscarDigesto = (term) => {
     const matches = [];
 
     for (const entry of digestoJson) {
-        // Buscamos en el texto en español para encontrar coincidencias con el término del usuario
         if (entry.texto_espanol && entry.texto_espanol.toLowerCase().includes(termLower)) {
             matches.push({
                 cita: entry.cita,
                 latin: entry.texto_latin.trim(),
                 espanol_original: entry.texto_espanol.trim()
             });
-            // Detenerse después de la primera coincidencia (la más relevante encontrada por el índice)
             if (matches.length >= 1) { 
                 break; 
             }
@@ -123,49 +123,51 @@ app.post('/api/consulta', async (req, res) => {
             : getContextoRelevante(termino);
 
         let promptFinalParaIA;
-        
-        let digestoPrompt = "";
         let coincidenciasDigesto = [];
 
         if (currentCaseText) {
-             // Lógica para RESOLVER el caso (SIN CAMBIOS)
              promptFinalParaIA = `Rol: Juez romano. Tarea: Resolver el caso "${currentCaseText}" aplicando principios del derecho romano. Instrucciones: Solución legal, clara y concisa. Basa tu solución en este contexto si es relevante: "${contextoFinal}".`;
         } else if (promptOriginal.includes("generar caso")) {
-            // Lógica para CREAR el caso (SIN CAMBIOS)
             promptFinalParaIA = `Rol: Profesor de derecho romano. Tarea: Crear un caso práctico (máx 3 frases) sobre "${termino}". Reglas: Nombres romanos. Terminar con preguntas legales. Sin explicaciones ni soluciones. Basar lógica en: "${contextoFinal}".`;
         } else {
-            // Lógica para CONSULTA teórica (UlpianoIA) - MÁXIMA BREVEDAD Y MEJOR SELECCIÓN
-
+            // *** PROMPT MANTENIDO (Brevity, Single Match) ***
             coincidenciasDigesto = buscarDigesto(termino);
             
             if (coincidenciasDigesto.length > 0) {
-                const match = coincidenciasDigesto[0]; // Obtenemos la única coincidencia
+                const match = coincidenciasDigesto[0]; 
 
-                // *** PROMPT AJUSTADO PARA UNA SOLA CITA ***
-                digestoPrompt = "\n\n--- FUENTE ADICIONAL: DIGESTO DE JUSTINIANO ---\n" +
-                                "He encontrado la siguiente cita del Digesto relacionada con la consulta. Tu tarea es:\n" +
-                                "1. Realizar una **traducción al español profesional y mejorada** del texto latino (la traducción que acompaño es de baja calidad y no sirve).\n" +
-                                "2. Incluir la cita completa (referencia, latín y tu traducción profesional) en la respuesta final, **destacándola** con el formato `# APUNTE DE ULPIANOIA: IUS ROMANUM #` justo antes de tu conclusión. **IGNORA la traducción original pobre**.\n\n" +
-                                `--- Cita ${match.cita} ---\n` +
-                                `TEXTO LATÍN: "${match.latin}"\n` +
-                                `TRADUCCIÓN ORIGINAL POBRE (IGNORAR): "${match.espanol_original}"\n\n`;
-                
-                // Prompt para consulta con Digesto: Brevedad reforzada
-                promptFinalParaIA = `Rol: Jurista Ulpiano (experto en Derecho Romano). Tarea: Explica el concepto de "${termino}" de forma **breve y concisa** (máx. 2 párrafos) y **didáctica**, ideal para un estudiante. **DEBES INCORPORAR LA CITA DEL DIGESTO** (ver abajo) con tu traducción. Contexto principal: "${contextoFinal}". No lo contradigas. Si está vacío, usa tu conocimiento general. **INSTRUCCIONES ADICIONALES DEL DIGESTO AL FINAL**: \n\n${digestoPrompt}`;
+                promptFinalParaIA = `
+Rol: Jurista Ulpiano (experto didáctico en Derecho Romano).
+Tarea: Explica "${termino}" de forma breve, concisa y didáctica (máx. 2 párrafos) para un estudiante.
+
+CONTEXTO DE REFERENCIA (Manual): "${contextoFinal}"
+
+--- DATOS DEL DIGESTO ---
+Cita: ${match.cita}
+Texto Latín: "${match.latin}"
+Traducción Pobre (IGNORAR): "${match.espanol_original}"
+
+INSTRUCCIONES CLAVE:
+1. **DEBES INCORPORAR LA CITA COMPLETA** (Latín, Referencia y tu **traducción profesional**) bajo el encabezado **# APUNTE DE ULPIANOIA: IUS ROMANUM #** justo antes de la conclusión.
+2. Usa el CONTEXTO DE REFERENCIA y el Latín para tu explicación.
+`.trim();
 
             } else {
-                // Prompt para consulta sin Digesto: Brevedad reforzada
-                promptFinalParaIA = `Rol: Jurista Ulpiano (experto en Derecho Romano). Tarea: Explica el concepto de "${termino}" de forma **breve y concisa** (máx. 2 párrafos) y **didáctica**, ideal para un estudiante. Contexto principal: "${contextoFinal}". No lo contradigas. Si está vacío, usa tu conocimiento general.`;
+                promptFinalParaIA = `
+Rol: Jurista Ulpiano (experto didáctico en Derecho Romano).
+Tarea: Explica "${termino}" de forma **breve, concisa y didáctica** (máx. 2 párrafos) para un estudiante.
+Contexto de Referencia (Manual): "${contextoFinal}". Si está vacío, usa tu conocimiento general.
+`.trim();
             }
         }
 
         const payload = { contents: [{ parts: [{ text: promptFinalParaIA }] }], safetySettings };
         
-        // La respuesta se devuelve correctamente
         const respuestaIA = await callGeminiWithRetries(payload);
         res.json({ respuesta: respuestaIA }); 
         
     } catch (error) {
+        // *** RESTAURACIÓN DEL MANEJO DE ERRORES ANTIGUO ***
         handleApiError(error, res);
     }
 });
@@ -181,6 +183,7 @@ app.post('/api/derecho-moderno', async (req, res) => {
         const respuestaModerno = await callGeminiWithRetries(payload);
         res.json({ moderno: respuestaModerno });
     } catch (error) {
+        // *** RESTAURACIÓN DEL MANEJO DE ERRORES ANTIGUO ***
         handleApiError(error, res);
     }
 });
@@ -216,7 +219,6 @@ app.post('/api/buscar-pagina', (req, res) => {
 // --- FUNCIÓN DE ARRANQUE DEL SERVIDOR ---
 const startServer = async () => {
     try {
-        // Carga de datos de forma asíncrona
         const manualData = await fs.readFile('manual.json', 'utf-8');
         manualJson = JSON.parse(manualData);
         console.log(`✓ Manual JSON cargado: ${manualJson.length} conceptos.`);
@@ -225,7 +227,6 @@ const startServer = async () => {
         indiceJson = JSON.parse(indiceData);
         console.log(`✓ Índice JSON cargado: ${indiceJson.length} temas.`);
 
-        // Carga del archivo de Digesto
         const digestoData = await fs.readFile('digesto_traducido_final.json', 'utf-8');
         digestoJson = JSON.parse(digestoData);
         console.log(`✓ Digesto JSON cargado: ${digestoJson.length} citas.`);
@@ -240,5 +241,5 @@ const startServer = async () => {
     }
 };
 
-console.log("--- [OK] Ejecutando servidor.js v15.4 (Optimización para Timeout) ---");
+console.log("--- [OK] Ejecutando servidor.js v15.7 (Restauración de Flujo de Error Estable) ---");
 startServer();
