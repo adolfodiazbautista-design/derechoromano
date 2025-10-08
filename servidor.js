@@ -14,6 +14,8 @@ let manualJson = [];
 let indiceJson = [];
 let digestoJson = []; 
 
+// *** OBJETO DE CITAS PRIORITARIAS ELIMINADO ***
+
 // --- CONFIGURACIÓN DE MIDDLEWARE Y SEGURIDAD ---
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
@@ -30,17 +32,13 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 // --- FUNCIONES DE UTILIDAD Y LÓGICA DE API ---
-
-// *** RESTAURACIÓN: handleApiError ahora toma 'res' y envía la respuesta directamente ***
 function handleApiError(error, res) {
     console.error("Error definitivo desde la API de Gemini:", error.response ? error.response.data : error.message);
     if (error.response?.data?.error?.code === 503) {
         return res.status(503).json({ error: 'MODEL_OVERLOADED', message: 'Ulpiano parece estar desbordado. Por favor, dale un minuto y vuelve a intentarlo.' });
     }
-    // Devolvemos el error en la clave 'error' para que el cliente lo pueda manejar, si no es 503
     res.status(500).json({ error: 'INTERNAL_SERVER_ERROR', message: 'Ha ocurrido un error en el servidor o al comunicarse con la IA.' });
 }
-// -------------------------------------------------------------------------------------
 
 const safetySettings = [
     { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
@@ -84,7 +82,7 @@ function getContextoRelevante(termino) {
     return encontrado ? encontrado.definicion : '';
 }
 
-// *** Mantenemos la optimización de buscarDigesto (solo 1 coincidencia) ***
+// *** RESTAURACIÓN Y MEJORA: Búsqueda de 3 coincidencias ***
 const buscarDigesto = (term) => {
     if (!term || !digestoJson.length) {
         return [];
@@ -92,22 +90,24 @@ const buscarDigesto = (term) => {
 
     const termLower = term.toLowerCase().trim();
     const matches = [];
+    const maxMatches = 3; // Buscamos hasta 3 coincidencias
 
     for (const entry of digestoJson) {
+        // La búsqueda simple por texto en español debe ser suficiente
         if (entry.texto_espanol && entry.texto_espanol.toLowerCase().includes(termLower)) {
             matches.push({
                 cita: entry.cita,
                 latin: entry.texto_latin.trim(),
                 espanol_original: entry.texto_espanol.trim()
             });
-            if (matches.length >= 1) { 
+            if (matches.length >= maxMatches) { 
                 break; 
             }
         }
     }
     return matches;
 };
-// ----------------------------------------------------------------------
+// ----------------------------------------------------
 
 
 // --- ENDPOINTS DE LA API ---
@@ -130,27 +130,26 @@ app.post('/api/consulta', async (req, res) => {
         } else if (promptOriginal.includes("generar caso")) {
             promptFinalParaIA = `Rol: Profesor de derecho romano. Tarea: Crear un caso práctico (máx 3 frases) sobre "${termino}". Reglas: Nombres romanos. Terminar con preguntas legales. Sin explicaciones ni soluciones. Basar lógica en: "${contextoFinal}".`;
         } else {
-            // *** PROMPT MANTENIDO (Brevity, Single Match) ***
             coincidenciasDigesto = buscarDigesto(termino);
             
             if (coincidenciasDigesto.length > 0) {
-                const match = coincidenciasDigesto[0]; 
+                // *** INSTRUCCIONES ESTRICTAS PARA LA PRIORIZACIÓN DE DEFINICIONES ***
+                digestoPrompt = "\n\n--- FUENTE ADICIONAL: DIGESTO DE JUSTINIANO ---\n" +
+                                "He encontrado las siguientes citas del Digesto. Tu tarea es:\n" +
+                                "1. **SELECCIONAR LA ÚNICA CITA MÁS RELEVANTE.** DEBES **PRIORIZAR DE FORMA EXTREMA** las **DEFINICIONES JURÍDICAS FUNDAMENTALES** y los textos que expliquen directamente el concepto de **\"${termino}\"**. **EVITA A TODA COSTA** casos prácticos, referencias tangenciales o menciones casuales.\n" +
+                                "2. Realizar una **traducción al español profesional y mejorada** del texto latino de la cita seleccionada (la traducción que acompaño es de baja calidad y no sirve).\n" +
+                                "3. Incluir la cita seleccionada (referencia, latín y tu traducción profesional) en la respuesta final, **destacándola** con el formato `# APUNTE DE ULPIANOIA: IUS ROMANUM #` justo antes de tu conclusión. **IGNORA las citas no seleccionadas**.\n\n";
+                
+                coincidenciasDigesto.forEach((match, index) => {
+                    digestoPrompt += `--- Cita ${index + 1} (${match.cita}) ---\n`;
+                    digestoPrompt += `TEXTO LATÍN: "${match.latin}"\n`;
+                    digestoPrompt += `TRADUCCIÓN ORIGINAL POBRE (IGNORAR): "${match.espanol_original}"\n\n`;
+                });
 
-                promptFinalParaIA = `
-Rol: Jurista Ulpiano (experto didáctico en Derecho Romano).
+                promptFinalParaIA = `Rol: Jurista Ulpiano (experto didáctico en Derecho Romano).
 Tarea: Explica "${termino}" de forma breve, concisa y didáctica (máx. 2 párrafos) para un estudiante.
-
-CONTEXTO DE REFERENCIA (Manual): "${contextoFinal}"
-
---- DATOS DEL DIGESTO ---
-Cita: ${match.cita}
-Texto Latín: "${match.latin}"
-Traducción Pobre (IGNORAR): "${match.espanol_original}"
-
-INSTRUCCIONES CLAVE:
-1. **DEBES INCORPORAR LA CITA COMPLETA** (Latín, Referencia y tu **traducción profesional**) bajo el encabezado **# APUNTE DE ULPIANOIA: IUS ROMANUM #** justo antes de la conclusión.
-2. Usa el CONTEXTO DE REFERENCIA y el Latín para tu explicación.
-`.trim();
+Contexto de Referencia (Manual): "${contextoFinal}"
+INSTRUCCIONES ADICIONALES DEL DIGESTO AL FINAL: \n\n${digestoPrompt}`.trim();
 
             } else {
                 promptFinalParaIA = `
@@ -167,7 +166,6 @@ Contexto de Referencia (Manual): "${contextoFinal}". Si está vacío, usa tu con
         res.json({ respuesta: respuestaIA }); 
         
     } catch (error) {
-        // *** RESTAURACIÓN DEL MANEJO DE ERRORES ANTIGUO ***
         handleApiError(error, res);
     }
 });
@@ -183,7 +181,6 @@ app.post('/api/derecho-moderno', async (req, res) => {
         const respuestaModerno = await callGeminiWithRetries(payload);
         res.json({ moderno: respuestaModerno });
     } catch (error) {
-        // *** RESTAURACIÓN DEL MANEJO DE ERRORES ANTIGUO ***
         handleApiError(error, res);
     }
 });
@@ -241,5 +238,5 @@ const startServer = async () => {
     }
 };
 
-console.log("--- [OK] Ejecutando servidor.js v15.7 (Restauración de Flujo de Error Estable) ---");
+console.log("--- [OK] Ejecutando servidor.js v15.9 (Relevancia Mejorada para 3 Fragmentos) ---");
 startServer();
