@@ -58,7 +58,7 @@ async function callGeminiWithRetries(payload) {
 
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
         try {
-            // *** TIMEOUT AUMENTADO A 4 MINUTOS 50 SEGUNDOS ***
+            // TIMEOUT AUMENTADO A 4 MINUTOS 50 SEGUNDOS
             const geminiResponse = await axios.post(url, payload, { 
                 headers: { 'Content-Type': 'application/json' },
                 timeout: 290000 
@@ -122,7 +122,9 @@ app.post('/api/consulta', async (req, res) => {
         if (!promptOriginal) return res.status(400).json({ error: 'No se ha proporcionado un prompt.' });
 
         const terminoNormalizado = termino ? termino.toLowerCase().trim() : '';
-        const contextoFinal = terminoNormalizado.includes('posesion')
+        
+        // *** EXCEPCIÓN DE POSESIÓN Y INTERDICTOS (V15.14) ***
+        const contextoFinal = terminoNormalizado.includes('posesion') || terminoNormalizado.includes('interdictos')
             ? `En Roma había dos clases de posesión: natural (solo corpus) y civil (corpus y animus domini) AMBAS FORMAS DE POSESIÓN TENÍAN PROTECCIÓN INTERDICTAL. Había una serie de casos, llamados "detentadores" (por ejemplo los arrendatarios) que, por razones desconocidas, no tenían protección de los interdictos.`
             : getContextoRelevante(termino);
 
@@ -238,8 +240,7 @@ const startServer = async () => {
             console.log(`🚀 Servidor de Derecho Romano escuchando en http://localhost:${port}`);
         });
         
-        // *** CONFIGURACIÓN AÑADIDA V15.13: Timeout máximo para la aplicación ***
-        // Aumentar el timeout del servidor a 300 segundos (5 minutos)
+        // CONFIGURACIÓN V15.13: Timeout máximo para la aplicación (5 minutos)
         server.timeout = 300000; 
         console.log("⏱️ Server Timeout ajustado a 300 segundos (5 minutos)."); 
 
@@ -249,5 +250,5 @@ const startServer = async () => {
     }
 };
 
-console.log("--- [OK] Ejecutando servidor.js v15.13 (Estabilidad Máxima: Timeout 5m) ---");
+console.log("--- [OK] Ejecutando servidor.js v15.14 (Regla de Posesión y Interdictos Asegurada) ---");
 startServer();
