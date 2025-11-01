@@ -83,6 +83,12 @@ async function callGeminiWithRetries(payload) {
 function getContextoRelevante(termino) {
     if (!termino) return '';
     const terminoBusqueda = termino.toLowerCase().trim();
+    
+    // *** CAMBIO: Se mantiene la excepción de POSESIÓN (V15.14) ***
+    if (terminoBusqueda.includes('posesion') || terminoBusqueda.includes('interdictos')) {
+        return `En Roma había dos clases de posesión: natural (solo corpus) y civil (corpus y animus domini) AMBAS FORMAS DE POSESIÓN TENÍAN PROTECCIÓN INTERDICTAL. Había una serie de casos, llamados "detentadores" (por ejemplo los arrendatarios) que, por razones desconocidas, no tenían protección de los interdictos.`;
+    }
+
     const encontrado = manualJson.find(item => item.termino.toLowerCase() === terminoBusqueda) ||
                      manualJson.find(item => item.sinonimos?.some(s => s.toLowerCase() === terminoBusqueda)) ||
                      manualJson.find(item => item.termino.toLowerCase().includes(terminoBusqueda));
@@ -116,56 +122,35 @@ const buscarDigesto = (term) => {
 
 // --- ENDPOINTS DE LA API ---
 
+// *** CAMBIO: Este endpoint ahora solo maneja el Laboratorio de Casos (generar y resolver) ***
 app.post('/api/consulta', async (req, res) => {
     try {
-        const { promptOriginal, termino, currentCaseText } = req.body;
-        if (!promptOriginal) return res.status(400).json({ error: 'No se ha proporcionado un prompt.' });
+        // *** CAMBIO: Se recibe 'tipo' en lugar de 'promptOriginal' ***
+        const { tipo, termino, currentCaseText } = req.body;
+        if (!tipo) return res.status(400).json({ error: 'No se ha proporcionado un tipo de consulta.' });
 
         const terminoNormalizado = termino ? termino.toLowerCase().trim() : '';
         
-        // *** EXCEPCIÓN DE POSESIÓN Y INTERDICTOS (V15.14) ***
-        const contextoFinal = terminoNormalizado.includes('posesion') || terminoNormalizado.includes('interdictos')
-            ? `En Roma había dos clases de posesión: natural (solo corpus) y civil (corpus y animus domini) AMBAS FORMAS DE POSESIÓN TENÍAN PROTECCIÓN INTERDICTAL. Había una serie de casos, llamados "detentadores" (por ejemplo los arrendatarios) que, por razones desconocidas, no tenían protección de los interdictos.`
-            : getContextoRelevante(termino);
+        const contextoFinal = getContextoRelevante(terminoNormalizado);
 
         let promptFinalParaIA;
-        let coincidenciasDigesto = [];
 
-        if (currentCaseText) {
-             promptFinalParaIA = `Rol: Juez romano. Tarea: Resolver el caso "${currentCaseText}" aplicando principios del derecho romano. Instrucciones: Solución legal, clara y concisa. Basa tu solución en este contexto si es relevante: "${contextoFinal}".`;
-        } else if (promptOriginal.includes("generar caso")) {
+        // *** CAMBIO: La lógica se basa en 'tipo' ***
+        if (tipo === 'resolver') {
+            if (!currentCaseText) return res.status(400).json({ error: 'No se proporcionó texto del caso a resolver.' });
+             
+             // *** CAMBIO: Prompt modificado para respuesta CONCISA (petición del usuario) ***
+             promptFinalParaIA = `Rol: Juez romano. Tarea: Resolver el caso "${currentCaseText}" aplicando principios del derecho romano. 
+Instrucciones: **Solución legal MUY BREVE, DIRECTA Y CONCISA (máximo 2-3 frases).** Ve directo a la acción legal, principio o solución. Sin saludos ni explicaciones largas.
+Basa tu solución en este contexto si es relevante: "${contextoFinal}".`;
+
+        } else if (tipo === 'generar') {
+            if (!termino) return res.status(400).json({ error: 'No se proporcionó término para generar el caso.' });
             promptFinalParaIA = `Rol: Profesor de derecho romano. Tarea: Crear un caso práctico (máx 3 frases) sobre "${termino}". Reglas: Nombres romanos. Terminar con preguntas legales. Sin explicaciones ni soluciones. Basar lógica en: "${contextoFinal}".`;
+        
         } else {
-            coincidenciasDigesto = buscarDigesto(termino);
-            
-            if (coincidenciasDigesto.length > 0) {
-                // *** INSTRUCCIONES MEJORADAS (V15.11) PARA PRIORIZAR CITA Y FORMATO ***
-                digestoPrompt = "\n\n--- FUENTE ADICIONAL: DIGESTO DE JUSTINIANO ---\n" +
-                                "He encontrado las siguientes citas del Digesto. Tu tarea es:\n" +
-                                "1. **SELECCIONAR LA ÚNICA CITA MÁS RELEVANTE Y ACADÉMICA.** Debes **PRIORIZAR DE FORMA EXTREMA** la cita cuyo texto latín se parezca más a una **DEFINICIÓN JURÍDICA FUNDAMENTAL** del concepto (ej: una cita con las palabras 'ius est', 'salva rerum substantia', 'actio est'). **ADVERTENCIA:** Si seleccionas una cita de un caso práctico, interdicto, o que solo menciona el término tangencialmente, el resultado será considerado erróneo. Prioriza la que contenga la DEFINICIÓN CLÁSICA.\n" +
-                                "2. Realizar una **traducción al español profesional y mejorada** del texto latino de la cita seleccionada (la traducción que acompaño es de baja calidad y no sirve).\n" +
-                                "3. Incluir la cita seleccionada (referencia, latín y tu traducción profesional) en la respuesta final, **destacándola** con el formato `# APUNTE DE ULPIANOIA: IUS ROMANUM #` justo antes de tu conclusión. **IGNORA las citas no seleccionadas**.\n\n";
-                
-                coincidenciasDigesto.forEach((match, index) => {
-                    digestoPrompt += `--- Cita ${index + 1} (${match.cita}) ---\n`;
-                    digestoPrompt += `TEXTO LATÍN: "${match.latin}"\n`;
-                    digestoPrompt += `TRADUCCIÓN ORIGINAL POBRE (IGNORAR): "${match.espanol_original}"\n\n`;
-                });
-
-                promptFinalParaIA = `Rol: Jurista Ulpiano (experto didáctico en Derecho Romano).
-Instrucción de Formato: **Responde con un máximo de DOS PÁRRAFOS cortos.** No uses saludos, ni metáforas extensas. Ve directo al concepto.
-Tarea: Explica "${termino}" de forma **breve, concisa y didáctica** para un estudiante.
-Contexto de Referencia (Manual): "${contextoFinal}"
-INSTRUCCIONES ADICIONALES DEL DIGESTO AL FINAL: \n\n${digestoPrompt}`.trim();
-
-            } else {
-                promptFinalParaIA = `
-Rol: Jurista Ulpiano (experto didáctico en Derecho Romano).
-Instrucción de Formato: **Responde con un máximo de DOS PÁRRAFOS cortos.** No uses saludos, ni metáforas extensas. Ve directo al concepto.
-Tarea: Explica "${termino}" de forma **breve, concisa y didáctica** para un estudiante.
-Contexto de Referencia (Manual): "${contextoFinal}". Si está vacío, usa tu conocimiento general.
-`.trim();
-            }
+            // Si el 'tipo' no es 'resolver' o 'generar', es un error para este endpoint.
+            return res.status(400).json({ error: 'Tipo de consulta no válido para este endpoint.' });
         }
 
         const payload = { contents: [{ parts: [{ text: promptFinalParaIA }] }], safetySettings };
@@ -179,6 +164,7 @@ Contexto de Referencia (Manual): "${contextoFinal}". Si está vacío, usa tu con
 });
 
 
+// *** CAMBIO: Se mantiene /api/derecho-moderno por si se usa en otro lugar, pero UlpianoIA ya no lo llama. ***
 app.post('/api/derecho-moderno', async (req, res) => {
     try {
         const { termino } = req.body;
@@ -193,33 +179,121 @@ app.post('/api/derecho-moderno', async (req, res) => {
     }
 });
 
+// *** CAMBIO: Lógica de búsqueda extraída a una función reutilizable ***
+function buscarPagina(termino) {
+    if (!termino) return { pagina: null, titulo: null };
+
+    const terminoLower = termino.toLowerCase().trim();
+    let mejorCoincidencia = null;
+    let maxPuntuacion = 0;
+
+    indiceJson.forEach(tema => {
+        let puntuacionActual = 0;
+        if (tema.palabrasClave.some(p => p.toLowerCase() === terminoLower)) puntuacionActual += 10;
+        if (tema.titulo.toLowerCase().includes(terminoLower)) puntuacionActual += 5;
+        if (tema.palabrasClave.some(p => p.toLowerCase().includes(terminoLower))) puntuacionActual += 3;
+
+        if (puntuacionActual > maxPuntuacion) {
+            maxPuntuacion = puntuacionActual;
+            mejorCoincidencia = tema;
+        }
+    });
+
+    return { pagina: mejorCoincidencia?.pagina || null, titulo: mejorCoincidencia?.titulo || null };
+}
+
+// *** CAMBIO: El endpoint /api/buscar-pagina ahora usa la función helper ***
 app.post('/api/buscar-pagina', (req, res) => {
     try {
         const { termino } = req.body;
         if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
 
-        const terminoLower = termino.toLowerCase().trim();
-        let mejorCoincidencia = null;
-        let maxPuntuacion = 0;
+        const result = buscarPagina(termino);
+        res.json(result);
 
-        indiceJson.forEach(tema => {
-            let puntuacionActual = 0;
-            if (tema.palabrasClave.some(p => p.toLowerCase() === terminoLower)) puntuacionActual += 10;
-            if (tema.titulo.toLowerCase().includes(terminoLower)) puntuacionActual += 5;
-            if (tema.palabrasClave.some(p => p.toLowerCase().includes(terminoLower))) puntuacionActual += 3;
-
-            if (puntuacionActual > maxPuntuacion) {
-                maxPuntuacion = puntuacionActual;
-                mejorCoincidencia = tema;
-            }
-        });
-
-        res.json({ pagina: mejorCoincidencia?.pagina || null, titulo: mejorCoincidencia?.titulo || null });
     } catch (error) {
         console.error("Error en /api/buscar-pagina:", error);
         res.status(500).json({ error: 'Error interno del servidor al buscar la página.' });
     }
 });
+
+// *** CAMBIO: NUEVO ENDPOINT para optimizar UlpianoIA (Coste y Velocidad) ***
+app.post('/api/consulta-unificada', async (req, res) => {
+    try {
+        const { termino } = req.body;
+        if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
+
+        const terminoNormalizado = termino.toLowerCase().trim();
+
+        // 1. Obtener Contexto del Manual (incluye regla de posesión)
+        const contextoManual = getContextoRelevante(terminoNormalizado);
+        
+        // 2. Obtener Citas del Digesto
+        const coincidenciasDigesto = buscarDigesto(termino);
+        let digestoPrompt = "";
+        
+        if (coincidenciasDigesto.length > 0) {
+            digestoPrompt = "\n\n--- FUENTE ADICIONAL: DIGESTO DE JUSTINIANO ---\n" +
+                            "He encontrado las siguientes citas del Digesto. Tu tarea es:\n" +
+                            "1. **SELECCIONAR LA ÚNICA CITA MÁS RELEVANTE Y ACADÉMICA.** Debes **PRIORIZAR DE FORMA EXTREMA** la cita cuyo texto latín se parezca más a una **DEFINICIÓN JURÍDICA FUNDAMENTAL** del concepto (ej: una cita con las palabras 'ius est', 'salva rerum substantia', 'actio est'). **ADVERTENCIA:** Si seleccionas una cita de un caso práctico, interdicto, o que solo menciona el término tangencialmente, el resultado será considerado erróneo. Prioriza la que contenga la DEFINICIÓN CLÁSICA.\n" +
+                            "2. Realizar una **traducción al español profesional y mejorada** del texto latino de la cita seleccionada (la traducción que acompaño es de baja calidad y no sirve).\n" +
+                            "3. Incluir la cita seleccionada (referencia, latín y tu traducción profesional) en la respuesta final, **destacándola** con el formato `# APUNTE DE ULPIANOIA: IUS ROMANUM #` justo antes de tu conclusión. **IGNORA las citas no seleccionadas**.\n\n";
+            
+            coincidenciasDigesto.forEach((match, index) => {
+                digestoPrompt += `--- Cita ${index + 1} (${match.cita}) ---\n`;
+                digestoPrompt += `TEXTO LATÍN: "${match.latin}"\n`;
+                digestoPrompt += `TRADUCCIÓN ORIGINAL POBRE (IGNORAR): "${match.espanol_original}"\n\n`;
+            });
+        }
+
+        // 3. Obtener Página del Manual
+        const infoPagina = buscarPagina(termino);
+
+        // 4. Construir el Master-Prompt para Gemini
+        const promptFinalParaIA = `
+Rol: Jurista Ulpiano (experto didáctico en Derecho Romano).
+Tarea: Proporcionar información sobre el término "${termino}".
+Contexto de Referencia (Manual): "${contextoManual}". Si está vacío, usa tu conocimiento general.
+${digestoPrompt} // Instrucciones del Digesto (si las hay)
+
+--- INSTRUCCIONES DE FORMATO DE SALIDA ---
+Debes responder *exactamente* con un objeto JSON. No incluyas "'''json" o cualquier otro texto antes o después del objeto.
+El formato debe ser:
+{
+  "respuesta_principal": "Tu explicación breve y didáctica del concepto (máximo DOS PÁRRAFOS cortos). No uses saludos, ve directo al concepto. Si encontraste una cita del Digesto relevante, inclúyela aquí con el formato '# APUNTE DE ULPIANOIA: IUS ROMANUM #'.",
+  "conexion_moderna": "Tu explicación muy concisa (máximo un párrafo) de la herencia del concepto romano '${termino}' en el derecho español moderno."
+}
+`.trim();
+
+        const payload = { contents: [{ parts: [{ text: promptFinalParaIA }] }], safetySettings };
+        
+        // 5. Llamar a Gemini (UNA SOLA VEZ)
+        const respuestaIA = await callGeminiWithRetries(payload);
+        
+        // 6. Parsear la respuesta JSON de Gemini
+        let jsonRespuesta;
+        try {
+            // Limpiar la respuesta de Gemini por si incluye ```json
+            const cleanResponse = respuestaIA.replace(/```json/g, '').replace(/```/g, '').trim();
+            jsonRespuesta = JSON.parse(cleanResponse);
+        } catch (e) {
+            console.error("Error al parsear JSON de Gemini:", respuestaIA);
+            throw new Error('La IA no devolvió un JSON válido. Respuesta recibida: ' + respuestaIA);
+        }
+        
+        // 7. Enviar la respuesta unificada al frontend
+        res.json({
+            respuesta: jsonRespuesta.respuesta_principal,
+            moderno: jsonRespuesta.conexion_moderna,
+            pagina: infoPagina.pagina, // Se añade la info de la página
+            titulo: infoPagina.titulo   // Se añade el título del tema
+        });
+
+    } catch (error) {
+        handleApiError(error, res);
+    }
+});
+
 
 // --- FUNCIÓN DE ARRANQUE DEL SERVIDOR ---
 const startServer = async () => {
