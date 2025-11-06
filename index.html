@@ -200,7 +200,7 @@
             try {
                 const controller = new AbortController();
                 // Timeout de 90 segundos
-                const timeoutId = setTimeout(() => controller.abort(), 90000); 
+                const timeoutId = setTimeout(() => controller.abort(), 500000); 
 
                 const response = await fetch(`${API_BASE_URL}/api/${endpoint}`, {
                     method: 'POST',
