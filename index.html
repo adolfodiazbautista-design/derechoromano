@@ -117,7 +117,138 @@
 .loader-infografia {
     animation: spin 1s linear infinite;
 }
-/* No es necesario @keyframes spin, ya lo tienes definido */    
+/* No es necesario @keyframes spin, ya lo tienes definido */   
+
+ /* ... (tus estilos acaban aquí) ... */
+
+        /* INICIO DEL CÓDIGO NUEVO (CASOS v3.0) */
+        
+        details.caso-flashcard {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            margin-top: 1.5rem;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+            transition: all 0.2s ease-in-out; 
+        }
+        details.caso-flashcard[open] {
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07);
+        }
+        details.caso-flashcard summary {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: block; 
+        }
+        details.caso-flashcard summary::-webkit-details-marker { display: none; }
+        
+        details.caso-flashcard .flashcard-problema h4 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            color: #9a3412; /* Color primario */
+            font-size: 1.25rem;
+            margin: 0 0 1rem 0;
+        }
+        details.caso-flashcard .flashcard-problema .situacion {
+            font-family: 'Lato', sans-serif;
+            font-size: 1rem;
+            color: #334155;
+            margin: 0 0 1.5rem 0;
+            line-height: 1.6;
+        }
+        details.caso-flashcard .flashcard-problema .ver-solucion-btn {
+            display: inline-block;
+            background-color: #f59e0b; /* Ámbar */
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 9999px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        details.caso-flashcard summary:hover .ver-solucion-btn {
+            background-color: #d97706; /* Ámbar más oscuro */
+        }
+
+        /* Solución y Animación */
+        .flashcard-solucion {
+            padding: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+            background-color: #f8fafc;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        details.caso-flashcard[open] .flashcard-solucion {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .flashcard-solucion h5 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            color: #334155;
+            font-size: 1.1rem;
+            margin: 0 0 1rem 0;
+            border-bottom: 2px solid #f59e0b;
+            padding-bottom: 0.5rem;
+        }
+        .flashcard-solucion .solucion-texto {
+            font-family: 'Lato', sans-serif;
+            font-size: 0.95rem;
+            color: #475569;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* Árbol Gráfico y Cuotas */
+        .arbol-grafico {
+            font-family: 'Inter', sans-serif;
+            padding: 1.5rem 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1;
+            background-color: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .arbol-grafico .nivel { display: flex; justify-content: center; gap: 0.5rem; }
+        .arbol-grafico .rama { display: flex; flex-direction: column; align-items: center; position: relative; padding: 0 0.5rem; }
+        .arbol-grafico .persona {
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 2px solid;
+            min-width: 50px; /* Más ancho para la cuota */
+            text-align: center;
+            background-color: #fff;
+            z-index: 2;
+        }
+        .arbol-grafico .persona .cuota {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #b45309; /* Ámbar oscuro */
+            margin-top: 2px;
+        }
+        .arbol-grafico .linea-v { width: 2px; background-color: #cbd5e1; flex-grow: 1; min-height: 20px; }
+        .arbol-grafico .linea-h { height: 2px; background-color: #cbd5e1; width: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
+        .rama .linea-v-conector { width: 2px; background-color: #cbd5e1; height: 10px; position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 1; }
+        .nivel-hijos { width: 100%; position: relative; display: flex; justify-content: center; gap: 0.5rem; }
+        .nivel-hijos .rama { padding-top: 10px; }
+        /* Estados de Persona */
+        .persona.de-cuius { border-color: #f59e0b; color: #b45309; }
+        .persona.hereda { border-color: #16a34a; color: #15803d; background-color: #f0fdf4; }
+        .persona.excluido { border-color: #d1d5db; color: #6b7280; background-color: #f9fafb; text-decoration: line-through; }
+        .persona.agnado { border-color: #3b82f6; color: #1d4ed8; background-color: #eff6ff; }
+        .persona.premuerto { border-color: #9ca3af; color: #4b5563; background-color: #f3f4f6; font-style: italic; }
+        
+        /* FIN DEL CÓDIGO NUEVO (CASOS v3.0) */
+    </style>
 </style>
 </head>
 <body class="flex min-h-screen">
@@ -2399,7 +2530,8 @@
                                 <button onclick="window.location.hash = '#caselab'" class="text-xs bg-purple-600 text-white px-2 py-1 rounded-md hover:bg-purple-700 transition-all mt-3">✨ Ir al Laboratorio</button>
                             </div>
                         </div>
-                    </div>
+                   
+ </div>
                 </section>
                 <section class="mb-6">
                     <h2 class="text-2xl md:text-3xl font-semibold text-slate-800 border-b-2 border-purple-400 pb-3 mb-8">
@@ -2439,6 +2571,261 @@
                 </section>
             </main>
         </div>
+    </div>
+</details><details class="infografia-container">
+    <summary>
+        <span>👨‍👩‍👧‍👦 Ver 5 Casos Prácticos de Sucesión Intestada (Evolución)</span>
+        <svg class="w-6 h-6 infografia-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path></svg>
+    </summary>
+    <div class="infografia-content" style="background-color: #f8fafc; padding: 1rem;">
+        
+        <p class="text-secondary mb-4 p-4 bg-white rounded-lg border border-amber-200">Cinco casos clave que ilustran la evolución desde el *Ius Civile* hasta Justiniano. Plantea el problema y luego haz clic en "Ver Solución" para comprobar el resultado.</p>
+
+        <details class="caso-flashcard">
+            <summary>
+                <div class="flashcard-problema">
+                    <h4>Caso 1: Ius Civile (Heredes Sui)</h4>
+                    <p class="situacion">El de cuius (D) murió sin testamento en la época clásica y tenía:
+                        <ul class="list-disc list-inside text-secondary ml-4 mt-2">
+                            <li>Dos hijos (A) y (B) y una hija (C) bajo su potestad.</li>
+                            <li>Estaba casado *cum manu* con su mujer (M).</li>
+                        </ul>
+                    </p>
+                    <span class="ver-solucion-btn">Ver Solución y Árbol</span>
+                </div>
+            </summary>
+            <div class="flashcard-solucion">
+                <h5>Esquema Familiar:</h5>
+                <div class="arbol-grafico">
+                    <div class="persona de-cuius" title="De Cuius (D)">(D)</div>
+                    <div class="linea-v" style="height: 20px;"></div>
+                    <div class="nivel-hijos" style="width: 250px;">
+                        <div class="linea-h"></div>
+                        <div class="rama">
+                            <div class="linea-v-conector"></div>
+                            <div class="persona hereda" title="Uxor in Manu (M) - Hereda">(M)<span class="cuota">1/4</span></div>
+                        </div>
+                        <div class="rama">
+                            <div class="linea-v-conector"></div>
+                            <div class="persona hereda" title="Hijo (A) - Hereda">(A)<span class="cuota">1/4</span></div>
+                        </div>
+                        <div class="rama">
+                            <div class="linea-v-conector"></div>
+                            <div class="persona hereda" title="Hijo (B) - Hereda">(B)<span class="cuota">1/4</span></div>
+                        </div>
+                        <div class="rama">
+                            <div class="linea-v-conector"></div>
+                            <div class="persona hereda" title="Hija (C) - Hereda">(C)<span class="cuota">1/4</span></div>
+                        </div>
+                    </div>
+                </div>
+                <h5>Solución (Derecho Civil):</h5>
+                <p class="solucion-texto">Se harán cuatro partes iguales. (A), (B), (C) y (M) heredan una cuarta parte cada uno. Todos son *heredes sui* (herederos de derecho propio) y heredan *in capita* (por cabezas), ya que la mujer *in manu* ocupa el lugar de una hija (*loco filiae*).</p>
+            </div>
+        </details>
+
+        <details class="caso-flashcard">
+            <summary>
+                <div class="flashcard-problema">
+                    <h4>Caso 2: Ius Civile (Representación)</h4>
+                    <p class="situacion">El de cuius (D) murió sin testamento en la época clásica y tenía bajo su potestad:
+                        <ul class="list-disc list-inside text-secondary ml-4 mt-2">
+                            <li>Un hijo (A).</li>
+                            <li>Dos nietos (B1) y (B2), hijos de su hijo (B) que había muerto antes que él.</li>
+                            <li>Una hija (C).</li>
+                            <li>Y su mujer (M) casada *cum manu*.</li>
+                        </ul>
+                    </p>
+                    <span class="ver-solucion-btn">Ver Solución y Árbol</span>
+                </div>
+            </summary>
+            <div class="flashcard-solucion">
+                <h5>Esquema Familiar:</h5>
+                <div class="arbol-grafico">
+                    <div class="persona de-cuius" title="De Cuius (D)">(D)</div>
+                    <div class="linea-v" style="height: 20px;"></div>
+                    <div class="nivel-hijos" style="width: 250px;">
+                        <div class="linea-h"></div>
+                        <div class="rama">
+                            <div class="linea-v-conector"></div>
+                            <div class="persona hereda" title="Uxor in Manu (M) - Hereda">(M)<span class="cuota">1/4</span></div>
+                        </div>
+                        <div class="rama">
+                            <div class="linea-v-conector"></div>
+                            <div class="persona hereda" title="Hijo (A) - Hereda">(A)<span class="cuota">1/4</span></div>
+                        </div>
+                        <div class="rama">
+                            <div class="linea-v-conector"></div>
+                            <div class="persona premuerto" title="Hijo (B) - Premuerto">(B)</div>
+                            <div class="linea-v" style="height: 10px;"></div>
+                            <div class="nivel-hijos" style="width: 80px;">
+                                <div class="linea-h" style="top: 5px;"></div>
+                                <div class="rama"><div class="linea-v-conector" style="height:5px;"></div><div class="persona hereda" title="Nieto (B1) - Hereda">(B1)<span class="cuota">1/8</span></div></div>
+                                <div class="rama"><div class="linea-v-conector" style="height:5px;"></div><div class="persona hereda" title="Nieto (B2) - Hereda">(B2)<span class="cuota">1/8</span></div></div>
+                            </div>
+                        </div>
+                        <div class="rama">
+                            <div class="linea-v-conector"></div>
+                            <div class="persona hereda" title="Hija (C) - Hereda">(C)<span class="cuota">1/4</span></div>
+                        </div>
+                    </div>
+                </div>
+                <h5>Solución (Derecho Civil):</h5>
+                <p class="solucion-texto">Se harán cuatro partes iguales (por estirpes). (M), (A) y (C) reciben 1/4 cada uno. La cuarta parte que habría correspondido a (B) si estuviera vivo, pasa a sus descendientes (B1) y (B2) por derecho de representación (*in stirpes*). Por lo tanto, (B1) y (B2) reciben una octava parte (1/8) cada uno.</p>
+            </div>
+        </details>
+
+        <details class="caso-flashcard">
+            <summary>
+                <div class="flashcard-problema">
+                    <h4>Caso 3: Ius Civile (Agnados y Exclusión)</h4>
+                    <p class="situacion">El de cuius (D) murió sin testamento en la época clásica; no tenía *sui*, pero le sobrevivieron:
+                        <ul class="list-disc list-inside text-secondary ml-4 mt-2">
+                            <li>Un hermano (A) de doble vínculo que había sido emancipado.</li>
+                            <li>Una hermana (B) también de doble vínculo, que estaba casada *sine manu*.</li>
+                            <li>Y su madre (M), viuda, que había estado casada *sine manu* con su padre (P).</li>
+                        </ul>
+                    </p>
+                    <span class="ver-solucion-btn">Ver Solución y Árbol</span>
+                </div>
+            </summary>
+            <div class="flashcard-solucion">
+                <h5>Esquema Familiar:</h5>
+                <div class="arbol-grafico">
+                    <div class="persona de-cuius" title="De Cuius (D)">(D)</div>
+                    <div class="linea-v" style="height: 20px;"></div>
+                    <div class="nivel-hijos" style="width: 250px;">
+                        <div class="linea-h"></div>
+                        <div class="rama">
+                            <div class="linea-v-conector"></div>
+                            <div class="persona excluido" title="Hermano (A) - Emancipado (No Agnado)">(A)</div>
+                        </div>
+                        <div class="rama">
+                            <div class="linea-v-conector"></div>
+                            <div class="persona agnado hereda" title="Hermana (B) - Agnada (Hereda)">(B)<span class="cuota">TODO</span></div>
+                        </div>
+                        <div class="rama">
+                            <div class="linea-v-conector"></div>
+                            <div class="persona excluido" title="Madre (M) - Sine Manu (No Agnada)">(M)</div>
+                        </div>
+                    </div>
+                </div>
+                <h5>Solución (Derecho Civil):</h5>
+                <p class="solucion-texto">Al no haber *sui*, se llama al *agnatus proximus* (agnado de grado más próximo).
+                    <br>• (B) es agnada de segundo grado.
+                    <br>• (A) dejó de ser agnado al ser emancipado.
+                    <br>• (M) no es agnada al estar casada *sine manu*.
+                    <br>Por lo tanto, **toda la herencia es para la hermana (B)**.</p>
+            </div>
+        </details>
+
+        <details class="caso-flashcard">
+            <summary>
+                <div class="flashcard-problema">
+                    <h4>Caso 4: Derecho Pretorio (Unde Liberi)</h4>
+                    <p class="situacion">El de cuius (D) murió sin testamento en la época clásica y dejó al morir:
+                        <ul class="list-disc list-inside text-secondary ml-4 mt-2">
+                            <li>Un hijo (A) que estaba bajo su potestad (*Sui*).</li>
+                            <li>Dos nietos (B1) y (B2) hijos de su hijo (B) premuerto, que había sido emancipado.</li>
+                            <li>Un hijo (C) emancipado.</li>
+                            <li>La mujer (M) del de cuius que había estado casada *cum manu* (*Sui*).</li>
+                        </ul>
+                    </p>
+                    <span class="ver-solucion-btn">Ver Solución y Árbol</span>
+                </div>
+            </summary>
+            <div class="flashcard-solucion">
+                <h5>Esquema Familiar:</h5>
+                <div class="arbol-grafico">
+                    <div class="persona de-cuius" title="De Cuius (D)">(D)</div>
+                    <div class="linea-v" style="height: 20px;"></div>
+                    <div class="nivel-hijos" style="width: 250px;">
+                        <div class="linea-h"></div>
+                        <div class="rama">
+                            <div class="linea-v-conector"></div>
+                            <div class="persona hereda" title="Uxor in Manu (M) - Sui Heres">(M)<span class="cuota">1/4</span></div>
+                        </div>
+                        <div class="rama">
+                            <div class="linea-v-conector"></div>
+                            <div class="persona hereda" title="Hijo (A) - Sui Heres">(A)<span class="cuota">1/4</span></div>
+                        </div>
+                        <div class="rama">
+                            <div class="linea-v-conector"></div>
+                            <div class="persona premuerto excluido" title="Hijo (B) - Emancipado (Excluido Ius Civile)">(B)</div>
+                            <div class="linea-v" style="height: 10px;"></div>
+                            <div class="nivel-hijos" style="width: 80px;">
+                                <div class="linea-h" style="top: 5px;"></div>
+                                <div class="rama"><div class="linea-v-conector" style="height:5px;"></div><div class="persona hereda" title="Nieto (B1) - Liberi">(B1)<span class="cuota">1/8</span></div></div>
+                                <div class="rama"><div class="linea-v-conector" style="height:5px;"></div><div class="persona hereda" title="Nieto (B2) - Liberi">(B2)<span class="cuota">1/8</span></div></div>
+                            </div>
+                        </div>
+                        <div class="rama">
+                            <div class="linea-v-conector"></div>
+                            <div class="persona hereda" title="Hijo (C) - Emancipado (Liberi)">(C)<span class="cuota">1/4</span></div>
+                        </div>
+                    </div>
+                </div>
+                <h5>Solución (Derecho Pretorio):</h5>
+                <p class="solucion-texto">El Pretor corrige el *Ius Civile*. En el llamamiento *Unde Liberi*, llama a todos los descendientes (bajo potestad o emancipados). Se harán cuatro partes iguales:
+                    <br>• 1/4 para (M) (*Sui*).
+                    <br>• 1/4 para (A) (*Sui*).
+                    <br>• 1/4 para (C) (Emancipado, obtiene la *Bonorum Possessio*).
+                    <br>• 1/4 para (B1) y (B2) (Ocupan el lugar de su padre emancipado premuerto).</p>
+            </div>
+        </details>
+
+        <details class="caso-flashcard">
+            <summary>
+                <div class="flashcard-problema">
+                    <h4>Caso 5: Sistema Justinianeo (Madre y Hermanos)</h4>
+                    <p class="situacion">El de cuius (D) murió sin testamento estando vigente el sistema justinianeo sin tener más parientes que:
+                        <ul class="list-disc list-inside text-secondary ml-4 mt-2">
+                            <li>Su madre (M) viuda de su padre (P).</li>
+                            <li>Sus hermanos de doble vínculo (A) y (B).</li>
+                            <li>Y su hermana de doble vínculo (C).</li>
+                        </ul>
+                    </p>
+                    <span class="ver-solucion-btn">Ver Solución y Árbol</span>
+                </div>
+            </summary>
+            <div class="flashcard-solucion">
+                <h5>Esquema Familiar:</h5>
+                <div class="arbol-grafico">
+                    <div class="nivel">
+                        <div class="persona premuerto" title="Padre (P) - Premuerto">(P)</div>
+                        <div style="width: 0.5rem;"></div> <div class="persona hereda" title="Madre (M) - Hereda">(M)<span class="cuota">1/4</span></div>
+                    </div>
+                    <div class="linea-v" style="height: 20px;"></div>
+                    <div class="nivel-hijos" style="width: 250px;">
+                        <div class="linea-h"></div>
+                        <div class="rama">
+                            <div class="linea-v-conector"></div>
+                            <div class="persona hereda" title="Hermano (A) - Hereda">(A)<span class="cuota">1/4</span></div>
+                        </div>
+                        <div class="rama">
+                            <div class="linea-v-conector"></div>
+                            <div class="persona hereda" title="Hermano (B) - Hereda">(B)<span class="cuota">1/4</span></div>
+                        </div>
+                        <div class="rama">
+                            <div class="linea-v-conector"></div>
+                            <div class="persona hereda" title="Hermana (C) - Hereda">(C)<span class="cuota">1/4</span></div>
+                        </div>
+                        <div class="rama">
+                            <div class="linea-v-conector"></div>
+                            <div class="persona de-cuius" title="De Cuius (D)">(D)</div>
+                        </div>
+                    </div>
+                </div>
+                <h5>Solución (Justiniano):</h5>
+                <p class="solucion-texto">(D) muere sin descendientes. La herencia pasa al segundo orden: ascendientes y hermanos de doble vínculo. Concurren la madre (M) y los hermanos (A), (B) y (C). En este caso, **se reparte la herencia por cabezas (*in capita*)** entre todos ellos.
+                    <br><br>Se harán cuatro partes iguales de la herencia:
+                    <br>• 1/4 para la Madre (M).
+                    <br>• 1/4 para el Hermano (A).
+                    <br>• 1/4 para el Hermano (B).
+                    <br>• 1/4 para la Hermana (C).</p>
+            </div>
+        </details>
+
     </div>
 </details><div class="space-y-4 mt-8"><div class="topic-card"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 19: Sucesiones (I)</h4><p class="text-secondary mb-3 text-sm">Guion de estudio sobre el Derecho de Sucesiones.</p><div class="topic-links flex flex-wrap gap-4"><a href="19. sucesiones i.pdf" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg><span>Ver Guion</span></a><a href="https://open.spotify.com/episode/2gvvqYT8xPP4OYErc5eE9J?si=LpIeaa3PRniE-IjccmLV2g" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div><div class="topic-card"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 20: Sucesiones (II)</h4><p class="text-secondary mb-3 text-sm">Guion de estudio sobre el Derecho de Sucesiones.</p><div class="topic-links flex flex-wrap gap-4"><a href="20. sucesiones ii.pdf" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg><span>Ver Guion</span></a><a href="https://open.spotify.com/episode/5GkVFHllI7hOzI0oVDpy1X?si=cKCMf5fkR_eCIjRgFDvnnQ" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div><div class="topic-card"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 21: Sucesiones (III)</h4><p class="text-secondary mb-3 text-sm">Guion de estudio sobre el Derecho de Sucesiones.</p><div class="topic-links flex flex-wrap gap-4"><a href="21. sucesiones iii.pdf" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg><span>Ver Guion</span></a><a href="https://open.spotify.com/episode/4mjQWbnKWMHeZoYpsgzzpA?si=umiiHBZ0QOKqg1IMyUKCvg" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div></div>` 
             },
