@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infografía: Grados de Responsabilidad en Roma</title>
+    <!-- Incluimos Tailwind CSS desde el CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Usamos la fuente Inter, que es limpia y moderna */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Animación para las tarjetas */
+        .info-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        /* Estilos para el modal y el loader */
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        .modal-content {
+            transition: transform 0.25s ease;
+        }
+        .loader {
+            border-top-color: #4b5563; /* gray-600 */
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 p-4 md:p-8 antialiased">
+
+    <!-- Contenedor principal de la infografía -->
+    <div class="max-w-7xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden">
+        
+        <!-- Cabecera -->
+        <header class="bg-gradient-to-r from-gray-800 to-slate-700 p-6 md:p-8 text-white shadow-lg">
+            <h1 class="text-2xl md:text-3xl font-bold">La Escalera de la Responsabilidad del Deudor</h1>
+            <p class="text-lg md:text-xl opacity-90 mt-1">De la Responsabilidad Subjetiva a la Objetiva</p>
+        </header>
+
+        <!-- Contenido principal -->
+        <main class="p-6 md:p-8">
+
+            <!-- Contenedor de las dos columnas principales -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+
+                <!-- Columna 1: Responsabilidad Subjetiva -->
+                <section class="flex flex-col space-y-8">
+                    <h2 class="text-2xl md:text-3xl font-semibold text-orange-700 border-b-2 border-orange-300 pb-3">
+                        1. Responsabilidad Subjetiva
+                    </h2>
+                    <p class="text-lg text-slate-600 -mt-4">Se valora la <span class="font-bold">conducta interna</span> del deudor (su intención o su negligencia).</p>
+
+                    <!-- Tarjeta 1: DOLO -->
+                    <div class="info-card flex flex-col p-6 bg-orange-50 rounded-lg shadow-lg border-t-4 border-orange-500 h-full">
+                        <div class="flex items-center mb-4">
+                            <!-- Icono de "Intención/Máscara" -->
+                            <div class="w-16 h-16 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0zM7 14c.23-.23.47-.45.72-.66M17.28 9.34c-.25-.21-.5-.42-.72-.66" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-2xl text-orange-800">NIVEL 1: DOLO</h3>
+                                <p class="font-semibold text-orange-600 text-lg">Incumplimiento Voluntario</p>
+                            </div>
+                        </div>
+                        <p class="text-lg text-slate-700 mb-4 flex-grow">
+                            El deudor <span class="font-semibold">voluntaria y deliberadamente</span> no realiza la prestación. Es la "maquinación engañosa" o el incumplimiento a sabiendas.
+                        </p>
+                        <div class="bg-orange-100 border-l-4 border-orange-400 p-3 rounded mb-4">
+                            <p class="text-lg font-bold text-orange-900">Responde por: <span class="font-black">DOLO</span></p>
+                            <p class="text-sm text-orange-700">(Este es el mínimo exigible; se responde siempre por dolo).</p>
+                        </div>
+                        <button onclick="generarCaso('Dolo (Incumplimiento Voluntario)')" class="w-full text-sm bg-slate-600 text-white px-3 py-2 rounded-md hover:bg-slate-700 transition-all mt-auto">✨ Generar Caso</button>
+                    </div>
+
+                    <!-- Tarjeta 2: CULPA -->
+                    <div class="info-card flex flex-col p-6 bg-orange-50 rounded-lg shadow-lg border-t-4 border-orange-500 h-full">
+                        <div class="flex items-center mb-4">
+                            <!-- Icono de "Negligencia/Tropiezo" -->
+                            <div class="w-16 h-16 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" opacity="0.4"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636a9 9 0 11-12.728 0 9 9 0 0112.728 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-2xl text-orange-800">NIVEL 2: CULPA</h3>
+                                <p class="font-semibold text-orange-600 text-lg">Falta de Diligencia</p>
+                            </div>
+                        </div>
+                        <p class="text-lg text-slate-700 mb-4 flex-grow">
+                            El deudor incumple por <span class="font-semibold">no haber observado la diligencia precisa</span> (negligencia).
+                        </p>
+                        <div class="bg-white p-3 rounded shadow-inner text-sm mb-4">
+                            <h4 class="font-bold text-slate-700 mb-2">Grados de Culpa:</h4>
+                            <ul class="list-disc list-inside space-y-1 text-slate-600">
+                                <li><strong>Culpa Lata:</strong> Negligencia extrema. (Se equipara al Dolo).</li>
+                                <li><strong>Culpa Leve:</strong> Omisión de la diligencia de un "buen padre de familia".</li>
+                                <li><strong>Culpa Levissima:</strong> Omisión de la diligencia de una persona muy cuidadosa (profesional).</li>
+                            </ul>
+                        </div>
+                        <div class="bg-orange-100 border-l-4 border-orange-400 p-3 rounded mb-4">
+                            <p class="text-lg font-bold text-orange-900">Responde por: <span class="font-black">DOLO + CULPA</span></p>
+                        </div>
+                        <button onclick="generarCaso('Culpa Leve (Negligencia)')" class="w-full text-sm bg-slate-600 text-white px-3 py-2 rounded-md hover:bg-slate-700 transition-all mt-auto">✨ Generar Caso</button>
+                    </div>
+                </section>
+
+                <!-- Columna 2: Responsabilidad Objetiva -->
+                <section class="flex flex-col space-y-8">
+                    <h2 class="text-2xl md:text-3xl font-semibold text-purple-700 border-b-2 border-purple-300 pb-3">
+                        2. Responsabilidad Objetiva
+                    </h2>
+                    <p class="text-lg text-slate-600 -mt-4">Se responde por el <span class="font-bold">mero hecho</span> del incumplimiento, sin importar la conducta del deudor.</p>
+
+                    <!-- Tarjeta 3: CUSTODIA -->
+                    <div class="info-card flex flex-col p-6 bg-purple-50 rounded-lg shadow-lg border-t-4 border-purple-500 h-full">
+                        <div class="flex items-center mb-4">
+                            <!-- Icono de "Caja Fuerte/Guardar" -->
+                            <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-2xl text-purple-800">NIVEL 3: CUSTODIA</h3>
+                                <p class="font-semibold text-purple-600 text-lg">Caso Fortuito</p>
+                            </div>
+                        </div>
+                        <p class="text-lg text-slate-700 mb-4 flex-grow">
+                            El deudor responde incluso si el incumplimiento (o pérdida) se debe a un <span class="font-semibold">caso fortuito (previsible o evitable)</span>, aunque haya actuado con toda la diligencia exigible.
+                        </p>
+                        <div class="bg-purple-100 border-l-4 border-purple-400 p-3 rounded mb-4">
+                            <p class="text-lg font-bold text-purple-900">Responde por: <span class="font-black">DOLO + CULPA + CASO FORTUITO</span></p>
+                        </div>
+                        <button onclick="generarCaso('Custodia (Caso Fortuito)')" class="w-full text-sm bg-slate-600 text-white px-3 py-2 rounded-md hover:bg-slate-700 transition-all mt-auto">✨ Generar Caso</button>
+                    </div>
+
+                    <!-- Tarjeta 4: PERICULUM -->
+                    <div class="info-card flex flex-col p-6 bg-purple-50 rounded-lg shadow-lg border-t-4 border-purple-500 h-full">
+                        <div class="flex items-center mb-4">
+                            <!-- Icono de "Rayo/Fuerza Mayor" -->
+                            <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-2xl text-purple-800">NIVEL 4: PERICULUM</h3>
+                                <p class="font-semibold text-purple-600 text-lg">Fuerza Mayor (Vis Maior)</p>
+                            </div>
+                        </div>
+                        <p class="text-lg text-slate-700 mb-4 flex-grow">
+                            El deudor responde incluso por un <span class="font-semibold">acontecimiento imprevisible E inevitable (fuerza mayor)</span>. Es la responsabilidad máxima.
+                        </p>
+                        <div class="bg-red-100 border-l-4 border-red-400 p-3 rounded">
+                            <p class="text-lg font-bold text-red-900">Responde por: <span class="font-black">TODO (RESPONSABILIDAD ILIMITADA)</span></p>
+                            <p class="text-sm text-red-700">(Dolo + Culpa + Caso Fortuito + Vis Maior).</p>
+                        </div>
+                        <p class="text-sm text-slate-600 mt-4 flex-grow">
+                            Si el deudor NO responde por *periculum* (ej. solo por culpa), se dice que "el *periculum* es del acreedor", quien pierde la cosa sin indemnización.
+                        </p>
+                        <button onclick="generarCaso('Periculum (Fuerza Mayor)')" class="w-full text-sm bg-slate-600 text-white px-3 py-2 rounded-md hover:bg-slate-700 transition-all mt-auto">✨ Generar Caso</button>
+                    </div>
+
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal para mostrar la respuesta de Gemini -->
+    <div id="geminiModal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none">
+        <div class="modal-content bg-white rounded-lg shadow-lg w-11/12 md:w-1/2 lg:w-1/3 p-6 transform scale-95">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modalTitle" class="text-xl font-bold text-gray-800"></h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div id="modalBody" class="text-slate-700 whitespace-pre-wrap overflow-y-auto max-h-96">
+                <!-- El contenido generado por Gemini irá aquí -->
+            </div>
+            <div class="text-right mt-6">
+                <button onclick="closeModal()" class="bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-all">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay de carga -->
+    <div id="loader" class="fixed inset-0 z-60 flex items-center justify-center bg-black bg-opacity-25 hidden">
+        <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-24 w-24"></div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('geminiModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const loader = document.getElementById('loader');
+
+        function openModal(title, content) {
+            modalTitle.textContent = title;
+            // Reemplaza los saltos de línea de texto con <br> y negritas
+            let htmlContent = content.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-800">$1</strong>');
+            htmlContent = htmlContent.replace(/\n/g, '<br>');
+            modalBody.innerHTML = htmlContent;
+            
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.querySelector('.modal-content').classList.remove('scale-95');
+        }
+
+        function closeModal() {
+            modal.querySelector('.modal-content').classList.add('scale-95');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function showLoader() {
+            loader.classList.remove('hidden');
+        }
+
+        function hideLoader() {
+            loader.classList.add('hidden');
+        }
+
+        // Función de prompt personalizada
+        function getPromptForTopic(topic) {
+            switch(topic) {
+                case 'Dolo (Incumplimiento Voluntario)':
+                    return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) donde un deudor (ej. un depositario) incumple su obligación con **Dolo**.
+Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué el deudor responde.
+Formato:
+**Caso:** [Tu caso aquí]
+**Solución (Responsa):** [Tu solución aquí]`;
+                case 'Culpa Leve (Negligencia)':
+                    return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) donde un deudor (ej. un comodatario) incumple por **Culpa Leve** (no usar la diligencia de un 'bonus paterfamilias').
+Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué responde por negligencia.
+Formato:
+**Caso:** [Tu caso aquí]
+**Solución (Responsa):** [Tu solución aquí]`;
+                case 'Custodia (Caso Fortuito)':
+                    return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre la responsabilidad por **Custodia**. Un deudor (ej. un tintorero o un comodatario) pierde la cosa por un **caso fortuito** (ej. un robo por terceros, no violento).
+Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué, a pesar de no tener culpa, debe responder por custodia.
+Formato:
+**Caso:** [Tu caso aquí]
+**Solución (Responsa):** [Tu solución aquí]`;
+                case 'Periculum (Fuerza Mayor)':
+                    return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) donde se discute el **Periculum (riesgo)**. Una **fuerza mayor** (*vis maior*, ej. un terremoto o un incendio) destruye la cosa debida (ej. un esclavo específico) antes de la entrega, y el deudor solo respondía por culpa.
+Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué el deudor se libera de la obligación y el 'periculum' es del acreedor.
+Formato:
+**Caso:** [Tu caso aquí]
+**Solución (Responsa):** [Tu solución aquí]`;
+                default:
+                    return `Genera un caso práctico sobre ${topic}.`;
+            }
+        }
+
+        // Función principal para llamar a Gemini
+        async function generarCaso(tipoCaso) {
+            showLoader();
+            
+            const prompt = getPromptForTopic(tipoCaso);
+
+            try {
+                const response = await callGeminiAPI(prompt);
+                hideLoader();
+                openModal(`Caso Práctico: ${tipoCaso}`, response);
+            } catch (error) {
+                hideLoader();
+                openModal('Error', 'No se pudo generar el caso práctico en este momento. Por favor, inténtelo de nuevo más tarde.');
+            }
+        }
+
+        // Función de llamada a la API con reintentos (backoff exponencial)
+        async function callGeminiAPI(prompt, retries = 3, delay = 1000) {
+            const apiKey = ""; // Dejar vacío, se gestionará en el entorno
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+            };
+
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Error en la API: ${response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        return result.candidates[0].content.parts[0].text;
+                    } else {
+                        throw new Error('Respuesta inesperada de la API.');
+                    }
+
+                } catch (error) {
+                    if (i === retries - 1) {
+                        console.error('Error al llamar a la API de Gemini:', error);
+                        throw error;
+                    }
+                    // Espera exponencial antes de reintentar
+                    await new Promise(res => setTimeout(res, delay * Math.pow(2, i)));
+                }
+            }
+            throw new Error('No se pudo obtener respuesta de la API después de varios intentos.');
+        }
+
+        // Cerrar modal si se hace clic fuera
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

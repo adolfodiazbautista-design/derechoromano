@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infografía: República Romana (S.P.Q.R.)</title>
+    <!-- Incluimos Tailwind CSS para el diseño -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos personalizados para las flechas y el flujo */
+        .flow-arrow {
+            position: relative;
+            text-align: center;
+            font-size: 2.5rem; /* 40px */
+            font-weight: bold;
+            color: #4b5563; /* gray-600 */
+        }
+        .flow-arrow-down::after {
+            content: '↓';
+        }
+        .flow-arrow-up::after {
+            content: '↑';
+        }
+        .flow-arrow-veto {
+            color: #991b1b; /* red-800 */
+            font-weight: bold;
+            text-align: center;
+            font-size: 1.5rem; /* 24px */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans p-6 lg:p-12">
+
+    <div class="max-w-7xl mx-auto">
+
+        <!-- Título Principal -->
+        <h1 class="text-4xl lg:text-5xl font-extrabold text-center text-red-900 mb-4">
+            Estructura de la República Romana
+        </h1>
+        <h2 class="text-3xl text-center text-gray-700 font-light mb-12">
+            S.P.Q.R. - *Senatus Populusque Romanus*
+        </h2>
+
+        <!-- Contenedor principal de los pilares -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- PILAR 1: ASAMBLEAS (PUEBLO) -->
+            <div class="flex flex-col h-full">
+                <div class="bg-white p-6 rounded-xl shadow-2xl flex-grow">
+                    <h3 class="text-3xl font-bold text-blue-800 mb-4">
+                        <span class="text-4xl mr-2">👥</span> EL PUEBLO
+                    </h3>
+                    <div class="text-xl font-semibold text-gray-600 mb-4">(Asambleas / Comicios)</div>
+                    
+                    <p class="text-lg font-medium text-gray-800 mb-6">Poder: Soberanía (limitada)</p>
+
+                    <h4 class="text-xl font-semibold mb-3 text-gray-900 border-b-2 border-blue-200 pb-2">Funciones Clave:</h4>
+                    <ul class="list-disc list-inside space-y-2 text-lg text-gray-700">
+                        <li>
+                            <span class="font-semibold text-blue-700">Votan Leyes</span> (*Leges*) y <span class="font-semibold text-blue-700">Plebiscitos</span>.
+                        </li>
+                        <li>
+                            <span class="font-semibold text-blue-700">Eligen</span> a los Magistrados.
+                        </li>
+                        <li>Deciden sobre la guerra y la paz.</li>
+                    </ul>
+
+                    <h4 class="text-xl font-semibold mt-6 mb-3 text-gray-900 border-b-2 border-blue-200 pb-2">Asambleas Principales:</h4>
+                    <ul class="list-none space-y-2 text-lg text-gray-700">
+                        <li><span class="font-bold">Comicios Centuriados:</span> Eligen Cónsules y Pretores.</li>
+                        <li><span class="font-bold">Comicios Tributos:</span> Eligen Ediles y Cuestores.</li>
+                        <li><span class="font-bold">Concilios de la Plebe:</span> Eligen Tribunos.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PILAR 2: MAGISTRATURAS (GOBIERNO) -->
+            <div class="flex flex-col h-full">
+                <!-- Flecha de subida desde el Pueblo -->
+                <div class="flow-arrow flow-arrow-up" title="El Pueblo Elige a los Magistrados"></div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-2xl flex-grow">
+                    <h3 class="text-3xl font-bold text-gray-800 mb-4">
+                        <span class="text-4xl mr-2">⚖️</span> MAGISTRATURAS
+                    </h3>
+                    <div class="text-xl font-semibold text-gray-600 mb-4">(Gobierno / *Potestas*)</div>
+                    
+                    <p class="text-lg font-medium text-gray-800 mb-6">Poder: *Imperium* y *Potestas*</p>
+
+                    <h4 class="text-xl font-semibold mb-3 text-gray-900 border-b-2 border-gray-300 pb-2">Características:</h4>
+                    <ul class="list-disc list-inside space-y-2 text-lg text-gray-700">
+                        <li><span class="font-semibold">Anualidad:</span> 1 año de mandato.</li>
+                        <li><span class="font-semibold">Colegialidad:</span> Mínimo 2 por cargo (veto).</li>
+                        <li><span class="font-semibold">Gratuidad:</span> Es un honor (*cursus honorum*).</li>
+                    </ul>
+
+                    <h4 class="text-xl font-semibold mt-6 mb-3 text-gray-900 border-b-2 border-gray-300 pb-2">*Cursus Honorum* (Jerarquía):</h4>
+                    <ul class="list-none space-y-2 text-lg text-gray-700">
+                        <li><span class="font-bold">Cónsules (2):</span> Poder supremo. Jefes militares.</li>
+                        <li><span class="font-bold">Pretores (2+):</span> Administración de justicia.</li>
+                        <li><span class="font-bold">Ediles (4):</span> Administración de la ciudad.</li>
+                        <li><span class="font-bold">Cuestores (4+):</span> Finanzas.</li>
+                        <li class="mt-2 pt-2 border-t border-gray-200"><span class="font-bold">Censores (2):</span> (Cada 5 años) Censo y moral.</li>
+                    </ul>
+                </div>
+                
+                <!-- Flecha de bajada hacia el Senado -->
+                <div class="flow-arrow flow-arrow-down" title="Los Ex-Magistrados ingresan al Senado"></div>
+            </div>
+
+            <!-- PILAR 3: SENADO (AUTORIDAD) -->
+            <div class="flex flex-col h-full">
+                <div class="bg-white p-6 rounded-xl shadow-2xl flex-grow">
+                    <h3 class="text-3xl font-bold text-red-900 mb-4">
+                        <span class="text-4xl mr-2">🏛️</span> SENADO
+                    </h3>
+                    <div class="text-xl font-semibold text-gray-600 mb-4">(Consejo / *Auctoritas*)</div>
+                    
+                    <p class="text-lg font-medium text-gray-800 mb-6">Poder: *Auctoritas* (Prestigio)</p>
+
+                    <h4 class="text-xl font-semibold mb-3 text-gray-900 border-b-2 border-red-200 pb-2">Composición:</h4>
+                    <ul class="list-disc list-inside space-y-2 text-lg text-gray-700">
+                        <li>300+ miembros vitalicios.</li>
+                        <li>Compuesto por <span class="font-semibold">ex-magistrados</span>.</li>
+                    </ul>
+
+                    <h4 class="text-xl font-semibold mt-6 mb-3 text-gray-900 border-b-2 border-red-200 pb-2">Funciones Clave:</h4>
+                    <ul class="list-disc list-inside space-y-2 text-lg text-gray-700">
+                        <li>
+                            <span class="font-semibold text-red-800">Aconseja</span> a los magistrados (*Senadoconsultos*).
+                        </li>
+                        <li>
+                            <span class="font-semibold text-red-800">Política Exterior</span> (Guerra, paz, embajadores).
+                        </li>
+                        <li>
+                            <span class="font-semibold text-red-800">Finanzas Públicas</span> (Tesoro).
+                        </li>
+                        <li>Supervisa la religión.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Elemento Especial: Tribunos de la Plebe -->
+        <div class="mt-12 bg-red-50 border-4 border-dashed border-red-800 p-8 rounded-xl shadow-lg">
+            <h2 class="text-3xl font-bold text-red-900 text-center mb-4">
+                <span class="text-4xl mr-2">🛡️</span> CONTRA-PODER: TRIBUNOS DE LA PLEBE
+            </h2>
+            <p class="text-xl text-center text-red-800 font-semibold mb-4">
+                (Elegidos por la <span class="font-bold">Concilia Plebis</span> para defender al pueblo)
+            </p>
+            <div class="text-center text-red-900">
+                <div class="text-2xl font-extrabold mb-2">*Ius Intercessionis* (Derecho de VETO)</div>
+                <p class="text-lg">
+                    Podían vetar y paralizar cualquier acto de un Magistrado o una decisión del Senado.
+                </p>
+            </div>
+            
+            <!-- Flechas de Veto -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                <div class="flow-arrow-veto">
+                    VETO ═══▷ Magistraturas
+                </div>
+                <div class="flow-arrow-veto">
+                    VETO ═══▷ Senado
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

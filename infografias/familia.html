@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infografía: Cómputo de Parentesco Romano</title>
+    <!-- Incluimos Tailwind CSS desde el CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Usamos la fuente Inter, que es limpia y moderna */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Pequeña animación para las tarjetas al pasar el ratón */
+        .info-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        /* Estilos para el modal */
+        #modal-overlay {
+            transition: opacity 0.3s ease-in-out;
+        }
+        #modal-content {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+        /* Animación de spinner */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 p-4 md:p-8 antialiased">
+
+    <!-- Contenedor principal de la infografía -->
+    <div class="max-w-5xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden">
+        
+        <!-- Cabecera -->
+        <header class="bg-gradient-to-r from-purple-800 to-indigo-600 p-6 md:p-8 text-white shadow-lg">
+            <h1 class="text-2xl md:text-3xl font-bold">Cómputo del Parentesco en Roma</h1>
+            <p class="text-lg md:text-xl opacity-90 mt-1">Líneas y Grados</p>
+        </header>
+
+        <!-- Contenido principal -->
+        <main class="p-6 md:p-8">
+
+            <!-- Sección 1: Definiciones Clave -->
+            <section class="mb-10">
+                <h2 class="text-xl md:text-2xl font-semibold text-slate-800 border-b-2 border-purple-300 pb-2 mb-6">
+                    Definiciones Clave
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- Tarjeta: Línea -->
+                    <div class="info-card flex items-start bg-slate-50 p-5 rounded-lg shadow-md border-l-4 border-purple-500">
+                        <!-- Icono de Líneas -->
+                        <div class="flex-shrink-0 w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-purple-800">LÍNEA</h3>
+                            <p class="text-slate-700 mb-2">Serie de personas que proceden de un mismo tronco.</p>
+                            <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
+                                <li><strong>Línea Recta:</strong> Une ascendientes y descendientes (abuelo-padre-hijo).</li>
+                                <li><strong>Línea Colateral:</strong> Tienen un ascendiente común, pero no descienden unas de otras (hermanos, primos).</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta: Grado -->
+                    <div class="info-card flex items-start bg-slate-50 p-5 rounded-lg shadow-md border-l-4 border-indigo-500">
+                        <!-- Icono de Medida -->
+                        <div class="flex-shrink-0 w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 012-2h2a2 2 0 012 2v6m-6 0h-2a2 2 0 01-2-2v-6a2 2 0 012-2h2m6 0h2a2 2 0 012 2v6a2 2 0 01-2 2h-2m-6 0l-2 2 2 2m6 0l2 2-2 2" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-indigo-800">GRADO</h3>
+                            <p class="text-slate-700 mb-2">Unidad de medida; cada generación es un grado.</p>
+                            <p class="text-sm text-slate-600">
+                                <span class="font-semibold text-slate-800">Cómputo Romano:</span> Para calcular el grado, se sube desde la primera persona hasta el tronco común y se baja hasta la segunda.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Tarjeta: Agnación -->
+                    <div class="info-card flex items-start bg-slate-50 p-5 rounded-lg shadow-md border-l-4 border-teal-500">
+                        <!-- Icono de Vínculo/Ley -->
+                        <div class="flex-shrink-0 w-12 h-12 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m1.101-1.102l4-4a4 4 0 00-5.656-5.656l-1.102 1.101" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-teal-800">AGNACIÓN (Parentesco Civil)</h3>
+                            <p class="text-slate-700 mb-2">Vínculo <span class="font-semibold">jurídico</span> que une a personas bajo una misma *patria potestas* (o que lo estarían si el *paterfamilias* común viviese).</p>
+                            <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
+                                <li>Se transmite solo por <span class="font-semibold">línea masculina</span>.</li>
+                                <li>Era la base de la familia y la herencia en el derecho arcaico.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta: Cognación -->
+                    <div class="info-card flex items-start bg-slate-50 p-5 rounded-lg shadow-md border-l-4 border-sky-500">
+                        <!-- Icono de Sangre/Corazón -->
+                        <div class="flex-shrink-0 w-12 h-12 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <!-- Usando un icono de "corazón" o "gota de sangre" simbólico -->
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.828 6.707a4 4 0 010 5.656L12 19.364l7.172-7.001a4 4 0 010-5.656l-5.656-5.657a4 4 0 00-5.656 0L4.828 6.707z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-sky-800">COGNACIÓN (Parentesco de Sangre)</h3>
+                            <p class="text-slate-700 mb-2">Vínculo <span class="font-semibold">de sangre</span> que une a personas que descienden de un tronco común, (incluye línea femenina).</p>
+                            <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
+                                <li>Es el parentesco "natural".</li>
+                                <li>Ganó importancia (D. Pretorio) hasta sustituir a la agnación como base sucesoria (D. Justinianeo).</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Sección 2: Ejemplos Visuales del Cómputo -->
+            <section class="mb-10">
+                <h2 class="text-xl md:text-2xl font-semibold text-slate-800 border-b-2 border-purple-300 pb-2 mb-6">
+                    Ejemplos Visuales del Cómputo
+                </h2>
+                
+                <!-- Ejemplo 1: Hermanos -->
+                <div class="info-card bg-white p-6 rounded-lg shadow-lg border-t-4 border-purple-500 mb-6">
+                    <h3 class="font-bold text-xl text-purple-700 mb-4">Ejemplo 1: Hermanos (Colateral, 2º Grado)</h3>
+                    <p class="text-slate-600 mb-5">El cálculo es: subir de EGO al tronco (Padre) y bajar al Hermano.</p>
+                    <div class="bg-slate-50 p-4 rounded-lg overflow-x-auto">
+                        <div class="flex items-center justify-center space-x-2 font-semibold min-w-max">
+                            <!-- EGO -->
+                            <div class="p-3 bg-gray-200 rounded-lg border-2 border-gray-400 text-slate-800">EGO (Hermano 1)</div>
+                            <!-- Flecha y Grado 1 -->
+                            <div class="text-center">
+                                <span class="text-sm font-medium text-purple-600">1er Grado</span>
+                                <div class="text-2xl text-purple-500 mx-2">→</div>
+                            </div>
+                            <!-- Tronco Común -->
+                            <div class="p-3 bg-purple-100 rounded-lg border-2 border-purple-500 text-purple-900">Padre (Tronco Común)</div>
+                            <!-- Flecha y Grado 2 -->
+                            <div class="text-center">
+                                <span class="text-sm font-medium text-purple-600">2º Grado</span>
+                                <div class="text-2xl text-purple-500 mx-2">→</div>
+                            </div>
+                            <!-- Objetivo -->
+                            <div class="p-3 bg-gray-200 rounded-lg border-2 border-gray-400 text-slate-800">Hermano 2</div>
+                        </div>
+                    </div>
+                    <p class="text-center mt-4 text-lg font-bold text-slate-800">1 (subir) + 1 (bajar) = <span class="text-purple-700">Total: 2 Grados</span></p>
+                </div>
+
+                <!-- Ejemplo 2: Tío y Sobrino -->
+                <div class="info-card bg-white p-6 rounded-lg shadow-lg border-t-4 border-indigo-500">
+                    <h3 class="font-bold text-xl text-indigo-700 mb-4">Ejemplo 2: Tío y Sobrino (Colateral, 3er Grado)</h3>
+                    <p class="text-slate-600 mb-5">El cálculo es: subir de EGO al Padre, subir al tronco (Abuelo) y bajar al Tío.</p>
+                    <div class="bg-slate-50 p-4 rounded-lg overflow-x-auto">
+                        <div class="flex items-center justify-center space-x-2 font-semibold min-w-max flex-wrap">
+                            <!-- EGO -->
+                            <div class="p-3 bg-gray-200 rounded-lg border-2 border-gray-400 text-slate-800">EGO (Sobrino)</div>
+                            <!-- Flecha y Grado 1 -->
+                            <div class="text-center mx-1">
+                                <span class="text-sm font-medium text-indigo-600">1er Grado</span>
+                                <div class="text-2xl text-indigo-500">→</div>
+                            </div>
+                            <!-- Padre -->
+                            <div class="p-3 bg-indigo-100 rounded-lg border-2 border-indigo-500 text-indigo-900">Padre</div>
+                            <!-- Flecha y Grado 2 -->
+                            <div class="text-center mx-1">
+                                <span class="text-sm font-medium text-indigo-600">2º Grado</span>
+                                <div class="text-2xl text-indigo-500">→</div>
+                            </div>
+                            <!-- Tronco Común -->
+                            <div class="p-3 bg-indigo-200 rounded-lg border-2 border-indigo-600 text-indigo-900 font-bold">Abuelo (Tronco Común)</div>
+                            <!-- Flecha y Grado 3 -->
+                            <div class="text-center mx-1">
+                                <span class="text-sm font-medium text-indigo-600">3er Grado</span>
+                                <div class="text-2xl text-indigo-500">→</div>
+                            </div>
+                            <!-- Objetivo -->
+                            <div class="p-3 bg-gray-200 rounded-lg border-2 border-gray-400 text-slate-800">Tío</div>
+                        </div>
+                    </div>
+                    <p class="text-center mt-4 text-lg font-bold text-slate-800">1 (subir) + 1 (subir) + 1 (bajar) = <span class="text-indigo-700">Total: 3 Grados</span></p>
+                </div>
+            </section>
+
+            <!-- ====================================================== -->
+            <!-- ====== SECCIÓN NUEVA: Funcionalidad Gemini API ====== -->
+            <!-- ====================================================== -->
+            <section class="mt-10 pt-8 border-t-2 border-dashed border-slate-300">
+                <h2 class="text-2xl md:text-3xl font-semibold text-slate-800 text-center mb-6">
+                    Calculadora de Parentesco (con IA)
+                </h2>
+                <p class="text-center text-lg text-slate-600 max-w-2xl mx-auto mb-6">
+                    Usa la IA para aplicar el método de cómputo romano a cualquier relación.
+                </p>
+                <div class="max-w-xl mx-auto space-y-4 p-6 bg-slate-50 rounded-lg shadow-inner">
+                    <div>
+                        <label for="person-1" class="block text-sm font-medium text-gray-700">Persona 1</label>
+                        <input type="text" id="person-1" value="Yo" class="w-full p-3 mt-1 rounded-lg border border-gray-300 bg-gray-50 text-slate-500" readonly>
+                    </div>
+                    <div>
+                        <label for="person-2" class="block text-sm font-medium text-gray-700">Persona 2</label>
+                        <input type="text" id="person-2" placeholder="Ej: El hijo de mi primo" class="w-full p-3 mt-1 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <button id="calculate-button"
+                            class="w-full bg-gradient-to-r from-purple-600 to-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition duration-300 ease-in-out text-lg flex items-center justify-center space-x-2">
+                        <!-- Icono de chispa -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17.346c.206.568.66.96 1.2.96h2.274c.54 0 1.002-.392 1.2-.96l.383-1.045a.6.6 0 00-.04.081c.014-.028.028-.057.04-.086M14.337 16.3c.206.568.66.96 1.2.96h2.274c.54 0 1.002-.392 1.2-.96l.383-1.045a.6.6 0 00-.04.081c.014-.028.028-.057.04-.086M5.663 17.346c.206.568.66.96 1.2.96h2.274c.54 0 1.002-.392 1.2-.96l.383-1.045a.6.6 0 00-.04.081c.014-.028.028-.057.04-.086M6.337 16.3c.206.568.66.96 1.2.96h2.274c.54 0 1.002-.392 1.2-.96l.383-1.045a.6.6 0 00-.04.081c.014-.028.028-.057.04-.086m-4-1.1c0 .28.224.5.5.5h.5a.5.5 0 00.5-.5v-.5a.5.5 0 00-.5-.5h-.5a.5.5 0 00-.5.5v.5zM12 9.05a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m-7.071-7.071l-.707-.707M19.071 4.929l-.707.707M4.929 4.929l.707.707M18.364 18.364l.707.707M3 12h1m16 0h1" />
+                        </svg>
+                        <span>✨ Calcular Parentesco</span>
+                    </button>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- ====== MODAL PARA RESPUESTA DE GEMINI ====== -->
+    <!-- ============================================= -->
+    <div id="modal-container" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+        
+        <!-- Fondo oscuro (Overlay) -->
+        <div id="modal-overlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0"></div>
+        
+        <!-- Contenido del Modal -->
+        <div id="modal-content" class="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 md:p-8 transform scale-95 opacity-0">
+            
+            <!-- Cabecera del Modal -->
+            <div class="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-2xl font-semibold text-gray-900 dark:text-white">
+                    Resultado del Cómputo
+                </h3>
+                <button id="modal-close-button" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Cuerpo del Modal (Spinner y Resultado) -->
+            <div id="modal-body" class="mt-6 min-h-[150px] max-h-[60vh] overflow-y-auto">
+                
+                <!-- Spinner de carga -->
+                <div id="modal-spinner" class="flex flex-col items-center justify-center h-full text-gray-600 dark:text-gray-400">
+                    <div class="spinner w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full mb-4"></div>
+                    <p class="text-lg">Calculando con IA...</p>
+                </div>
+                
+                <!-- Contenido del resultado -->
+                <div id="modal-output" class="hidden space-y-4">
+                    <!-- El contenido generado por IA se insertará aquí -->
+                </div>
+
+                <!-- Mensaje de error -->
+                <div id="modal-error" class="hidden p-4 bg-red-100 dark:bg-red-900 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-200 rounded-lg">
+                    <strong>¡Error!</strong> <span id="modal-error-text"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ============================================= -->
+    <!-- ====== SCRIPT DE JAVASCRIPT ====== -->
+    <!-- ============================================= -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- Elementos del DOM ---
+            const calculateButton = document.getElementById('calculate-button');
+            const person1Input = document.getElementById('person-1');
+            const person2Input = document.getElementById('person-2');
+            
+            const modalContainer = document.getElementById('modal-container');
+            const modalOverlay = document.getElementById('modal-overlay');
+            const modalContent = document.getElementById('modal-content');
+            const modalCloseButton = document.getElementById('modal-close-button');
+            const modalSpinner = document.getElementById('modal-spinner');
+            const modalOutput = document.getElementById('modal-output');
+            const modalError = document.getElementById('modal-error');
+            const modalErrorText = document.getElementById('modal-error-text');
+
+            // --- Configuración de la API ---
+            const apiKey = ""; // Se deja vacío según instrucciones
+            const model = 'gemini-2.5-flash-preview-09-2025';
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+            // --- Lógica del Modal ---
+            const openModal = () => {
+                // Resetear estado del modal
+                modalSpinner.classList.remove('hidden');
+                modalSpinner.classList.add('flex');
+                modalOutput.classList.add('hidden');
+                modalError.classList.add('hidden');
+                modalOutput.innerHTML = '';
+                modalErrorText.textContent = '';
+                
+                // Mostrar modal con animación
+                modalContainer.classList.remove('hidden');
+                setTimeout(() => {
+                    modalOverlay.classList.remove('opacity-0');
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                    modalContent.classList.add('scale-100', 'opacity-100');
+                }, 10);
+            };
+
+            const closeModal = () => {
+                modalContent.classList.add('scale-95', 'opacity-0');
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalOverlay.classList.add('opacity-0');
+                setTimeout(() => {
+                    modalContainer.classList.add('hidden');
+                }, 300);
+            };
+
+            // --- Event Listeners ---
+            calculateButton.addEventListener('click', handleCalculate);
+            modalCloseButton.addEventListener('click', closeModal);
+            modalOverlay.addEventListener('click', closeModal);
+            person2Input.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    handleCalculate();
+                }
+            });
+
+            // --- Esquema JSON para la respuesta de la IA ---
+            const responseSchema = {
+                type: "OBJECT",
+                properties: {
+                    "linea": { 
+                        "type": "STRING",
+                        "description": "La línea de parentesco (Ej: 'Línea Colateral', 'Línea Recta Descendente')." 
+                    },
+                    "grado": { 
+                        "type": "STRING", 
+                        "description": "El grado de parentesco (Ej: 'Segundo Grado', 'Tercer Grado')." 
+                    },
+                    "explicacion": { 
+                        "type": "STRING", 
+                        "description": "Explicación breve (máx 2 frases) de cómo se calcula, mencionando el ancestro común." 
+                    }
+                },
+                required: ["linea", "grado", "explicacion"]
+            };
+
+            // --- Lógica de la API ---
+            async function handleCalculate() {
+                const person1 = person1Input.value.trim();
+                const person2 = person2Input.value.trim();
+
+                openModal(); // Abrir modal primero
+
+                if (!person2) {
+                    showModalError("Por favor, introduce la 'Persona 2' para calcular.");
+                    return;
+                }
+
+                // --- Prompts para la IA ---
+                const systemPrompt = `Eres un experto en Derecho Romano, especializado en cómputo de parentesco. Tu tarea es calcular el parentesco entre dos personas usando el método romano (*tot gradus quot generationes*). Responde en español y adhiérete estrictamente al esquema JSON proporcionado. Sé conciso.`;
+                
+                const userQuery = `Por favor, calcula el parentesco romano entre "${person1}" y "${person2}".`;
+
+                // --- Payload de la API ---
+                const payload = {
+                    contents: [
+                        { parts: [{ text: userQuery }] }
+                    ],
+                    systemInstruction: {
+                        parts: [{ text: systemPrompt }]
+                    },
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: responseSchema,
+                        temperature: 0.2, // Queremos precisión, no creatividad
+                    }
+                };
+
+                try {
+                    // --- Llamada a la API con Backoff ---
+                    const response = await fetchWithBackoff(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorBody = await response.text();
+                        console.error("Cuerpo del error:", errorBody);
+                        throw new Error(`Error de la API: ${response.status} ${response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    // --- Procesar Respuesta ---
+                    const candidate = result.candidates?.[0];
+                    if (candidate && candidate.content?.parts?.[0]?.text) {
+                        const jsonText = candidate.content.parts[0].text;
+                        const data = JSON.parse(jsonText);
+                        
+                        // Mostrar resultado
+                        displayResults(data);
+
+                    } else {
+                        console.error("Estructura de respuesta inválida:", result);
+                        throw new Error("No se pudo obtener una respuesta válida de la IA.");
+                    }
+
+                } catch (error) {
+                    console.error("Error al calcular:", error);
+                    showModalError(error.message || "Ocurrió un error desconocido.");
+                }
+            }
+
+            function displayResults(data) {
+                modalOutput.innerHTML = `
+                    <ul class="space-y-3 text-lg text-slate-700 dark:text-slate-200">
+                        <li class="flex items-start">
+                            <strong class="w-24 inline-block flex-shrink-0 text-purple-700">Línea:</strong>
+                            <span>${data.linea}</span>
+                        </li>
+                        <li class="flex items-start">
+                            <strong class="w-24 inline-block flex-shrink-0 text-purple-700">Grado:</strong>
+                            <span>${data.grado}</span>
+                        </li>
+                        <li class="flex items-start">
+                            <strong class="w-24 inline-block flex-shrink-0 text-purple-700">Cómputo:</strong>
+                            <span>${data.explicacion}</span>
+                        </li>
+                    </ul>
+                `;
+                modalSpinner.classList.add('hidden');
+                modalSpinner.classList.remove('flex');
+                modalOutput.classList.remove('hidden');
+            }
+
+            function showModalError(message) {
+                modalSpinner.classList.add('hidden');
+                modalSpinner.classList.remove('flex');
+                modalErrorText.textContent = message;
+                modalError.classList.remove('hidden');
+            }
+
+            /**
+             * Fetch con lógica de reintentos (exponential backoff).
+             */
+            async function fetchWithBackoff(url, options, maxRetries = 3) {
+                let attempt = 0;
+                let delay = 1000; // 1 segundo
+
+                while (attempt < maxRetries) {
+                    try {
+                        const response = await fetch(url, options);
+                        if (response.ok) {
+                            return response;
+                        }
+                        if (response.status !== 429) {
+                            return response;
+                        }
+                    } catch (error) {
+                        if (attempt + 1 >= maxRetries) {
+                            throw error;
+                        }
+                    }
+                    
+                    await new Promise(resolve => setTimeout(resolve, delay * (2 ** attempt)));
+                    attempt++;
+                }
+                throw new Error("La solicitud a la API falló después de varios reintentos.");
+            }
+        });
+    </script>
+</body>
+</html>

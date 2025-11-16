@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infografía: Modos de Adquirir la Propiedad</title>
+    <!-- Incluimos Tailwind CSS desde el CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Usamos la fuente Inter, que es limpia y moderna */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Animación para las tarjetas */
+        .info-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        /* Estilos para el modal y el loader */
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        .modal-content {
+            transition: transform 0.25s ease;
+        }
+        .loader {
+            border-top-color: #d97706; /* amber-600 */
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 p-4 md:p-8 antialiased">
+
+    <!-- Contenedor principal de la infografía -->
+    <div class="max-w-7xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden">
+        
+        <!-- Cabecera -->
+        <header class="bg-gradient-to-r from-orange-800 to-amber-700 p-6 md:p-8 text-white shadow-lg">
+            <h1 class="text-2xl md:text-3xl font-bold">Modos de Adquirir la Propiedad</h1>
+            <p class="text-lg md:text-xl opacity-90 mt-1">La Clasificación Fundamental (Originarios y Derivativos)</p>
+        </header>
+
+        <!-- Contenido principal: Las 2 Vías -->
+        <main class="p-6 md:p-8 grid grid-cols-1 lg:grid-cols-2 gap-10">
+
+            <!-- Columna 1: Modos Originarios -->
+            <section class="flex flex-col">
+                <h2 class="text-2xl font-semibold text-slate-800 border-b-2 border-orange-400 pb-3 mb-4 flex items-center">
+                    <!-- Icono de "Planta/Nuevo" -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mr-3 text-orange-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    </svg>
+                    1. MODOS ORIGINARIOS
+                </h2>
+                <div class="info-card flex-grow h-full p-6 bg-orange-50 rounded-lg shadow-lg border-t-4 border-orange-600">
+                    <p class="text-lg font-semibold text-orange-800 mb-4">
+                        La propiedad se adquiere *ex novo*, sin depender de un titular anterior.
+                    </p>
+                    <div class="space-y-3">
+                        <div class="bg-white p-3 rounded-md shadow-sm border-l-2 border-orange-300 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-slate-700">Ocupación (Occupatio)</h4>
+                                <p class="text-slate-600 text-sm">Apoderarse de cosas que no tienen dueño (*res nullius*). Ej: Caza, pesca, cosas abandonadas (*res derelictae*).</p>
+                            </div>
+                            <button onclick="generarCaso('Ocupación (Occupatio)')" class="text-xs bg-amber-600 text-white px-2 py-1 rounded-md hover:bg-amber-700 transition-all flex-shrink-0 ml-2">✨ Generar Caso</button>
+                        </div>
+                        <div class="bg-white p-3 rounded-md shadow-sm border-l-2 border-orange-300 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-slate-700">Accesión (Accessio)</h4>
+                                <p class="text-slate-600 text-sm">Unión inseparable de una cosa accesoria a una principal. El dueño de la principal adquiere la accesoria. Ej: *Superficies solo cedit* (lo construido cede al suelo).</p>
+                            </div>
+                            <button onclick="generarCaso('Accesión (Accessio)')" class="text-xs bg-amber-600 text-white px-2 py-1 rounded-md hover:bg-amber-700 transition-all flex-shrink-0 ml-2">✨ Generar Caso</button>
+                        </div>
+                        <div class="bg-white p-3 rounded-md shadow-sm border-l-2 border-orange-300 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-slate-700">Especificación (Specificatio)</h4>
+                                <p class="text-slate-600 text-sm">Crear una "nueva especie" (*nova species*) con materiales ajenos. Ej: Hacer vino con uvas ajenas.</p>
+                            </div>
+                            <button onclick="generarCaso('Especificación (Specificatio)')" class="text-xs bg-amber-600 text-white px-2 py-1 rounded-md hover:bg-amber-700 transition-all flex-shrink-0 ml-2">✨ Generar Caso</button>
+                        </div>
+                        <div class="bg-white p-3 rounded-md shadow-sm border-l-2 border-orange-300 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-slate-700">Hallazgo de Tesoro</h4>
+                                <p class="text-slate-600 text-sm">Adquisición de un depósito antiguo de valor. Mitad para el descubridor, mitad para el dueño del fundo.</p>
+                            </div>
+                            <button onclick="generarCaso('Hallazgo de Tesoro')" class="text-xs bg-amber-600 text-white px-2 py-1 rounded-md hover:bg-amber-700 transition-all flex-shrink-0 ml-2">✨ Generar Caso</button>
+                        </div>
+                        <div class="bg-white p-3 rounded-md shadow-sm border-l-2 border-orange-300 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-slate-700">Adquisición de Frutos</h4>
+                                <p class="text-slate-600 text-sm">El propietario los adquiere por *separación* (mera separación física); el usufructuario o arrendatario por *percepción* (recogida efectiva).</p>
+                            </div>
+                            <button onclick="generarCaso('Adquisición de Frutos (Separatio vs Perceptio)')" class="text-xs bg-amber-600 text-white px-2 py-1 rounded-md hover:bg-amber-700 transition-all flex-shrink-0 ml-2">✨ Generar Caso</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Columna 2: Modos Derivativos -->
+            <section class="flex flex-col">
+                <h2 class="text-2xl font-semibold text-slate-800 border-b-2 border-sky-400 pb-3 mb-4 flex items-center">
+                    <!-- Icono de "Transferencia" -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mr-3 text-sky-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-2.87l-1.423 1.423A3 3 0 0017 20zM17 4h5v2a3 3 0 01-5.356 2.87l-1.423-1.423A3 3 0 0117 4zM4 20h5v-2a3 3 0 00-5.356-2.87l-1.423 1.423A3 3 0 004 20zM4 4h5v2a3 3 0 01-5.356 2.87l-1.423-1.423A3 3 0 014 4z" />
+                    </svg>
+                    2. MODOS DERIVATIVOS
+                </h2>
+                <div class="info-card flex-grow h-full p-6 bg-sky-50 rounded-lg shadow-lg border-t-4 border-sky-600">
+                    <p class="text-lg font-semibold text-sky-800 mb-4">
+                        La propiedad se adquiere de un titular anterior. El derecho del nuevo dueño depende del que tenía el transmitente.
+                    </p>
+                    <p class="text-slate-600 italic text-center mb-4">"Nemo dat quod non habet" (Nadie da lo que no tiene)</p>
+
+                    <!-- Sub-sección: Formales -->
+                    <h3 class="font-bold text-lg text-slate-700 mb-2">A. Modos Formales (del *Ius Civile*)</h3>
+                    <p class="text-slate-600 mb-3 text-sm">Solemnes y abstractos. Requeridos para transmitir las <span class="font-bold">RES MANCIPI</span>.</p>
+                    <div class="space-y-3 mb-6">
+                        <div class="bg-white p-3 rounded-md shadow-sm border-l-2 border-sky-300 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-sky-700">Mancipatio</h4>
+                                <p class="text-slate-600 text-sm">Venta simbólica (*per aes et libram*) ante 5 testigos. Modo de transmisión de las cosas de mayor valor (fundos, esclavos, animales de tiro).</p>
+                            </div>
+                            <button onclick="generarCaso('Mancipatio')" class="text-xs bg-amber-600 text-white px-2 py-1 rounded-md hover:bg-amber-700 transition-all flex-shrink-0 ml-2">✨ Generar Caso</button>
+                        </div>
+                        <div class="bg-white p-3 rounded-md shadow-sm border-l-2 border-sky-300 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-sky-700">In Iure Cessio</h4>
+                                <p class="text-slate-600 text-sm">Proceso fingido ante el Pretor. El adquirente "reivindica" la cosa y el transmitente se allana. Servía para *res mancipi* y *nec mancipi*.</p>
+                            </div>
+                            <button onclick="generarCaso('In Iure Cessio')" class="text-xs bg-amber-600 text-white px-2 py-1 rounded-md hover:bg-amber-700 transition-all flex-shrink-0 ml-2">✨ Generar Caso</button>
+                        </div>
+                    </div>
+
+                    <!-- Sub-sección: No Formales -->
+                    <h3 class="font-bold text-lg text-slate-700 mb-2">B. Modo No Formal (del *Ius Gentium*)</h3>
+                    <p class="text-slate-600 mb-3 text-sm">Basado en la entrega material. Requerido para transmitir las <span class="font-bold">RES NEC MANCIPI</span>.</p>
+                    <div class="space-y-3">
+                        <div class="bg-white p-3 rounded-md shadow-sm border-l-2 border-sky-300 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-sky-700">Traditio (Entrega)</h4>
+                                <p class="text-slate-600 text-sm">Era la simple entrega de la cosa. Para transmitir la propiedad civil, requería una <span class="font-semibold">Justa Causa</span> (ej. *causa emendi* -compra-, *causa donandi* -donación-).</p>
+                            </div>
+                            <button onclick="generarCaso('Traditio (con Iusta Causa)')" class="text-xs bg-amber-600 text-white px-2 py-1 rounded-md hover:bg-amber-700 transition-all flex-shrink-0 ml-2">✨ Generar Caso</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+        
+        <!-- Pie de página / Conclusión -->
+        <footer class="p-6 md:p-8 bg-slate-100 border-t border-slate-200">
+            <h3 class="text-xl font-bold text-slate-800 text-center">La Importancia de esta Distinción</h3>
+            <p class="text-lg text-slate-700 max-w-4xl mx-auto mt-3 text-center">
+                Esta rígida dualidad del *Ius Civile* (exigir <span class="font-bold text-sky-700">Mancipatio</span> para *Res Mancipi* y bastar la <span class="font-bold text-sky-700">Traditio</span> para *Res Nec Mancipi*) fue el origen del mayor problema jurídico de Roma.
+                <br><br>
+                <span class="font-semibold text-blue-800">¿Qué pasaba si alguien compraba una *Res Mancipi* (un esclavo) pero solo se la entregaban (*Traditio*)?</span>
+                <br>
+                <span class="text-lg font-bold text-slate-700">→ La respuesta es la <span class="bg-yellow-200 px-2 py-1 rounded">Propiedad Pretoria</span> (Ver Tema 14).</span>
+            </p>
+        </footer>
+
+    </div>
+
+    <!-- Modal para mostrar la respuesta de Gemini -->
+    <div id="geminiModal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none">
+        <div class="modal-content bg-white rounded-lg shadow-lg w-11/12 md:w-1/2 lg:w-1/3 p-6 transform scale-95">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modalTitle" class="text-xl font-bold text-gray-800"></h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div id="modalBody" class="text-slate-700 whitespace-pre-wrap overflow-y-auto max-h-96">
+                <!-- El contenido generado por Gemini irá aquí -->
+            </div>
+            <div class="text-right mt-6">
+                <button onclick="closeModal()" class="bg-amber-700 text-white px-4 py-2 rounded-lg hover:bg-amber-800 transition-all">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay de carga -->
+    <div id="loader" class="fixed inset-0 z-60 flex items-center justify-center bg-black bg-opacity-25 hidden">
+        <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-24 w-24"></div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('geminiModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const loader = document.getElementById('loader');
+
+        function openModal(title, content) {
+            modalTitle.textContent = title;
+            // Reemplaza los saltos de línea de texto con <br> y negritas
+            let htmlContent = content.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-800">$1</strong>');
+            htmlContent = htmlContent.replace(/\n/g, '<br>');
+            modalBody.innerHTML = htmlContent;
+            
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.querySelector('.modal-content').classList.remove('scale-95');
+        }
+
+        function closeModal() {
+            modal.querySelector('.modal-content').classList.add('scale-95');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function showLoader() {
+            loader.classList.remove('hidden');
+        }
+
+        function hideLoader() {
+            loader.classList.add('hidden');
+        }
+        
+        // Función de prompt personalizada
+        function getPromptForTopic(topic) {
+            const basePrompt = `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) para un estudiante de primer año que involucre el concepto de '${topic}'.
+Después del caso, proporciona una 'Responsa' (solución) clara y concisa en un párrafo, explicando la solución jurídica.
+
+Formato:
+**Caso:** [Tu caso aquí]
+**Solución (Responsa):** [Tu solución aquí]`;
+
+            switch(topic) {
+                case 'Ocupación (Occupatio)':
+                    return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre la **Ocupación** de una *res nullius* (ej. un animal salvaje cazado o una cosa abandonada).
+Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué el ocupante adquiere la propiedad civil.
+Formato:
+**Caso:** [Tu caso aquí]
+**Solución (Responsa):** [Tu solución aquí]`;
+                case 'Accesión (Accessio)':
+                    return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre la **Accesión** de inmuebles, usando el principio *'Superficies solo cedit'* (ej. Ticio construye en el fundo de Cayo).
+Después del caso, proporciona una 'Responsa' (solución) clara, explicando quién es el dueño de lo construido y qué acciones proceden.
+Formato:
+**Caso:** [Tu caso aquí]
+**Solución (Responsa):** [Tu solución aquí]`;
+                case 'Especificación (Specificatio)':
+                    return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre **Especificación**, donde alguien crea una *nova species* con materiales ajenos (ej. Sempronio hace vino con uvas de Mevio).
+Después del caso, proporciona una 'Responsa' (solución) clara, explicando quién es el dueño de la nueva especie.
+Formato:
+**Caso:** [Tu caso aquí]
+**Solución (Responsa):** [Tu solución aquí]`;
+                case 'Hallazgo de Tesoro':
+                    return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre el **Hallazgo de un Tesoro** en fundo ajeno.
+Después del caso, proporciona una 'Responsa' (solución) clara, explicando cómo se reparte la propiedad del tesoro según el Derecho Clásico o Justinianeo.
+Formato:
+**Caso:** [Tu caso aquí]
+**Solución (Responsa):** [Tu solución aquí]`;
+                case 'Adquisición de Frutos (Separatio vs Perceptio)':
+                    return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) que ilustre la diferencia entre adquirir frutos por **'separatio' (separación)** y por **'perceptio' (percepción)**.
+Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué un propietario y un usufructuario adquieren los frutos en momentos distintos.
+Formato:
+**Caso:** [Tu caso aquí]
+**Solución (Responsa):** [Tu solución aquí]`;
+                case 'Mancipatio':
+                    return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre la **Mancipatio**. El caso debe involucrar la compraventa de una *res mancipi* (ej. un esclavo) donde SÍ se realiza la ceremonia solemne.
+Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué el comprador se convierte en propietario civil (*dominus ex iure Quiritium*).
+Formato:
+**Caso:** [Tu caso aquí]
+**Solución (Responsa):** [Tu solución aquí]`;
+                case 'In Iure Cessio':
+                    return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre la **In Iure Cessio**, explicando cómo funciona el 'proceso fingido' ante el Pretor para transmitir la propiedad (ej. de una servidumbre).
+Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué este acto transfiere el *dominium*.
+Formato:
+**Caso:** [Tu caso aquí]
+**Solución (Responsa):** [Tu solución aquí]`;
+                case 'Traditio (con Iusta Causa)':
+                    return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre la **Traditio** de una *res nec mancipi* (ej. una túnica o dinero) basada en una *iusta causa* (ej. una compraventa o donación).
+Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué la simple entrega, en este caso, SÍ transmite la propiedad civil.
+Formato:
+**Caso:** [Tu caso aquí]
+**Solución (Responsa):** [Tu solución aquí]`;
+                default:
+                    return basePrompt;
+            }
+        }
+
+        // Función principal para llamar a Gemini
+        async function generarCaso(tipoCaso) {
+            showLoader();
+            
+            const prompt = getPromptForTopic(tipoCaso);
+
+            try {
+                const response = await callGeminiAPI(prompt);
+                hideLoader();
+                openModal(`Caso Práctico: ${tipoCaso}`, response);
+            } catch (error) {
+                hideLoader();
+                openModal('Error', 'No se pudo generar el caso práctico en este momento. Por favor, inténtelo de nuevo más tarde.');
+            }
+        }
+
+        // Función de llamada a la API con reintentos (backoff exponencial)
+        async function callGeminiAPI(prompt, retries = 3, delay = 1000) {
+            const apiKey = ""; // Dejar vacío, se gestionará en el entorno
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+            };
+
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Error en la API: ${response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        return result.candidates[0].content.parts[0].text;
+                    } else {
+                        throw new Error('Respuesta inesperada de la API.');
+                    }
+
+                } catch (error) {
+                    if (i === retries - 1) {
+                        console.error('Error al llamar a la API de Gemini:', error);
+                        throw error;
+                    }
+                    // Espera exponencial antes de reintentar
+                    await new Promise(res => setTimeout(res, delay * Math.pow(2, i)));
+                }
+            }
+            throw new Error('No se pudo obtener respuesta de la API después de varios intentos.');
+        }
+
+        // Cerrar modal si se hace clic fuera
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+
+</body>
+</html>

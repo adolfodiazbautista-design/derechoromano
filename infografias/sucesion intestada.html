@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infografía: Evolución de la Sucesión Intestada</title>
+    <!-- Incluimos Tailwind CSS desde el CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Usamos la fuente Inter, que es limpia y moderna */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Animación para las tarjetas */
+        .info-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        /* Estilos para el modal y el loader */
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        .modal-content {
+            transition: transform 0.25s ease;
+        }
+        .loader {
+            border-top-color: #ca8a04; /* yellow-600 */
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 p-4 md:p-8 antialiased">
+
+    <!-- Contenedor principal de la infografía -->
+    <div class="max-w-7xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden">
+        
+        <!-- Cabecera -->
+        <header class="bg-gradient-to-r from-yellow-900 to-amber-700 p-6 md:p-8 text-white shadow-lg">
+            <h1 class="text-2xl md:text-3xl font-bold">La Evolución de la Sucesión Intestada en Roma</h1>
+            <p class="text-lg md:text-xl opacity-90 mt-1">Del Vínculo de Poder (Agnatio) al Vínculo de Sangre (Cognatio)</p>
+        </header>
+
+        <!-- Contenido principal: Las 3 Vías -->
+        <main class="p-6 md:p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Columna 1: Ius Civile (XII Tablas) -->
+            <section class="flex flex-col">
+                <h2 class="text-2xl font-semibold text-slate-800 border-b-2 border-red-400 pb-3 mb-4 flex items-center">
+                    <!-- Icono de "Ley Antigua" -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mr-3 text-red-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    1. IUS CIVILE (Ley de las XII Tablas)
+                </h2>
+                <div class="info-card flex-grow h-full p-6 bg-red-50 rounded-lg shadow-lg border-t-4 border-red-600">
+                    <p class="text-lg font-bold text-red-800 mb-4 text-center">
+                        Basado en la AGNATIO (Poder)
+                    </p>
+                    <p class="text-slate-600 mb-4">Sistema arcaico y rígido. Llama a 3 grupos por orden <span class="font-semibold">excluyente</span>:</p>
+                    
+                    <ol class="list-decimal list-inside space-y-4 text-slate-700">
+                        <li>
+                            <span class="font-bold text-slate-800">Heredes Sui (Herederos de propio derecho)</span>
+                            <ul class="list-disc list-inside ml-4 text-sm text-slate-600 space-y-1 mt-1">
+                                <li>Quienes se hacen *sui iuris* al morir el *pater* (hijos/as, esposa *cum manu*, nietos de hijos premuertos).</li>
+                                <li>Reparto: *In capita* (por cabezas) o *In stirpes* (por estirpes, con derecho de representación).</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span class="font-bold text-slate-800">Agnatus Proximus (Agnado más próximo)</span>
+                            <ul class="list-disc list-inside ml-4 text-sm text-slate-600 space-y-1 mt-1">
+                                <li>A falta de *sui*, hereda el pariente agnado más cercano (ej. hermanos).</li>
+                                <li>Reparto: *In capita*.</li>
+                                <li class="font-semibold text-red-700">¡Sin Sucesión de Grados! Si el más próximo no acepta, la herencia queda vacante.</li>
+                            </ul>
+                            <button onclick="generarCaso('Problema Ius Civile (Agnados vs Emancipados)')" class="text-xs bg-amber-600 text-white px-2 py-1 rounded-md hover:bg-amber-700 transition-all mt-3">✨ Generar Caso (Injusticia)</button>
+                        </li>
+                        <li>
+                            <span class="font-bold text-slate-800">Gentiles</span>
+                            <ul class="list-disc list-inside ml-4 text-sm text-slate-600 space-y-1 mt-1">
+                                <li>Miembros de la misma *gens* (clan). Desapareció muy pronto.</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- Columna 2: Derecho Pretorio (Bonorum Possessio) -->
+            <section class="flex flex-col">
+                <h2 class="text-2xl font-semibold text-slate-800 border-b-2 border-blue-400 pb-3 mb-4 flex items-center">
+                    <!-- Icono de "Equidad/Balanza" -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mr-3 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 0010.001 0M3 7l3-1m0 0l18 13.5M3.055 11H5.945L4.5 14.5M11.945 11H9.055L10.5 14.5m-5 0h10" />
+                    </svg>
+                    2. DERECHO PRETORIO (Bonorum Possessio)
+                </h2>
+                <div class="info-card flex-grow h-full p-6 bg-blue-50 rounded-lg shadow-lg border-t-4 border-blue-600">
+                    <p class="text-lg font-bold text-blue-800 mb-4 text-center">
+                        Introduce la COGNATIO (Sangre) por equidad
+                    </p>
+                    <p class="text-slate-600 mb-4">El Pretor "corrige" al *Ius Civile*. Llama a 5 grupos por orden <span class="font-semibold">sucesivo</span> (si falla uno, pasa al siguiente):</p>
+                    
+                    <ol class="list-decimal list-inside space-y-4 text-slate-700">
+                        <li>
+                            <span class="font-bold text-slate-800">Unde Liberi (Descendientes)</span>
+                            <ul class="list-disc list-inside ml-4 text-sm text-slate-600 space-y-1 mt-1">
+                                <li>La gran corrección: Llama a los *Heredes Sui* <span class="font-bold text-blue-700">Y TAMBIÉN a los hijos emancipados</span> (excluidos por el *Ius Civile*).</li>
+                                <li class="font-semibold text-blue-700 bg-blue-100 p-2 rounded-md">
+                                    Collatio Bonorum: Para ser justos, el emancipado (con patrimonio propio) debe "colacionar" (aportar) sus bienes a la masa hereditaria.
+                                    <button onclick="generarCaso('Solución Pretoria (Collatio Bonorum)')" class="text-xs bg-amber-600 text-white px-2 py-1 rounded-md hover:bg-amber-700 transition-all mt-2 block">✨ Generar Caso (Collatio)</button>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span class="font-bold text-slate-800">Unde Legitimi (Herederos Civiles)</span>
+                            <ul class="list-disc list-inside ml-4 text-sm text-slate-600 space-y-1 mt-1">
+                                <li>Si fallan los *liberi*, se vuelve a llamar según el *Ius Civile* (Sui y Agnados).</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span class="font-bold text-slate-800">Unde Cognati (Parientes de Sangre)</span>
+                            <ul class="list-disc list-inside ml-4 text-sm text-slate-600 space-y-1 mt-1">
+                                <li>A falta de los anteriores, se llama a TODOS los parientes de sangre (cognados) hasta 6º grado.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span class="font-bold text-slate-800">Unde Vir et Uxor (Cónyuge viudo)</span>
+                            <ul class="list-disc list-inside ml-4 text-sm text-slate-600 space-y-1 mt-1">
+                                <li>Se llama al cónyuge viudo (siempre que no fuera esposa *cum manu*, que ya era *sui*).</li>
+                            </ul>
+                        </li>
+                         <li>
+                            <span class="font-bold text-slate-800">Cui Heres non Extabit (Acreedores/Fisco)</span>
+                        </li>
+                    </ol>
+                </div>
+            </section>
+            
+            <!-- Columna 3: Derecho Justinianeo (Novelas) -->
+            <section class="flex flex-col">
+                <h2 class="text-2xl font-semibold text-slate-800 border-b-2 border-yellow-500 pb-3 mb-4 flex items-center">
+                    <!-- Icono de "Libro/Código" -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mr-3 text-yellow-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13.5M8.25 6.253v13.5m0-13.5h-3.75c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h3.75m0-13.5h7.5c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-7.5m0-13.5V6.253z" />
+                    </svg>
+                    3. DERECHO JUSTINIANEO (Novelas)
+                </h2>
+                <div class="info-card flex-grow h-full p-6 bg-yellow-50 rounded-lg shadow-lg border-t-4 border-yellow-600">
+                    <p class="text-lg font-bold text-yellow-800 mb-4 text-center">
+                        La Fusión Definitiva (Cognatio Plena)
+                    </p>
+                    <blockquote class="text-slate-600 mb-4 italic text-center border-l-4 border-yellow-500 pl-4">
+                        "El afecto primero desciende, después asciende y después se extiende."
+                    </blockquote>
+                    <p class="text-slate-600 mb-4">Fusiona *Ius Civile* y Derecho Pretorio, basándose <span class="font-semibold">solo en la cognación</span>.</p>
+                    
+                    <ol class="list-decimal list-inside space-y-4 text-slate-700">
+                        <li>
+                            <span class="font-bold text-slate-800">Descendientes</span>
+                            <ul class="list-disc list-inside ml-4 text-sm text-slate-600 space-y-1 mt-1">
+                                <li>Todos (ya no se distingue *sui* de emancipados).</li>
+                                <li>Reparto: *In capita* o *In stirpes* (pleno derecho de representación).</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span class="font-bold text-slate-800">Ascendientes y Hermanos Germanos</span>
+                            <ul class="list-disc list-inside ml-4 text-sm text-slate-600 space-y-1 mt-1">
+                                <li>Si concurren, heredan *in capita*.</li>
+                                <li>Si solo hay hermanos, heredan *in capita* (con representación para sobrinos).</li>
+                            </ul>
+                            <button onclick="generarCaso('Llamada Justinianea (Ascendientes + Hermanos)')" class="text-xs bg-amber-600 text-white px-2 py-1 rounded-md hover:bg-amber-700 transition-all mt-3">✨ Generar Caso</button>
+                        </li>
+                        <li>
+                            <span class="font-bold text-slate-800">Hermanos de Vínculo Sencillo</span>
+                            <ul class="list-disc list-inside ml-4 text-sm text-slate-600 space-y-1 mt-1">
+                                <li>Consanguíneos (solo padre) o uterinos (solo madre).</li>
+                                <li>Con derecho de representación.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span class="font-bold text-slate-800">Colaterales</span>
+                            <ul class="list-disc list-inside ml-4 text-sm text-slate-600 space-y-1 mt-1">
+                                <li>El resto de parientes de sangre. El más próximo excluye al más remoto.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span class="font-bold text-slate-800">Cónyuge viudo</span>
+                        </li>
+                        <li>
+                            <span class="font-bold text-slate-800">Fisco</span>
+                        </li>
+                    </ol>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modal para mostrar la respuesta de Gemini -->
+    <div id="geminiModal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none">
+        <div class="modal-content bg-white rounded-lg shadow-lg w-11/12 md:w-1/2 lg:w-1/3 p-6 transform scale-95">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modalTitle" class="text-xl font-bold text-gray-800"></h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div id="modalBody" class="text-slate-700 whitespace-pre-wrap overflow-y-auto max-h-96">
+                <!-- El contenido generado por Gemini irá aquí -->
+            </div>
+            <div class="text-right mt-6">
+                <button onclick="closeModal()" class="bg-amber-700 text-white px-4 py-2 rounded-lg hover:bg-amber-800 transition-all">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay de carga -->
+    <div id="loader" class="fixed inset-0 z-60 flex items-center justify-center bg-black bg-opacity-25 hidden">
+        <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-24 w-24"></div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('geminiModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const loader = document.getElementById('loader');
+
+        function openModal(title, content) {
+            modalTitle.textContent = title;
+            // Reemplaza los saltos de línea de texto con <br> y negritas
+            let htmlContent = content.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-800">$1</strong>');
+            htmlContent = htmlContent.replace(/\n/g, '<br>');
+            modalBody.innerHTML = htmlContent;
+            
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.querySelector('.modal-content').classList.remove('scale-95');
+        }
+
+        function closeModal() {
+            modal.querySelector('.modal-content').classList.add('scale-95');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function showLoader() {
+            loader.classList.remove('hidden');
+        }
+
+        function hideLoader() {
+            loader.classList.add('hidden');
+        }
+
+        // Función de prompt personalizada
+        function getPromptForTopic(topic) {
+            switch(topic) {
+                case 'Problema Ius Civile (Agnados vs Emancipados)':
+                    return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) donde un 'paterfamilias' muere sin testamento. Le sobreviven dos personas: 
+1. Su hermano (agnado próximo).
+2. Un hijo que había emancipado en vida (cognado, pero no agnado).
+Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué, según el Ius Civile de las XII Tablas, hereda el hermano y no el hijo, y por qué esto era una injusticia.
+Formato:
+**Caso:** [Tu caso aquí]
+**Solución (Responsa):** [Tu solución aquí]`;
+                case 'Solución Pretoria (Collatio Bonorum)':
+                    return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) donde un 'paterfamilias' muere sin testamento. Le sobreviven dos hijos:
+1. Un hijo 'sui iuris' (bajo potestad, sin patrimonio propio).
+2. Un hijo 'emancipado' (fuera de potestad, con un gran patrimonio propio).
+Después del caso, proporciona una 'Responsa' (solución) clara, explicando cómo el Pretor (al llamar a 'Unde Liberi') obliga al emancipado a la 'Collatio Bonorum' para que el reparto sea justo.
+Formato:
+**Caso:** [Tu caso aquí]
+**Solución (Responsa):** [Tu solución aquí]`;
+                case 'Llamada Justinianea (Ascendientes + Hermanos)':
+                    return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) de la época de Justiniano. Un 'de cuius' muere sin testamento y sin descendientes. Le sobreviven:
+1. Su padre (ascendiente).
+2. Un hermano germano (de padre y madre).
+Después del caso, proporciona una 'Responsa' (solución) clara, explicando cómo heredan ambos según el Segundo Orden de las Novelas (Novela 118) y cómo se reparte la herencia (in capita).
+Formato:
+**Caso:** [Tu caso aquí]
+**Solución (Responsa):** [Tu solución aquí]`;
+                default:
+                    return `Genera un caso práctico sobre ${topic}.`;
+            }
+        }
+
+        // Función principal para llamar a Gemini
+        async function generarCaso(tipoCaso) {
+            showLoader();
+            
+            const prompt = getPromptForTopic(tipoCaso);
+
+            try {
+                const response = await callGeminiAPI(prompt);
+                hideLoader();
+                openModal(`Caso Práctico: ${tipoCaso}`, response);
+            } catch (error) {
+                hideLoader();
+                openModal('Error', 'No se pudo generar el caso práctico en este momento. Por favor, inténtelo de nuevo más tarde.');
+            }
+        }
+
+        // Función de llamada a la API con reintentos (backoff exponencial)
+        async function callGeminiAPI(prompt, retries = 3, delay = 1000) {
+            const apiKey = ""; // Dejar vacío, se gestionará en el entorno
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+            };
+
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Error en la API: ${response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        return result.candidates[0].content.parts[0].text;
+                    } else {
+                        throw new Error('Respuesta inesperada de la API.');
+                    }
+
+                } catch (error) {
+                    if (i === retries - 1) {
+                        console.error('Error al llamar a la API de Gemini:', error);
+                        throw error;
+                    }
+                    // Espera exponencial antes de reintentar
+                    await new Promise(res => setTimeout(res, delay * Math.pow(2, i)));
+                }
+            }
+            throw new Error('No se pudo obtener respuesta de la API después de varios intentos.');
+        }
+
+        // Cerrar modal si se hace clic fuera
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+
+</body>
+</html>

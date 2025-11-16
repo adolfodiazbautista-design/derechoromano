@@ -105,7 +105,20 @@
         .node-chevron-depth-3 { fill: #854d0e; }
         .node-chevron-depth-4 { fill: #991b1b; }
 
-    </style>
+/* ======================================== */
+/* ESTILOS PARA MODALS DE INFOGRAFÍAS (AÑADIDO) */
+/* ======================================== */
+.modal-infografia {
+    transition: opacity 0.25s ease;
+}
+.modal-infografia-content {
+    transition: transform 0.25s ease;
+}
+.loader-infografia {
+    animation: spin 1s linear infinite;
+}
+/* No es necesario @keyframes spin, ya lo tienes definido */    
+</style>
 </head>
 <body class="flex min-h-screen">
 
@@ -200,7 +213,7 @@
             try {
                 const controller = new AbortController();
                 // Timeout de 90 segundos
-                const timeoutId = setTimeout(() => controller.abort(), 90000); 
+                const timeoutId = setTimeout(() => controller.abort(), 500000); 
 
                 const response = await fetch(`${API_BASE_URL}/api/${endpoint}`, {
                     method: 'POST',
@@ -921,15 +934,651 @@
             },
             '#bloque1': {
                 title: 'Bloque I: Fundamentos',
-                html: `<div class="prose"><p class="text-secondary">Este bloque introduce los conceptos más básicos para comprender el Derecho. Exploraremos la diferencia entre los distintos tipos de normas de conducta, la aportación fundamental de Roma al Derecho y su evolución histórica, así como su pervivencia hasta nuestros días.</p></div><details class="infografia-container"><summary><span>📊 Ver Infografía: Las Fuentes del Derecho Romano</span><svg class="w-6 h-6 infografia-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path></svg></summary><div class="infografia-content grid grid-cols-1 md:grid-cols-4 gap-6 text-center"><div class="bg-slate-100 p-4 rounded-lg"><h4 class="font-bold text-sm text-primary">MONARQUÍA</h4><p class="text-xs mt-1 text-secondary"><strong>Mores Maiorum:</strong> Costumbres de los antepasados. Derecho no escrito y tradicional.</p></div><div class="bg-slate-100 p-4 rounded-lg"><h4 class="font-bold text-sm text-primary">REPÚBLICA</h4><p class="text-xs mt-1 text-secondary"><strong>Ley XII Tablas:</strong> Primera codificación. <strong>Leyes y Plebiscitos.</strong> <strong>Edicto del Pretor.</strong></p></div><div class="bg-slate-100 p-4 rounded-lg"><h4 class="font-bold text-sm text-primary">PRINCIPADO</h4><p class="text-xs mt-1 text-secondary"><strong>Jurisprudencia:</strong> Dictámenes de los juristas. <strong>Senadoconsultos.</strong></p></div><div class="bg-slate-100 p-4 rounded-lg"><h4 class="font-bold text-sm text-primary">DOMINADO</h4><p class="text-xs mt-1 text-secondary"><strong>Constituciones Imperiales.</strong> <strong>Corpus Iuris Civilis.</strong></p></div></div></details><div class="space-y-4 mt-8"><div class="topic-card"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 1: Ideas fundamentales</h4><p class="text-secondary mb-3 text-sm">Aborda las nociones primarias del Derecho, diferenciando entre distintas normas de conducta y sentando las bases del pensamiento jurídico.</p><div class="topic-links flex flex-wrap gap-4"><a href="1. introduccion.pdf" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg><span>Ver Guion</span></a><a href="https://open.spotify.com/episode/7EBPwjNWNeesrvtUgn1z1H?si=Zq5Yc1qDSxuhWl97MVkboA" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div><div class="topic-card"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 2: Historia del Derecho Romano</h4><p class="text-secondary mb-3 text-sm">Presenta la evolución histórica del Derecho Romano, desde la época arcaica hasta la compilación justinianea.</p><div class="topic-links flex flex-wrap gap-4"><a href="2. historia.pdf" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg><span>Ver Guion</span></a><a href="https://open.spotify.com/episode/6cU7dpW7hutUqkMGgh8Skc?si=DsBw44jfQoap7pBlo6t_zQ" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div><div class="topic-card"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 3: Persistencia del Derecho Romano</h4><p class="text-secondary mb-3 text-sm">Analiza la pervivencia del Derecho Romano y su influencia en los sistemas jurídicos modernos.</p><div class="topic-links flex flex-wrap gap-4"><a href="3. persistencia.pdf" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg><span>Ver Guion</span></a><a href="https://open.spotify.com/episode/2HKvLfGckWNzmzewxHrnYv?si=kTlHzhCJTF--_8qMbK-DpQ" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div></div>` 
+                html: `<div class="prose"><p class="text-secondary">Este bloque introduce los conceptos más básicos para comprender el Derecho. Exploraremos la diferencia entre los distintos tipos de normas de conducta, la aportación fundamental de Roma al Derecho y su evolución histórica, así como su pervivencia hasta nuestros días.</p></div><details class="infografia-container"><summary><span>📊 Ver Infografía: Las Fuentes del Derecho Romano</span><svg class="w-6 h-6 infografia-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path></svg></summary><div class="infografia-content grid grid-cols-1 md:grid-cols-4 gap-6 text-center"><div class="bg-slate-100 p-4 rounded-lg"><h4 class="font-bold text-sm text-primary">MONARQUÍA</h4><p class="text-xs mt-1 text-secondary"><strong>Mores Maiorum:</strong> Costumbres de los antepasados. Derecho no escrito y tradicional.</p></div><div class="bg-slate-100 p-4 rounded-lg"><h4 class="font-bold text-sm text-primary">REPÚBLICA</h4><p class="text-xs mt-1 text-secondary"><strong>Ley XII Tablas:</strong> Primera codificación. <strong>Leyes y Plebiscitos.</strong> <strong>Edicto del Pretor.</strong></p></div><div class="bg-slate-100 p-4 rounded-lg"><h4 class="font-bold text-sm text-primary">PRINCIPADO</h4><p class="text-xs mt-1 text-secondary"><strong>Jurisprudencia:</strong> Dictámenes de los juristas. <strong>Senadoconsultos.</strong></p></div><div class="bg-slate-100 p-4 rounded-lg"><h4 class="font-bold text-sm text-primary">DOMINADO</h4><p class="text-xs mt-1 text-secondary"><strong>Constituciones Imperiales.</strong> <strong>Corpus Iuris Civilis.</strong></p></div></div></details><details class="infografia-container">
+    <summary>
+        <span>🏛️ Ver Infografía: Estructura de la República Romana</span>
+        <svg class="w-6 h-6 infografia-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path></svg>
+    </summary>
+    <div class="infografia-content">
+        
+        <h2 class="text-3xl lg:text-4xl font-extrabold text-center text-red-900 mb-2 font-heading">
+            Estructura de la República Romana
+        </h2>
+        <h3 class="text-2xl text-center text-gray-700 font-light mb-10">
+            S.P.Q.R. - *Senatus Populusque Romanus*
+        </h3>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <div class="flex flex-col h-full">
+                <div class="bg-white p-6 rounded-xl shadow-2xl flex-grow">
+                    <h3 class="text-3xl font-bold text-blue-800 mb-4 font-heading">
+                        <span class="text-4xl mr-2">👥</span> EL PUEBLO
+                    </h3>
+                    <div class="text-xl font-semibold text-gray-600 mb-4">(Asambleas / Comicios)</div>
+                    
+                    <p class="text-lg font-medium text-gray-800 mb-6">Poder: Soberanía (limitada)</p>
+
+                    <h4 class="text-xl font-semibold mb-3 text-gray-900 border-b-2 border-blue-200 pb-2 font-heading">Funciones Clave:</h4>
+                    <ul class="list-disc list-inside space-y-2 text-lg text-gray-700">
+                        <li>
+                            <span class="font-semibold text-blue-700">Votan Leyes</span> (*Leges*) y <span class="font-semibold text-blue-700">Plebiscitos</span>.
+                        </li>
+                        <li>
+                            <span class="font-semibold text-blue-700">Eligen</span> a los Magistrados.
+                        </li>
+                        <li>Deciden sobre la guerra y la paz.</li>
+                    </ul>
+
+                    <h4 class="text-xl font-semibold mt-6 mb-3 text-gray-900 border-b-2 border-blue-200 pb-2 font-heading">Asambleas Principales:</h4>
+                    <ul class="list-none space-y-2 text-lg text-gray-700">
+                        <li><span class="font-bold">Comicios Centuriados:</span> Eligen Cónsules y Pretores.</li>
+                        <li><span class="font-bold">Comicios Tributos:</span> Eligen Ediles y Cuestores.</li>
+                        <li><span class="font-bold">Concilios de la Plebe:</span> Eligen Tribunos.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flex flex-col h-full">
+                <div title="El Pueblo Elige a los Magistrados" style="position: relative; text-align: center; font-size: 2.5rem; font-weight: bold; color: #4b5563;">↑</div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-2xl flex-grow">
+                    <h3 class="text-3xl font-bold text-gray-800 mb-4 font-heading">
+                        <span class="text-4xl mr-2">⚖️</span> MAGISTRATURAS
+                    </h3>
+                    <div class="text-xl font-semibold text-gray-600 mb-4">(Gobierno / *Potestas*)</div>
+                    
+                    <p class="text-lg font-medium text-gray-800 mb-6">Poder: *Imperium* y *Potestas*</p>
+
+                    <h4 class="text-xl font-semibold mb-3 text-gray-900 border-b-2 border-gray-300 pb-2 font-heading">Características:</h4>
+                    <ul class="list-disc list-inside space-y-2 text-lg text-gray-700">
+                        <li><span class="font-semibold">Anualidad:</span> 1 año de mandato.</li>
+                        <li><span class="font-semibold">Colegialidad:</span> Mínimo 2 por cargo (veto).</li>
+                        <li><span class="font-semibold">Gratuidad:</span> Es un honor (*cursus honorum*).</li>
+                    </ul>
+
+                    <h4 class="text-xl font-semibold mt-6 mb-3 text-gray-900 border-b-2 border-gray-300 pb-2 font-heading">*Cursus Honorum* (Jerarquía):</h4>
+                    <ul class="list-none space-y-2 text-lg text-gray-700">
+                        <li><span class="font-bold">Cónsules (2):</span> Poder supremo. Jefes militares.</li>
+                        <li><span class="font-bold">Pretores (2+):</span> Administración de justicia.</li>
+                        <li><span class="font-bold">Ediles (4):</span> Administración de la ciudad.</li>
+                        <li><span class="font-bold">Cuestores (4+):</span> Finanzas.</li>
+                        <li class="mt-2 pt-2 border-t border-gray-200"><span class="font-bold">Censores (2):</span> (Cada 5 años) Censo y moral.</li>
+                    </ul>
+                </div>
+                
+                <div title="Los Ex-Magistrados ingresan al Senado" style="position: relative; text-align: center; font-size: 2.5rem; font-weight: bold; color: #4b5563;">↓</div>
+            </div>
+
+            <div class="flex flex-col h-full">
+                <div class="bg-white p-6 rounded-xl shadow-2xl flex-grow">
+                    <h3 class="text-3xl font-bold text-red-900 mb-4 font-heading">
+                        <span class="text-4xl mr-2">🏛️</span> SENADO
+                    </h3>
+                    <div class="text-xl font-semibold text-gray-600 mb-4">(Consejo / *Auctoritas*)</div>
+                    
+                    <p class="text-lg font-medium text-gray-800 mb-6">Poder: *Auctoritas* (Prestigio)</p>
+
+                    <h4 class="text-xl font-semibold mb-3 text-gray-900 border-b-2 border-red-200 pb-2 font-heading">Composición:</h4>
+                    <ul class="list-disc list-inside space-y-2 text-lg text-gray-700">
+                        <li>300+ miembros vitalicios.</li>
+                        <li>Compuesto por <span class="font-semibold">ex-magistrados</span>.</li>
+                    </ul>
+
+                    <h4 class="text-xl font-semibold mt-6 mb-3 text-gray-900 border-b-2 border-red-200 pb-2 font-heading">Funciones Clave:</h4>
+                    <ul class="list-disc list-inside space-y-2 text-lg text-gray-700">
+                        <li>
+                            <span class="font-semibold text-red-800">Aconseja</span> a los magistrados (*Senadoconsultos*).
+                        </li>
+                        <li>
+                            <span class="font-semibold text-red-800">Política Exterior</span> (Guerra, paz, embajadores).
+                        </li>
+                        <li>
+                            <span class="font-semibold text-red-800">Finanzas Públicas</span> (Tesoro).
+                        </li>
+                        <li>Supervisa la religión.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 bg-red-50 border-4 border-dashed border-red-800 p-8 rounded-xl shadow-lg">
+            <h2 class="text-3xl font-bold text-red-900 text-center mb-4 font-heading">
+                <span class="text-4xl mr-2">🛡️</span> CONTRA-PODER: TRIBUNOS DE LA PLEBE
+            </h2>
+            <p class="text-xl text-center text-red-800 font-semibold mb-4">
+                (Elegidos por la <span class="font-bold">Concilia Plebis</span> para defender al pueblo)
+            </p>
+            <div class="text-center text-red-900">
+                <div class="text-2xl font-extrabold mb-2">*Ius Intercessionis* (Derecho de VETO)</div>
+                <p class="text-lg">
+                    Podían vetar y paralizar cualquier acto de un Magistrado o una decisión del Senado.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                <div style="color: #991b1b; font-weight: bold; text-align: center; font-size: 1.5rem;">
+                    VETO ═══▷ Magistraturas
+                </div>
+                <div style="color: #991b1b; font-weight: bold; text-align: center; font-size: 1.5rem;">
+                    VETO ═══▷ Senado
+                </div>
+            </div>
+        </div>
+
+    </div>
+</details>
+<details class="infografia-container">
+    <summary>
+        <span>👑 Ver Infografía: La Tetrarquía (El Dominado)</span>
+        <svg class="w-6 h-6 infografia-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path></svg>
+    </summary>
+    <div class="infografia-content" style="background-color: #111827; color: #f9fafb; padding: 0;">
+        
+        <div class="max-w-7xl mx-auto p-6 lg:p-12">
+
+            <h1 class="text-4xl lg:text-5xl font-extrabold text-center text-purple-300 mb-4 font-heading">
+                La Tetrarquía: El Dominado
+            </h1>
+            <h2 class="text-3xl text-center text-gray-400 font-light mb-12 font-heading">
+                Reforma de Diocleciano (c. 284-305 d.C.)
+            </h2>
+
+            <div class="bg-gray-800 p-6 rounded-xl shadow-2xl mb-8 border-t-4 border-purple-400">
+                <h3 class="text-3xl font-bold text-purple-300 text-center mb-2 font-heading">
+                    <span class="text-4xl mr-2">👑</span> CONCEPTO DE PODER: *DOMINUS*
+                </h3>
+                <p class="text-xl text-center text-gray-300">
+                    El Emperador es *Dominus et Deus* (Señor y Dios).
+                </p>
+                <p class="text-lg text-center text-gray-400 mt-2">
+                    El poder desciende de la divinidad; se abandona la ficción republicana del *Princeps*.
+                </p>
+            </div>
+
+            <div style="position: relative; text-align: center; font-size: 2.5rem; font-weight: bold; color: #4b5563;">↓</div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+
+                <div class="bg-gray-800 p-6 rounded-xl shadow-2xl border-2 border-purple-500">
+                    <h2 class="text-3xl font-bold text-center text-purple-300 mb-6 font-heading">
+                        PARS ORIENTIS (Oriente)
+                    </h2>
+                    
+                    <div class="bg-gray-700 p-4 rounded-lg text-center shadow-lg">
+                        <h3 class="text-2xl font-extrabold text-purple-200 font-heading">AUGUSTUS (Senior)</h3>
+                        <p class="text-xl text-gray-300">(Ej. Diocleciano)</p>
+                        <p class="text-lg font-medium text-gray-400 mt-2">Poder supremo sobre la mitad del Imperio.</p>
+                    </div>
+
+                    <div style="position: relative; text-align: center; font-size: 2.5rem; font-weight: bold; color: #4b5563;" title="Nombra y adopta como sucesor">↓</div>
+
+                    <div class="bg-gray-700 p-4 rounded-lg text-center shadow-lg mt-4">
+                        <h3 class="text-2xl font-extrabold text-purple-300 font-heading">CAESAR (Junior)</h3>
+                        <p class="text-xl text-gray-300">(Ej. Galerio)</p>
+                        <p class="text-lg font-medium text-gray-400 mt-2">Gobernador, asistente y sucesor designado.</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 p-6 rounded-xl shadow-2xl border-2 border-red-500">
+                    <h2 class="text-3xl font-bold text-center text-red-300 mb-6 font-heading">
+                        PARS OCCIDENTIS (Occidente)
+                    </h2>
+                    
+                    <div class="bg-gray-700 p-4 rounded-lg text-center shadow-lg">
+                        <h3 class="text-2xl font-extrabold text-red-200 font-heading">AUGUSTUS (Senior)</h3>
+                        <p class="text-xl text-gray-300">(Ej. Maximiano)</p>
+                        <p class="text-lg font-medium text-gray-400 mt-2">Poder supremo sobre la mitad del Imperio.</p>
+                    </div>
+
+                    <div style="position: relative; text-align: center; font-size: 2.5rem; font-weight: bold; color: #4b5563;" title="Nombra y adopta como sucesor">↓</div>
+
+                    <div class="bg-gray-700 p-4 rounded-lg text-center shadow-lg mt-4">
+                        <h3 class="text-2xl font-extrabold text-red-300 font-heading">CAESAR (Junior)</h3>
+                        <p class="text-xl text-gray-300">(Ej. Constancio)</p>
+                        <p class="text-lg font-medium text-gray-400 mt-2">Gobernador, asistente y sucesor designado.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="position: relative; text-align: center; font-size: 2.5rem; font-weight: bold; color: #4b5563;">↓</div>
+
+            <div class="mt-8 bg-gray-800 p-6 rounded-xl shadow-2xl border-t-4 border-gray-500">
+                <h3 class="text-3xl font-bold text-gray-300 text-center mb-6 font-heading">
+                    <span class="text-4xl mr-2">🗺️</span> REFORMA ADMINISTRATIVA (Jerarquía)
+                </h3>
+                <p class="text-xl text-center text-gray-400 mb-6">El Imperio se divide en unidades más pequeñas para un control militar y fiscal eficaz.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                    <div class="bg-gray-700 p-4 rounded-lg shadow-lg">
+                        <h4 class="text-2xl font-bold text-purple-300 font-heading">4 PREFECTURAS</h4>
+                        <p class="text-lg text-gray-300">(Gobernadas por los 4 Tetrarca)</p>
+                    </div>
+                    
+                    <div style="position: relative; text-align: center; font-size: 2.5rem; font-weight: bold; color: #4b5563;" class="hidden md:block">↓</div>
+                    <div style="position: relative; text-align: center; font-size: 2.5rem; font-weight: bold; color: #4b5563;" class="md:hidden">↓</div>
+
+                    <div class="bg-gray-700 p-4 rounded-lg shadow-lg">
+                        <h4 class="text-2xl font-bold text-purple-400 font-heading">12 DIÓCESIS</h4>
+                        <p class="text-lg text-gray-300">(Gobernadas por *Vicarii*)</p>
+                    </div>
+                    
+                    <div style="position: relative; text-align: center; font-size: 2.5rem; font-weight: bold; color: #4b5563;" class="hidden md:block">↓</div>
+                    <div style="position: relative; text-align: center; font-size: 2.5rem; font-weight: bold; color: #4b5563;" class="md:hidden">↓</div>
+
+                    <div class="bg-gray-700 p-4 rounded-lg shadow-lg">
+                        <h4 class="text-2xl font-bold text-purple-500 font-heading">100+ PROVINCIAS</h4>
+                        <p class="text-lg text-gray-300">(Gobernadas por *Praesides*)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 bg-gray-950 border-2 border-dashed border-gray-600 p-8 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold text-gray-500 text-center mb-4 font-heading">
+                    <span class="text-4xl mr-2">🏛️</span> INSTITUCIONES "FÓSILES"
+                </h2>
+                <p class="text-xl text-center text-gray-400 font-medium">
+                    El <span class="font-bold text-gray-300">Senado</span> y los <span class="font-bold text-gray-300">Cónsules</span> pierden todo poder real.
+                </p>
+                <p class="text-lg text-center text-gray-500 mt-2">
+                    Se convierten en cargos puramente honoríficos y de administración local de la ciudad de Roma.
+                </p>
+            </div>
+
+        </div> </div> </details>
+<div class="space-y-4 mt-8"><div class="topic-card"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 1: Ideas fundamentales</h4><p class="text-secondary mb-3 text-sm">Aborda las nociones primarias del Derecho, diferenciando entre distintas normas de conducta y sentando las bases del pensamiento jurídico.</p><div class="topic-links flex flex-wrap gap-4"><a href="1. introduccion.pdf" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg><span>Ver Guion</span></a><a href="https://open.spotify.com/episode/7EBPwjNWNeesrvtUgn1z1H?si=Zq5Yc1qDSxuhWl97MVkboA" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div><div class="topic-card"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 2: Historia del Derecho Romano</h4><p class="text-secondary mb-3 text-sm">Presenta la evolución histórica del Derecho Romano, desde la época arcaica hasta la compilación justinianea.</p><div class="topic-links flex flex-wrap gap-4"><a href="2. historia.pdf" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg><span>Ver Guion</span></a><a href="https://open.spotify.com/episode/6cU7dpW7hutUqkMGgh8Skc?si=DsBw44jfQoap7pBlo6t_zQ" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div><div class="topic-card"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 3: Persistencia del Derecho Romano</h4><p class="text-secondary mb-3 text-sm">Analiza la pervivencia del Derecho Romano y su influencia en los sistemas jurídicos modernos.</p><div class="topic-links flex flex-wrap gap-4"><a href="3. persistencia.pdf" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg><span>Ver Guion</span></a><a href="https://open.spotify.com/episode/2HKvLfGckWNzmzewxHrnYv?si=kTlHzhCJTF--_8qMbK-DpQ" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div></div>` 
             },
             '#bloque2': {
                 title: 'Bloque II: Sujetos de Derecho',
-                html: `<div class="prose"><p class="text-secondary">Este bloque se centra en quiénes son los protagonistas del Derecho. Analizaremos los requisitos para ser persona en Roma, la estructura de la familia y los poderes que ostentaba el paterfamilias.</p></div><details class="infografia-container"><summary><span>📊 Ver Infografía: El Status de la Persona</span><svg class="w-6 h-6 infografia-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path></svg></summary><div class="infografia-content flex flex-col md:flex-row items-center justify-around gap-4"><div class="text-center p-4 bg-slate-100 rounded-lg"><h4 class="font-bold text-primary">Status Libertatis</h4><p class="text-secondary text-sm">¿Libre o Esclavo?</p><div class="text-2xl mt-2">🕊️ vs ⛓️</div></div><div class="text-2xl text-gray-300 font-bold">→</div><div class="text-center p-4 bg-slate-100 rounded-lg"><h4 class="font-bold text-primary">Status Civitatis</h4><p class="text-secondary text-sm">¿Ciudadano o Extranjero?</p><div class="text-2xl mt-2">🏛️ vs 🌍</div></div><div class="text-2xl text-gray-300 font-bold">→</div><div class="text-center p-4 bg-slate-100 rounded-lg"><h4 class="font-bold text-primary">Status Familiae</h4><p class="text-secondary text-sm">¿Jefe de Familia o Sometido?</p><div class="text-2xl mt-2">👑 vs 👨‍👩‍👧</div></div></div></details><div class="space-y-4 mt-8"><div class="topic-card"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 4: El sujeto del derecho</h4><p class="text-secondary mb-3 text-sm">Estudio de los requisitos para ostentar la condición de persona y ser sujeto de derechos en Roma.</p><div class="topic-links flex flex-wrap gap-4"><a href="4. persona.pdf" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg><span>Ver Guion</span></a><a href="https://open.spotify.com/episode/6D2mPBSBGo8AcyGWXO914i?si=btU9P3-nRryXxr_vFvu0Kw" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div><div class="topic-card"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 5: La familia</h4><p class="text-secondary mb-3 text-sm">Análisis de la organización familiar romana, una estructura social y jurídica fundamental.</p><div class="topic-links flex flex-wrap gap-4"><a href="5. familia.pdf" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg><span>Ver Guion</span></a><a href="https://open.spotify.com/episode/677MZlIOUO1eCMyec6AtnZ?si=9etnCEy0S92jHp88-NXWog" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div></div>`
+                html: `<div class="prose"><p class="text-secondary">Este bloque se centra en quiénes son los protagonistas del Derecho. Analizaremos los requisitos para ser persona en Roma, la estructura de la familia y los poderes que ostentaba el paterfamilias.</p></div><details class="infografia-container" open> <summary>
+        <span>👤 Ver Infografía: El Sujeto de Derecho (Status y Capacidad)</span>
+        <svg class="w-6 h-6 infografia-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path></svg>
+    </summary>
+    <div class="infografia-content" style="background-color: #f8fafc;"> <h1 class="text-4xl lg:text-5xl font-extrabold text-center text-amber-800 mb-4 font-heading">
+            El Sujeto de Derecho en Roma
+        </h1>
+        <h2 class="text-3xl text-center text-gray-700 font-light mb-8 font-heading">
+            Los Tres 'Status' y la Capacidad
+        </h2>
+
+        <blockquote class="bg-white p-5 rounded-xl shadow-lg border-l-4 border-amber-600 mb-8">
+            <p class="text-xl text-center text-gray-800 font-medium">
+                Concepto Clave Romano: <strong class="text-amber-900">"Persona" no es igual a "Sujeto de Derecho"</strong>.
+            </p>
+            <p class="text-lg text-center text-gray-600 mt-2">
+                Un esclavo (<em>servus</em>) era un ser humano (persona), pero jurídicamente era un objeto (<em>res</em>), no un sujeto.
+            </p>
+        </blockquote>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12">
+
+            <div class="bg-white p-6 rounded-xl shadow-2xl border-t-8 border-blue-800">
+                <h2 class="text-3xl font-bold text-blue-900 text-center mb-4 font-heading">
+                    PARTE 1: CAPACIDAD JURÍDICA
+                </h2>
+                <p class="text-xl text-center text-gray-700 font-medium mb-6">
+                    Aptitud para <strong>tener</strong> derechos y obligaciones (ser propietario, heredero, etc.).
+                </p>
+                <p class="text-lg text-center text-gray-600 mb-8">
+                    Para tenerla, se requerían los <strong>Tria Status</strong>:
+                </p>
+
+                <div class="space-y-6">
+                    <div class="bg-blue-50 p-5 rounded-lg border border-blue-200">
+                        <h3 class="text-2xl font-bold text-blue-800 font-heading"><span class="text-3xl mr-2">1.</span> STATUS LIBERTATIS</h3>
+                        <div class="flex items-center mt-2">
+                            <span class="text-2xl mr-3">✅</span>
+                            <p class="text-lg text-gray-700"><strong>Ser Libre</strong> (No ser Esclavo - <em>Servus</em>).</p>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center text-3xl font-bold text-blue-400">↓</div>
+
+                    <div class="bg-blue-50 p-5 rounded-lg border border-blue-200">
+                        <h3 class="text-2xl font-bold text-blue-800 font-heading"><span class="text-3xl mr-2">2.</span> STATUS CIVITATIS</h3>
+                        <div class="flex items-center mt-2">
+                            <span class="text-2xl mr-3">✅</span>
+                            <p class="text-lg text-gray-700"><strong>Ser Ciudadano Romano</strong> (No <em>Peregrinus</em> o <em>Latinus</em>).</p>
+                        </div>
+                    </div>
+
+                    <div class="text-center text-3xl font-bold text-blue-400">↓</div>
+
+                    <div class="bg-blue-50 p-5 rounded-lg border border-blue-200">
+                        <h3 class="text-2xl font-bold text-blue-800 font-heading"><span class="text-3xl mr-2">3.</span> STATUS FAMILIAE</h3>
+                        <div class="flex items-center mt-2">
+                            <span class="text-2xl mr-3">✅</span>
+                            <p class="text-lg text-gray-700"><strong>Ser <em>Sui Iuris</em></strong> (No estar bajo potestad de un <em>paterfamilias</em>).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 bg-blue-800 text-white p-6 rounded-xl shadow-lg text-center">
+                    <h3 class="text-2xl font-extrabold mb-2 font-heading">
+                        <span class="text-3xl mr-2">👑</span> RESULTADO: EL *PATERFAMILIAS*
+                    </h3>
+                    <p class="text-lg">
+                        El <em>civis optimo iure</em> que reunía los 3 <em>status</em>. Tenía <strong>PLENA CAPACIDAD JURÍDICA</strong>.
+                    </p>
+                </div>
+
+                <div class="mt-8 bg-red-50 p-5 rounded-lg border-2 border-dashed border-red-300">
+                    <h3 class="text-2xl font-bold text-red-800 mb-3 font-heading">
+                        <span class="text-3xl mr-2">🚨</span> *Capitis Deminutio* (Pérdida de Status)
+                    </h3>
+                    <ul class="list-disc list-inside space-y-2 text-lg text-red-900">
+                        <li><strong>Maxima:</strong> Se pierde la libertad (ej. Cautiverio).</li>
+                        <li><strong>Media:</strong> Se pierde la ciudadanía (ej. Deportación).</li>
+                        <li><strong>Minima:</strong> Cambia la posición familiar (ej. Emancipación).</li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-2xl border-t-8 border-green-800">
+                <h2 class="text-3xl font-bold text-green-900 text-center mb-4 font-heading">
+                    PARTE 2: CAPACIDAD DE OBRAR
+                </h2>
+                <p class="text-xl text-center text-gray-700 font-medium mb-6">
+                    Aptitud para <strong>ejercer</strong> válidamente esos derechos (vender, testar, casarse).
+                </p>
+                <p class="text-lg text-center text-gray-600 mb-8">
+                    Depende de la edad, sexo o salud mental.
+                </p>
+
+                <div class="bg-gray-100 p-4 rounded-lg mb-8 text-center">
+                    <p class="text-lg font-semibold text-gray-800">
+                        ¡Ambas capacidades no tienen por qué coincidir!
+                    </p>
+                    <ul class="list-none text-md text-gray-700 mt-2">
+                        <li>Un bebé huérfano (<em>sui iuris</em>) tiene Cap. Jurídica, pero <strong>cero</strong> Cap. de Obrar.</li>
+                        <li>Un hijo de 30 años (<em>alieni iuris</em>) tiene Cap. de Obrar, pero <strong>casi nula</strong> Cap. Jurídica patrimonial.</li>
+                    </ul>
+                </div>
+                
+                <h3 class="text-2xl font-bold text-gray-800 mb-4 font-heading">
+                    <span class="text-3xl mr-2">🛡️</span> Circunstancias que Limitan la Capacidad de Obrar
+                </h3>
+                <p class="text-lg text-gray-600 mb-4">
+                    Cuando un <em>Sui Iuris</em> no podía actuar, el Derecho creaba instituciones de guarda:
+                </p>
+
+                <div class="space-y-4">
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                        <h4 class="text-xl font-semibold text-green-800 font-heading">TUTELA (Por Edad)</h4>
+                        <ul class="list-disc list-inside ml-2 space-y-1 text-lg text-gray-700">
+                            <li><strong>Infantes (0-7 años):</strong> Nula. El Tutor actúa por él (<em>Gestio</em>).</li>
+                            <li><strong>Impúberes (7-12/14):</strong> Limitada. El Tutor asiste (<em>Auctoritas</em>).</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                        <h4 class="text-xl font-semibold text-green-800 font-heading">TUTELA (Por Sexo)</h4>
+                        <ul class="list-disc list-inside ml-2 space-y-1 text-lg text-gray-700">
+                            <li><strong><em>Tutela Mulierum</em>:</strong> La mujer <em>sui iuris</em> necesitaba un Tutor para actos de disposición (ej. testar). Se volvió un formalismo y desapareció.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                        <h4 class="text-xl font-semibold text-green-800 font-heading">CURATELA (Administración)</h4>
+                        <ul class="list-disc list-inside ml-2 space-y-1 text-lg text-gray-700">
+                            <li><strong><em>Cura Minorum</em> (Menores de 25):</strong> Para proteger de la inexperiencia.</li>
+                            <li><strong><em>Cura Furiosi</em> (Locos):</strong> Administra el patrimonio.</li>
+                            <li><strong><em>Cura Prodigi</em> (Pródigos):</strong> Administra el patrimonio.</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="mt-12 bg-white p-6 rounded-xl shadow-2xl border-t-8 border-gray-700">
+            <h2 class="text-3xl font-bold text-gray-800 text-center mb-4 font-heading">
+                <span class="text-4xl mr-2">🏛️</span> Bonus: Las "Personas Jurídicas"
+            </h2>
+            <p class="text-xl text-center text-gray-700">
+                El Derecho Romano también reconoció capacidad a <strong>entes colectivos</strong>, distintos de sus miembros.
+            </p>
+            <div class="mt-6 flex flex-wrap justify-center gap-4">
+                <span class="bg-gray-200 text-gray-800 text-lg font-semibold px-4 py-2 rounded-full">Populus Romanus (El Estado)</span>
+                <span class="bg-gray-200 text-gray-800 text-lg font-semibold px-4 py-2 rounded-full">Municipia y Coloniae (Ciudades)</span>
+                <span class="bg-gray-200 text-gray-800 text-lg font-semibold px-4 py-2 rounded-full">Collegia (Asociaciones / Gremios)</span>
+            </div>
+        </div>
+
+    </div> </details><details class="infografia-container">
+    <summary>
+        <span>👨‍👩‍👧‍👦 Ver Infografía: Cómputo del Parentesco (Calculadora Interactiva)</span>
+        <svg class="w-6 h-6 infografia-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path></svg>
+    </summary>
+    <div class="infografia-content" style="background-color: #f8fafc;">
+        <div class="max-w-5xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden">
+            
+            <header class="bg-gradient-to-r from-purple-800 to-indigo-600 p-6 md:p-8 text-white shadow-lg">
+                <h1 class="text-2xl md:text-3xl font-bold">Cómputo del Parentesco en Roma</h1>
+                <p class="text-lg md:text-xl opacity-90 mt-1">Líneas y Grados</p>
+            </header>
+    
+            <main class="p-6 md:p-8">
+    
+                <section class="mb-10">
+                    <h2 class="text-xl md:text-2xl font-semibold text-slate-800 border-b-2 border-purple-300 pb-2 mb-6">
+                        Definiciones Clave
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <div class="flex items-start bg-slate-50 p-5 rounded-lg shadow-md border-l-4 border-purple-500 transition-transform hover:-translate-y-1">
+                            <div class="flex-shrink-0 w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mr-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg text-purple-800">LÍNEA</h3>
+                                <p class="text-slate-700 mb-2">Serie de personas que proceden de un mismo tronco.</p>
+                                <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
+                                    <li><strong>Línea Recta:</strong> Une ascendientes y descendientes.</li>
+                                    <li><strong>Línea Colateral:</strong> Tienen un ascendiente común.</li>
+                                </ul>
+                            </div>
+                        </div>
+    
+                        <div class="flex items-start bg-slate-50 p-5 rounded-lg shadow-md border-l-4 border-indigo-500 transition-transform hover:-translate-y-1">
+                            <div class="flex-shrink-0 w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mr-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 012-2h2a2 2 0 012 2v6m-6 0h-2a2 2 0 01-2-2v-6a2 2 0 012-2h2m6 0h2a2 2 0 012 2v6a2 2 0 01-2 2h-2m-6 0l-2 2 2 2m6 0l2 2-2 2" /></svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg text-indigo-800">GRADO</h3>
+                                <p class="text-slate-700 mb-2">Unidad de medida; cada generación es un grado.</p>
+                                <p class="text-sm text-slate-600"><span class="font-semibold text-slate-800">Cómputo Romano:</span> Sube al tronco común y baja.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start bg-slate-50 p-5 rounded-lg shadow-md border-l-4 border-teal-500 transition-transform hover:-translate-y-1">
+                            <div class="flex-shrink-0 w-12 h-12 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center mr-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m1.101-1.102l4-4a4 4 0 00-5.656-5.656l-1.102 1.101" /></svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg text-teal-800">AGNACIÓN (Civil)</h3>
+                                <p class="text-slate-700 mb-2">Vínculo jurídico bajo una misma *patria potestas*. Solo línea masculina.</p>
+                            </div>
+                        </div>
+    
+                        <div class="flex items-start bg-slate-50 p-5 rounded-lg shadow-md border-l-4 border-sky-500 transition-transform hover:-translate-y-1">
+                            <div class="flex-shrink-0 w-12 h-12 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center mr-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.828 6.707a4 4 0 010 5.656L12 19.364l7.172-7.001a4 4 0 010-5.656l-5.656-5.657a4 4 0 00-5.656 0L4.828 6.707z" /></svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg text-sky-800">COGNACIÓN (Sangre)</h3>
+                                <p class="text-slate-700 mb-2">Vínculo de sangre que une a descendientes de un tronco común. Es el parentesco "natural".</p>
+                            </div>
+                        </div>
+    
+                    </div>
+                </section>
+    
+                <section class="mt-10 pt-8 border-t-2 border-dashed border-slate-300">
+                    <h2 class="text-2xl md:text-3xl font-semibold text-slate-800 text-center mb-6">
+                        Calculadora de Parentesco (con IA)
+                    </h2>
+                    <div class="max-w-xl mx-auto space-y-4 p-6 bg-slate-50 rounded-lg shadow-inner">
+                        <div>
+                            <label for="person-1-familia" class="block text-sm font-medium text-gray-700">Persona 1</label>
+                            <input type="text" id="person-1-familia" value="Yo" class="w-full p-3 mt-1 rounded-lg border border-gray-300 bg-gray-100 text-slate-500" readonly>
+                        </div>
+                        <div>
+                            <label for="person-2-familia" class="block text-sm font-medium text-gray-700">Persona 2</label>
+                            <input type="text" id="person-2-familia" placeholder="Ej: El hijo de mi primo" class="w-full p-3 mt-1 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        </div>
+                        <button id="calculate-button-familia"
+                                class="w-full bg-gradient-to-r from-purple-600 to-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition duration-300 ease-in-out text-lg flex items-center justify-center space-x-2">
+                            <span>✨ Calcular Parentesco</span>
+                        </button>
+                    </div>
+                </section>
+    
+            </main>
+        </div>
+
+        <div id="modal-container-familia" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+            <div id="modal-overlay-familia" class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 transition-opacity"></div>
+            <div id="modal-content-familia" class="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl p-6 md:p-8 transform scale-95 opacity-0 transition-all">
+                <div class="flex items-center justify-between pb-4 border-b border-gray-200">
+                    <h3 class="text-2xl font-semibold text-gray-900">Resultado del Cómputo</h3>
+                    <button id="modal-close-button-familia" class="text-gray-400 hover:text-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+                <div class="mt-6 min-h-[150px]">
+                    <div id="modal-spinner-familia" class="flex flex-col items-center justify-center h-full text-gray-600">
+                        <div class="loader-infografia w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full mb-4"></div>
+                        <p class="text-lg">Calculando con IA...</p>
+                    </div>
+                    <div id="modal-output-familia" class="hidden space-y-4"></div>
+                    <div id="modal-error-familia" class="hidden p-4 bg-red-100 border border-red-300 text-red-700 rounded-lg">
+                        <strong>¡Error!</strong> <span id="modal-error-text-familia"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</details><div class="topic-card"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 4: El sujeto del derecho</h4><p class="text-secondary mb-3 text-sm">Estudio de los requisitos para ostentar la condición de persona y ser sujeto de derechos en Roma.</p><div class="topic-links flex flex-wrap gap-4"><a href="4. persona.pdf" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg><span>Ver Guion</span></a><a href="https://open.spotify.com/episode/6D2mPBSBGo8AcyGWXO914i?si=btU9P3-nRryXxr_vFvu0Kw" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div><div class="topic-card"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 5: La familia</h4><p class="text-secondary mb-3 text-sm">Análisis de la organización familiar romana, una estructura social y jurídica fundamental.</p><div class="topic-links flex flex-wrap gap-4"><a href="5. familia.pdf" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg><span>Ver Guion</span></a><a href="https://open.spotify.com/episode/677MZlIOUO1eCMyec6AtnZ?si=9etnCEy0S92jHp88-NXWog" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div></div>`
             },
             '#bloque3': {
                 title: 'Bloque III: Negocio Jurídico',
-                html: `<div class="prose"><p class="text-secondary">Este bloque es crucial para la comprensión de los actos voluntarios con efectos jurídicos. Analizaremos los elementos esenciales y accidentales de los negocios jurídicos y las causas que pueden llevar a su ineficacia.</p></div><details class="infografia-container"><summary><span>📊 Ver Infografía: Anatomía del Negocio Jurídico</span><svg class="w-6 h-6 infografia-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path></svg></summary><div class="infografia-content grid grid-cols-1 md:grid-cols-3 gap-4"><div class="bg-slate-100 p-4 rounded-lg"><h4 class="font-bold text-primary">Elementos Esenciales</h4><ul class="text-sm text-secondary list-disc list-inside"><li><strong>Voluntad:</strong> El querer interno.</li><li><strong>Objeto:</strong> La cosa o hecho.</li><li><strong>Causa:</strong> El fin económico-social.</li></ul></div><div class="bg-slate-100 p-4 rounded-lg"><h4 class="font-bold text-primary">Elementos Accidentales</h4><ul class="text-sm text-secondary list-disc list-inside"><li><strong>Condición:</strong> Hecho futuro e incierto.</li><li><strong>Término:</strong> Hecho futuro y cierto.</li><li><strong>Modo:</strong> Carga impuesta.</li></ul></div><div class="bg-slate-100 p-4 rounded-lg"><h4 class="font-bold text-primary">Vicios de la Voluntad</h4><ul class="text-sm text-secondary list-disc list-inside"><li><strong>Error:</strong> Falso conocimiento.</li><li><strong>Dolo:</strong> Engaño malicioso.</li><li><strong>Violencia (Metus):</strong> Amenaza.</li></ul></div></div></details><div class="space-y-4 mt-8"><div class="topic-card"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 6: Hechos, actos y negocios jurídicos</h4><p class="text-secondary mb-3 text-sm">Se exploran las bases de los negocios jurídicos, sus elementos esenciales, accidentales y sus posibles vicios.</p><div class="topic-links flex flex-wrap gap-4"><a href="6. negocio.pdf" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg><span>Ver Guion</span></a><a href="https://open.spotify.com/episode/4o6JhmuT1p0ghazrVCR36z?si=ENP_QlRGQXay7bZF_HpOtg" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div></div>` 
+                html: `<div class="prose"><p class="text-secondary">Este bloque es crucial para la comprensión de los actos voluntarios con efectos jurídicos. Analizaremos los elementos esenciales y accidentales de los negocios jurídicos y las causas que pueden llevar a su ineficacia.</p></div><details class="infografia-container">
+    <summary>
+        <span>⚖️ Ver Infografía: El Negocio Jurídico (Estructura y Vicios)</span>
+        <svg class="w-6 h-6 infografia-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path></svg>
+    </summary>
+    <div class="infografia-content" style="background-color: #f3f4f6;"> <h1 class="text-4xl lg:text-5xl font-extrabold text-center text-blue-900 mb-4 font-heading">
+            El Negocio Jurídico
+        </h1>
+        <h2 class="text-3xl text-center text-gray-700 font-light mb-12 font-heading">
+            La Declaración de Voluntad Privada
+        </h2>
+
+        <div class="bg-white p-6 rounded-xl shadow-xl mb-8 border-t-4 border-blue-500">
+            <h3 class="text-3xl font-bold text-blue-800 text-center mb-2 font-heading">
+                <span class="text-4xl mr-2">💬</span> CONCEPTO
+            </h3>
+            <p class="text-xl text-center text-gray-700">
+                Acto de comunicación de una <strong>voluntad</strong> particular, dirigido a un fin práctico, al que el Derecho reconoce eficacia y dota de los efectos deseados.
+            </p>
+        </div>
+
+        <div style="position: relative; text-align: center; font-size: 2.5rem; font-weight: bold; color: #4b5563;">↓</div>
+
+        <h2 class="text-3xl font-bold text-center text-gray-800 mt-12 mb-8 font-heading">Estructura de un Negocio Válido</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <div class="bg-blue-50 p-6 rounded-xl shadow-lg border-2 border-blue-300">
+                <h3 class="text-2xl font-bold text-blue-900 mb-4 border-b-2 border-blue-200 pb-2 font-heading">
+                    <span class="text-3xl mr-2">🔑</span> ELEMENTOS ESENCIALES
+                </h3>
+                <p class="text-lg text-gray-600 mb-4">(Si falta uno, el negocio es <strong>NULO</strong>)</p>
+                <ul class="list-disc list-inside space-y-3 text-xl text-gray-800">
+                    <li><span class="font-semibold">Voluntad:</span> El motor del negocio. Debe ser real y manifestada.</li>
+                    <li><span class="font-semibold">Objeto:</span> El contenido. Debe ser posible, lícito y determinado.</li>
+                    <li><span class="font-semibold">Causa:</span> La función económico-social objetiva.</li>
+                    <li><span class="font-semibold">Forma:</span> (Solo en negocios solemnes, ej. <em>Stipulatio</em>).</li>
+                </ul>
+            </div>
+
+            <div class="bg-gray-50 p-6 rounded-xl shadow-lg border-2 border-gray-300">
+                <h3 class="text-2xl font-bold text-gray-900 mb-4 border-b-2 border-gray-200 pb-2 font-heading">
+                    <span class="text-3xl mr-2">➕</span> ELEMENTOS ACCIDENTALES
+                </h3>
+                <p class="text-lg text-gray-600 mb-4">(Cláusulas voluntarias que modifican los efectos)</p>
+                <ul class="list-disc list-inside space-y-3 text-xl text-gray-800">
+                    <li>
+                        <span class="font-semibold">Condición:</span> Hecho <em>futuro</em> e <em>incierto</em>.
+                        <ul class="list-none ml-8 text-lg">
+                            <li>- <span class="font-medium">Suspensiva:</span> Suspende el efecto (Ej. "Si llega la nave...")</li>
+                            <li>- <span class="font-medium">Resolutoria:</span> Cesa el efecto (Ej. "Te lo vendo, pero si...")</li>
+                        </ul>
+                    </li>
+                    <li><span class="font-semibold">Término (Dies):</span> Hecho <em>futuro</em> y <em>cierto</em>.</li>
+                    <li><span class="font-semibold">Modo (Modus):</span> Carga impuesta en un negocio gratuito.</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 class="text-3xl font-bold text-center text-red-900 mt-16 mb-8 font-heading">Anomalías y Vicios de la Voluntad</h2>
+        <div class="bg-red-50 border-4 border-dashed border-red-300 p-8 rounded-xl shadow-lg">
+            <p class="text-xl text-center text-red-800 font-medium mb-6">
+                El negocio existe, pero la voluntad está viciada. El <em>Ius Civile</em> lo ve válido, pero el <strong>Pretor</strong> concede remedios (Anulabilidad).
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <h4 class="text-2xl font-bold text-red-700 font-heading">ERROR</h4>
+                    <p class="text-lg text-gray-700">(Falso conocimiento sobre un elemento esencial, ej. <em>in substantia</em>)</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <h4 class="text-2xl font-bold text-red-700 font-heading">DOLO (<em>Dolus</em>)</h4>
+                    <p class="text-lg text-gray-700">(Engaño malicioso provocado por la otra parte para inducir al negocio)</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <h4 class="text-2xl font-bold text-red-700 font-heading">MIEDO (<em>Metus</em>)</h4>
+                    <p class="text-lg text-gray-700">(Amenaza grave e injusta que fuerza a celebrar el negocio)</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="text-3xl font-bold text-center text-gray-800 mt-16 mb-8 font-heading">Categorías de Ineficacia</h2>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="space-y-6">
+                <h3 class="text-2xl font-semibold text-center text-gray-700 font-heading">A. INVALIDEZ (Vicio Originario)</h3>
+                <div class="bg-white p-6 rounded-xl shadow-lg border-l-8 border-red-700">
+                    <h4 class="text-2xl font-extrabold text-red-700 font-heading">NULIDAD (<em>Ipso Iure</em>)</h4>
+                    <p class="text-lg text-gray-600 font-medium">(Sanción del <em>Ius Civile</em>)</p>
+                    <p class="text-lg text-gray-700 mt-2">El negocio "nace muerto". No existe. (Ej. Falta un elemento esencial, objeto ilícito, defecto de forma solemne).</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg border-l-8 border-yellow-500">
+                    <h4 class="text-2xl font-extrabold text-yellow-600 font-heading">ANULABILIDAD (<em>Ope Exceptionis</em>)</h4>
+                    <p class="text-lg text-gray-600 font-medium">(Protección del Pretor)</p>
+                    <p class="text-lg text-gray-700 mt-2">El negocio "nace válido" civilmente, pero es injusto por un <strong>vicio de la voluntad</strong> (Dolo, Metus). El Pretor concede la <em>Exceptio</em>.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg border-l-8 border-orange-500">
+                    <h4 class="text-2xl font-extrabold text-orange-600 font-heading">RESCISIÓN (Por Lesión)</h4>
+                    <p class="text-lg text-gray-600 font-medium">(Remedio del Pretor / Postclásico)</p>
+                    <p class="text-lg text-gray-700 mt-2">Para negocios <strong>VÁLIDOS</strong> que causan un <strong>grave perjuicio</strong> (lesión) a una parte. (Ej. <em>laesio enormis</em> o perjuicio a un <em>minor</em>). Se anulan sus efectos mediante la <em>Restitutio in integrum</em>.</p>
+                </div>
+            </div>
+            <div class="space-y-6">
+                <h3 class="text-2xl font-semibold text-center text-gray-700 font-heading">B. INEFICACIA SOBREVENIDA</h3>
+                <div class="bg-white p-6 rounded-xl shadow-lg border-l-8 border-green-600">
+                    <h4 class="text-2xl font-extrabold text-green-700 font-heading">RESOLUCIÓN</h4>
+                    <p class="text-lg text-gray-600 font-medium">(El negocio válido se deshace)</p>
+                    <p class="text-lg text-gray-700 mt-2">Cesa por un hecho posterior. (Ej. Incumplimiento de una parte, o cumplimiento de una condición resolutoria pactada).</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg border-l-8 border-gray-500">
+                    <h4 class="text-2xl font-extrabold text-gray-600 font-heading">REVOCACIÓN</h4>
+                    <p class="text-lg text-gray-600 font-medium">(Acto de voluntad unilateral)</p>
+                    <p class="text-lg text-gray-700 mt-2">El autor deshace un negocio válido. (Ej. Revocación de un testamento, de un mandato, o de una donación por ingratitud).</p>
+                </div>
+            </div>
+        </div>
+
+    </div> </details><div class="topic-card"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 6: Hechos, actos y negocios jurídicos</h4><p class="text-secondary mb-3 text-sm">Se exploran las bases de los negocios jurídicos, sus elementos esenciales, accidentales y sus posibles vicios.</p><div class="topic-links flex flex-wrap gap-4"><a href="6. negocio.pdf" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg><span>Ver Guion</span></a><a href="https://open.spotify.com/episode/4o6JhmuT1p0ghazrVCR36z?si=ENP_QlRGQXay7bZF_HpOtg" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div></div>` 
             },
        '#bloque4': {
                 title: 'Bloque IV: Procedimiento',
@@ -1036,6 +1685,8 @@
                  toggleSidebar();
             }
 
+            // ... (dentro de la función renderContent)
+
             if (hash === '#caselab') {
                 initCaseLabPage();
             } else if (hash === '#ulpiano') {
@@ -1044,6 +1695,8 @@
                  initHomePage();
             } else if (hash === '#mapamental') {
                 initMapaMental();
+            } else if (hash === '#bloque2') { // <--- AÑADE ESTA LÍNEA
+                initInfografia_Familia();      // <--- Y ESTA LÍNEA
             }
         }
 
@@ -1376,6 +2029,807 @@
 
         document.addEventListener('DOMContentLoaded', handleHashChange);
     </script>
+<script>
+// =============================================
+// --- SCRIPT PARA: familia.html ---
+// =============================================
+function initInfografia_Familia() {    // Vinculamos la lógica al botón específico de esta infografía
+    const calculateButton_familia = document.getElementById('calculate-button-familia');
+    if (calculateButton_familia) {
+        calculateButton_familia.addEventListener('click', handleCalculate_familia);
+    }
+
+    // Vínculos a elementos del modal
+    const modalContainer_familia = document.getElementById('modal-container-familia');
+    const modalCloseButton_familia = document.getElementById('modal-close-button-familia');
+    const modalOverlay_familia = document.getElementById('modal-overlay-familia');
+    
+    if (modalCloseButton_familia) {
+        modalCloseButton_familia.addEventListener('click', closeModal_familia);
+    }
+    if (modalOverlay_familia) {
+        modalOverlay_familia.addEventListener('click', closeModal_familia);
+    }
+    
+    const person2Input_familia = document.getElementById('person-2-familia');
+    if(person2Input_familia) {
+        person2Input_familia.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                handleCalculate_familia();
+            }
+        });
+    }
+}
+
+const openModal_familia = () => {
+    const modalContainer_familia = document.getElementById('modal-container-familia');
+    const modalOverlay_familia = document.getElementById('modal-overlay-familia');
+    const modalContent_familia = document.getElementById('modal-content-familia');
+    const modalSpinner_familia = document.getElementById('modal-spinner-familia');
+    const modalOutput_familia = document.getElementById('modal-output-familia');
+    const modalError_familia = document.getElementById('modal-error-familia');
+
+    modalSpinner_familia.classList.remove('hidden');
+    modalSpinner_familia.classList.add('flex');
+    modalOutput_familia.classList.add('hidden');
+    modalError_familia.classList.add('hidden');
+    modalOutput_familia.innerHTML = '';
+    
+    modalContainer_familia.classList.remove('hidden');
+    setTimeout(() => {
+        modalOverlay_familia.classList.remove('opacity-0');
+        modalContent_familia.classList.remove('scale-95', 'opacity-0');
+        modalContent_familia.classList.add('scale-100', 'opacity-100');
+    }, 10);
+};
+
+const closeModal_familia = () => {
+    const modalContainer_familia = document.getElementById('modal-container-familia');
+    const modalOverlay_familia = document.getElementById('modal-overlay-familia');
+    const modalContent_familia = document.getElementById('modal-content-familia');
+
+    modalContent_familia.classList.add('scale-95', 'opacity-0');
+    modalContent_familia.classList.remove('scale-100', 'opacity-100');
+    modalOverlay_familia.classList.add('opacity-0');
+    setTimeout(() => {
+        modalContainer_familia.classList.add('hidden');
+    }, 300);
+};
+
+const responseSchema_familia = {
+    type: "OBJECT",
+    properties: {
+        "linea": { "type": "STRING", "description": "La línea de parentesco (Ej: 'Línea Colateral', 'Línea Recta Descendente')." },
+        "grado": { "type": "STRING", "description": "El grado de parentesco (Ej: 'Segundo Grado', 'Tercer Grado')." },
+        "explicacion": { "type": "STRING", "description": "Explicación breve (máx 2 frases) de cómo se calcula, mencionando el ancestro común." }
+    },
+    required: ["linea", "grado", "explicacion"]
+};
+
+async function handleCalculate_familia() {
+    const person1Input_familia = document.getElementById('person-1-familia');
+    const person2Input_familia = document.getElementById('person-2-familia');
+
+    openModal_familia(); 
+
+    if (!person2Input_familia || !person1Input_familia) return; 
+    
+    const person1 = person1Input_familia.value.trim();
+    const person2 = person2Input_familia.value.trim();
+
+    if (!person2) {
+        showModalError_familia("Por favor, introduce la 'Persona 2' para calcular.");
+        return;
+    }
+
+    const systemPrompt = `Eres un experto en Derecho Romano, especializado en cómputo de parentesco. Tu tarea es calcular el parentesco entre dos personas usando el método romano (*tot gradus quot generationes*). Responde en español y adhiérete estrictamente al esquema JSON proporcionado. Sé conciso.`;
+    const userQuery = `Por favor, calcula el parentesco romano entre "${person1}" y "${person2}".`;
+    const apiKey_familia = ""; // Se deja vacío
+    const model_familia = 'gemini-2.5-flash-preview-09-2025';
+    const apiUrl_familia = `https://generativelanguage.googleapis.com/v1beta/models/${model_familia}:generateContent?key=${apiKey_familia}`;
+
+    const payload = {
+        contents: [{ parts: [{ text: userQuery }] }],
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        generationConfig: {
+            responseMimeType: "application/json",
+            responseSchema: responseSchema_familia,
+            temperature: 0.2,
+        }
+    };
+
+    try {
+        const response = await fetchWithBackoff_familia(apiUrl_familia, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        if (!response.ok) { throw new Error(`Error de la API: ${response.status} ${response.statusText}`); }
+        const result = await response.json();
+        const candidate = result.candidates?.[0];
+        if (candidate && candidate.content?.parts?.[0]?.text) {
+            const jsonText = candidate.content.parts[0].text;
+            const data = JSON.parse(jsonText);
+            displayResults_familia(data);
+        } else { throw new Error("No se pudo obtener una respuesta válida de la IA."); }
+    } catch (error) {
+        console.error("Error al calcular:", error);
+        showModalError_familia(error.message || "Ocurrió un error desconocido.");
+    }
+}
+
+function displayResults_familia(data) {
+    const modalSpinner_familia = document.getElementById('modal-spinner-familia');
+    const modalOutput_familia = document.getElementById('modal-output-familia');
+    
+    modalOutput_familia.innerHTML = `
+        <ul class="space-y-3 text-lg text-slate-700 dark:text-slate-200">
+            <li class="flex items-start">
+                <strong class="w-24 inline-block flex-shrink-0 text-purple-700">Línea:</strong>
+                <span>${data.linea}</span>
+            </li>
+            <li class="flex items-start">
+                <strong class="w-24 inline-block flex-shrink-0 text-purple-700">Grado:</strong>
+                <span>${data.grado}</span>
+            </li>
+            <li class="flex items-start">
+                <strong class="w-24 inline-block flex-shrink-0 text-purple-700">Cómputo:</strong>
+                <span>${data.explicacion}</span>
+            </li>
+        </ul>`;
+    modalSpinner_familia.classList.add('hidden');
+    modalSpinner_familia.classList.remove('flex');
+    modalOutput_familia.classList.remove('hidden');
+}
+
+function showModalError_familia(message) {
+    const modalSpinner_familia = document.getElementById('modal-spinner-familia');
+    const modalError_familia = document.getElementById('modal-error-familia');
+    const modalErrorText_familia = document.getElementById('modal-error-text-familia');
+    
+    modalSpinner_familia.classList.add('hidden');
+    modalSpinner_familia.classList.remove('flex');
+    modalErrorText_familia.textContent = message;
+    modalError_familia.classList.remove('hidden');
+}
+
+async function fetchWithBackoff_familia(url, options, maxRetries = 3) {
+    let attempt = 0;
+    let delay = 1000;
+    while (attempt < maxRetries) {
+        try {
+            const response = await fetch(url, options);
+            if (response.ok) { return response; }
+            if (response.status !== 429) { return response; }
+        } catch (error) {
+            if (attempt + 1 >= maxRetries) { throw error; }
+        }
+        await new Promise(resolve => setTimeout(resolve, delay * (2 ** attempt)));
+        attempt++;
+    }
+    throw new Error("La solicitud a la API falló después de varios reintentos.");
+}
+
+
+// =============================================
+// --- SCRIPT PARA: responsabilidad.html ---
+// =============================================
+function openModal_resp(title, content) {
+    const modal = document.getElementById('geminiModal_resp');
+    const modalTitle = document.getElementById('modalTitle_resp');
+    const modalBody = document.getElementById('modalBody_resp');
+    
+    modalTitle.textContent = title;
+    let htmlContent = content.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-800">$1</strong>');
+    htmlContent = htmlContent.replace(/\n/g, '<br>');
+    modalBody.innerHTML = htmlContent;
+    
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    modal.querySelector('.modal-infografia-content').classList.remove('scale-95');
+}
+
+function closeModal_resp() {
+    const modal = document.getElementById('geminiModal_resp');
+    modal.querySelector('.modal-infografia-content').classList.add('scale-95');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+}
+
+function showLoader_resp() { document.getElementById('loader_resp').classList.remove('hidden'); }
+function hideLoader_resp() { document.getElementById('loader_resp').classList.add('hidden'); }
+
+function getPromptForTopic_resp(topic) {
+    switch(topic) {
+        case 'Dolo (Incumplimiento Voluntario)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) donde un deudor (ej. un depositario) incumple su obligación con **Dolo**. Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué el deudor responde. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Culpa Leve (Negligencia)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) donde un deudor (ej. un comodatario) incumple por **Culpa Leve** (no usar la diligencia de un 'bonus paterfamilias'). Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué responde por negligencia. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Custodia (Caso Fortuito)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre la responsabilidad por **Custodia**. Un deudor (ej. un tintorero o un comodatario) pierde la cosa por un **caso fortuito** (ej. un robo por terceros, no violento). Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué, a pesar de no tener culpa, debe responder por custodia. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Periculum (Fuerza Mayor)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) donde se discute el **Periculum (riesgo)**. Una **fuerza mayor** (*vis maior*, ej. un terremoto o un incendio) destruye la cosa debida (ej. un esclavo específico) antes de la entrega, y el deudor solo respondía por culpa. Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué el deudor se libera de la obligación y el 'periculum' es del acreedor. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        default: return `Genera un caso práctico sobre ${topic}.`;
+    }
+}
+
+async function generarCaso_resp(tipoCaso) {
+    showLoader_resp();
+    const prompt = getPromptForTopic_resp(tipoCaso);
+    try {
+        const response = await callGeminiAPI_infografia(prompt);
+        hideLoader_resp();
+        openModal_resp(`Caso Práctico: ${tipoCaso}`, response);
+    } catch (error) {
+        hideLoader_resp();
+        openModal_resp('Error', 'No se pudo generar el caso práctico en este momento. Por favor, inténtelo de nuevo más tarde.');
+    }
+}
+
+// =============================================
+// --- SCRIPT PARA: clases de contratos.html ---
+// =============================================
+function openModal_clases_contratos(title, content) {
+    const modal = document.getElementById('geminiModal_clases_contratos');
+    const modalTitle = document.getElementById('modalTitle_clases_contratos');
+    const modalBody = document.getElementById('modalBody_clases_contratos');
+    
+    modalTitle.textContent = title;
+    let htmlContent = content.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-800">$1</strong>');
+    htmlContent = htmlContent.replace(/\n/g, '<br>');
+    modalBody.innerHTML = htmlContent;
+    
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    modal.querySelector('.modal-infografia-content').classList.remove('scale-95');
+}
+
+function closeModal_clases_contratos() {
+    const modal = document.getElementById('geminiModal_clases_contratos');
+    modal.querySelector('.modal-infografia-content').classList.add('scale-95');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+}
+
+function showLoader_clases_contratos() { document.getElementById('loader_clases_contratos').classList.remove('hidden'); }
+function hideLoader_clases_contratos() { document.getElementById('loader_clases_contratos').classList.add('hidden'); }
+
+async function generarCaso_clases_contratos(tipoContrato) {
+    showLoader_clases_contratos();
+    const prompt = `Eres un profesor experto en Derecho Romano, discípulo de Gayo y Papiniano. Genera un breve y claro caso práctico (casus) para un estudiante de primer año que involucre un contrato de '${tipoContrato}'. Después del caso, proporciona una 'Responsa' (solución) clara y concisa en un párrafo, explicando la acción o acciones legales que proceden y por qué. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+    try {
+        const response = await callGeminiAPI_infografia(prompt);
+        hideLoader_clases_contratos();
+        openModal_clases_contratos(`Caso Práctico: ${tipoContrato}`, response);
+    } catch (error) {
+        hideLoader_clases_contratos();
+        openModal_clases_contratos('Error', 'No se pudo generar el caso práctico en este momento. Por favor, inténtelo de nuevo más tarde.');
+    }
+}
+
+// =============================================
+// --- SCRIPT PARA: propietario pretorio.html ---
+// =============================================
+function openModal_pretorio(title, content) {
+    const modal = document.getElementById('geminiModal_pretorio');
+    const modalTitle = document.getElementById('modalTitle_pretorio');
+    const modalBody = document.getElementById('modalBody_pretorio');
+    
+    modalTitle.textContent = title;
+    let htmlContent = content.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-800">$1</strong>');
+    htmlContent = htmlContent.replace(/\n/g, '<br>');
+    modalBody.innerHTML = htmlContent;
+    
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    modal.querySelector('.modal-infografia-content').classList.remove('scale-95');
+}
+
+function closeModal_pretorio() {
+    const modal = document.getElementById('geminiModal_pretorio');
+    modal.querySelector('.modal-infografia-content').classList.add('scale-95');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+}
+
+function showLoader_pretorio() { document.getElementById('loader_pretorio').classList.remove('hidden'); }
+function hideLoader_pretorio() { document.getElementById('loader_pretorio').classList.add('hidden'); }
+
+function getPromptForTopic_pretorio(topic) {
+    switch(topic) {
+        case 'A non domino': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre una **adquisición 'a non domino'**. Ticio (Propietario Pretorio) compra de buena fe un esclavo a Mevio, quien no era el verdadero dueño. Más tarde, Cayo (el 'verus dominus') reconoce a su esclavo y lo reclama. Después del caso, proporciona una 'Responsa' (solución) clara, explicando la batalla procesal: Ticio usa la *Acción Publiciana*, pero Cayo la paraliza con la *exceptio iusti dominii*, y Ticio pierde. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Defecto de forma (demandado)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre un **defecto de forma**. Ticio (Propietario Civil) vende y entrega (*traditio*) un esclavo (*res mancipi*) a Cayo (Propietario Pretorio). Ticio, amparándose en el *Ius Civile*, demanda a Cayo con la *Acción Reivindicatoria*. Después del caso, proporciona una 'Responsa' (solución) clara, explicando la batalla procesal: Cayo paraliza la acción de Ticio usando la *exceptio rei venditae et traditae* y gana. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Defecto de forma (demandante)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre un **defecto de forma**. Ticio (Propietario Civil) vende y entrega (*traditio*) un esclavo (*res mancipi*) a Cayo (Propietario Pretorio). Cayo pierde la posesión del esclavo, que vuelve a manos de Ticio. Cayo demanda a Ticio con la *Acción Publiciana*. Después del caso, proporciona una 'Responsa' (solución) clara, explicando la batalla procesal: Ticio opone la *exceptio iusti dominii*, pero Cayo la anula con la *replicatio doli* y gana. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        default: return `Genera un caso práctico sobre ${topic}.`;
+    }
+}
+
+async function generarCaso_pretorio(tipoCaso) {
+    showLoader_pretorio();
+    const prompt = getPromptForTopic_pretorio(tipoCaso);
+    try {
+        const response = await callGeminiAPI_infografia(prompt);
+        hideLoader_pretorio();
+        openModal_pretorio(`Caso Práctico: ${tipoCaso}`, response);
+    } catch (error) {
+        hideLoader_pretorio();
+        openModal_pretorio('Error', 'No se pudo generar el caso práctico en este momento. Por favor, inténtelo de nuevo más tarde.');
+    }
+}
+
+// =============================================
+// --- SCRIPT PARA: servidumbres.html ---
+// =============================================
+function openModal_servidumbres(title, content) {
+    const modal = document.getElementById('geminiModal_servidumbres');
+    const modalTitle = document.getElementById('modalTitle_servidumbres');
+    const modalBody = document.getElementById('modalBody_servidumbres');
+    
+    modalTitle.textContent = title;
+    let htmlContent = content.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-800">$1</strong>');
+    htmlContent = htmlContent.replace(/\n/g, '<br>');
+    modalBody.innerHTML = htmlContent;
+    
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    modal.querySelector('.modal-infografia-content').classList.remove('scale-95');
+}
+
+function closeModal_servidumbres() {
+    const modal = document.getElementById('geminiModal_servidumbres');
+    modal.querySelector('.modal-infografia-content').classList.add('scale-95');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+}
+
+function showLoader_servidumbres() { document.getElementById('loader_servidumbres').classList.remove('hidden'); }
+function hideLoader_servidumbres() { document.getElementById('loader_servidumbres').classList.add('hidden'); }
+
+function getPromptForTopic_servidumbres(topic) {
+    const basePrompt = `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) para un estudiante de primer año que involucre una '${topic}'. Después del caso, proporciona una 'Responsa' (solución) clara y concisa en un párrafo, explicando la solución jurídica y la acción que procede (ej. 'Vindicatio Servitutis' o 'Acción Confesoria'). Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+    switch(topic) {
+        case 'Servidumbre de Paso (Iter/Via)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre una **Servidumbre de Paso (Iter o Via)**. Ticio (fundo dominante) tiene derecho a pasar por el fundo de Cayo (fundo sirviente) para llegar al camino público. Cayo decide construir un muro que bloquea el paso. Después del caso, proporciona una 'Responsa' (solución) clara, explicando la acción que tiene Ticio (*Vindicatio Servitutis*) para defender su derecho. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Servidumbre de Acueducto (Aquaeductus)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre una **Servidumbre de Acueducto (Aquaeductus)**. Ticio tiene derecho a que un canal de agua para su riego pase por el fundo de Cayo. Cayo realiza obras en su fundo y rompe el canal, impidiendo que llegue el agua. Después del caso, proporciona una 'Responsa' (solución) clara, explicando la acción que tiene Ticio. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Servidumbre de No Elevar (ius altius non tollendi)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre una **Servidumbre Negativa (ius altius non tollendi)**. Ticio (fundo dominante) tiene derecho a que su vecino Cayo (fundo sirviente) no eleve su edificación para no quitarle las vistas. Cayo comienza a construir un segundo piso. Después del caso, proporciona una 'Responsa' (solución) clara, explicando cómo puede Ticio paralizar la obra (*novi operis nuntiatio*) y defender su derecho (*Acción Confesoria*). Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Servidumbre de Apoyo (oneris ferendi)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre la **Servidumbre de Apoyo de Viga (oneris ferendi)**. La viga principal de la casa de Ticio se apoya en el muro de Cayo. El muro de Cayo amenaza ruina por falta de mantenimiento, y Cayo se niega a repararlo. Después del caso, proporciona una 'Responsa' (solución) clara, explicando la particularidad de esta servidumbre (que SÍ implica un 'hacer' por parte del sirviente). Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        default: return basePrompt.replace('${topic}', topic);
+    }
+}
+
+async function generarCaso_servidumbres(tipoCaso) {
+    showLoader_servidumbres();
+    const prompt = getPromptForTopic_servidumbres(tipoCaso);
+    try {
+        const response = await callGeminiAPI_infografia(prompt);
+        hideLoader_servidumbres();
+        openModal_servidumbres(`Caso Práctico: ${tipoCaso}`, response);
+    } catch (error) {
+        hideLoader_servidumbres();
+        openModal_servidumbres('Error', 'No se pudo generar el caso práctico en este momento. Por favor, inténtelo de nuevo más tarde.');
+    }
+}
+
+// =============================================
+// --- SCRIPT PARA: penal.html ---
+// =============================================
+function openModal_penal(title, content) {
+    const modal = document.getElementById('geminiModal_penal');
+    const modalTitle = document.getElementById('modalTitle_penal');
+    const modalBody = document.getElementById('modalBody_penal');
+    
+    modalTitle.textContent = title;
+    let htmlContent = content.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-800">$1</strong>');
+    htmlContent = htmlContent.replace(/\n/g, '<br>');
+    modalBody.innerHTML = htmlContent;
+    
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    modal.querySelector('.modal-infografia-content').classList.remove('scale-95');
+}
+
+function closeModal_penal() {
+    const modal = document.getElementById('geminiModal_penal');
+    modal.querySelector('.modal-infografia-content').classList.add('scale-95');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+}
+
+function showLoader_penal() { document.getElementById('loader_penal').classList.remove('hidden'); }
+function hideLoader_penal() { document.getElementById('loader_penal').classList.add('hidden'); }
+
+function getPromptForTopic_penal(topic) {
+    switch(topic) {
+        case 'Cumulativa (ej. Furtum)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre un delito de **hurto (furtum)**. Después del caso, proporciona una 'Responsa' (solución) clara, explicando la **concurrencia cumulativa**: por qué la víctima (Ticio) puede ejercitar TANTO la *actio furti* (penal, para el castigo) COMO la *condictio furtiva* (reipersecutoria, para recuperar el valor). Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Electiva (ej. Lex Aquilia)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre un delito de **daño (damnum iniuria datum)** bajo la Lex Aquilia (ej. Ticio mata a un esclavo de Cayo por negligencia). Después del caso, proporciona una 'Responsa' (solución) clara, explicando la **concurrencia electiva**: por qué se considera que la *actio legis Aquiliae* (penal) ya incluye la reparación del daño, y por tanto, la víctima (Cayo) debe elegir entre esa acción u otra reipersecutoria. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        default: return `Genera un caso práctico sobre ${topic}.`;
+    }
+}
+
+async function generarCaso_penal(tipoCaso) {
+    showLoader_penal();
+    const prompt = getPromptForTopic_penal(tipoCaso);
+    try {
+        const response = await callGeminiAPI_infografia(prompt);
+        hideLoader_penal();
+        openModal_penal(`Caso Práctico: ${tipoCaso}`, response);
+    } catch (error) {
+        hideLoader_penal();
+        openModal_penal('Error', 'No se pudo generar el caso práctico en este momento. Por favor, inténtelo de nuevo más tarde.');
+    }
+}
+
+// =============================================
+// --- SCRIPT PARA: modos.html ---
+// =============================================
+function openModal_modos(title, content) {
+    const modal = document.getElementById('geminiModal_modos');
+    const modalTitle = document.getElementById('modalTitle_modos');
+    const modalBody = document.getElementById('modalBody_modos');
+    
+    modalTitle.textContent = title;
+    let htmlContent = content.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-800">$1</strong>');
+    htmlContent = htmlContent.replace(/\n/g, '<br>');
+    modalBody.innerHTML = htmlContent;
+    
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    modal.querySelector('.modal-infografia-content').classList.remove('scale-95');
+}
+
+function closeModal_modos() {
+    const modal = document.getElementById('geminiModal_modos');
+    modal.querySelector('.modal-infografia-content').classList.add('scale-95');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+}
+
+function showLoader_modos() { document.getElementById('loader_modos').classList.remove('hidden'); }
+function hideLoader_modos() { document.getElementById('loader_modos').classList.add('hidden'); }
+
+function getPromptForTopic_modos(topic) {
+    const basePrompt = `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) para un estudiante de primer año que involucre el concepto de '${topic}'. Después del caso, proporciona una 'Responsa' (solución) clara y concisa en un párrafo, explicando la solución jurídica. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+    switch(topic) {
+        case 'Ocupación (Occupatio)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre la **Ocupación** de una *res nullius* (ej. un animal salvaje cazado o una cosa abandonada). Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué el ocupante adquiere la propiedad civil. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Accesión (Accessio)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre la **Accesión** de inmuebles, usando el principio *'Superficies solo cedit'* (ej. Ticio construye en el fundo de Cayo). Después del caso, proporciona una 'Responsa' (solución) clara, explicando quién es el dueño de lo construido y qué acciones proceden. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Especificación (Specificatio)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre **Especificación**, donde alguien crea una *nova species* con materiales ajenos (ej. Sempronio hace vino con uvas de Mevio). Después del caso, proporciona una 'Responsa' (solución) clara, explicando quién es el dueño de la nueva especie. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Hallazgo de Tesoro': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre el **Hallazgo de un Tesoro** en fundo ajeno. Después del caso, proporciona una 'Responsa' (solución) clara, explicando cómo se reparte la propiedad del tesoro según el Derecho Clásico o Justinianeo. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Adquisición de Frutos (Separatio vs Perceptio)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) que ilustre la diferencia entre adquirir frutos por **'separatio' (separación)** y por **'perceptio' (percepción)**. Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué un propietario y un usufructuario adquieren los frutos en momentos distintos. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Mancipatio': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre la **Mancipatio**. El caso debe involucrar la compraventa de una *res mancipi* (ej. un esclavo) donde SÍ se realiza la ceremonia solemne. Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué el comprador se convierte en propietario civil (*dominus ex iure Quiritium*). Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'In Iure Cessio': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre la **In Iure Cessio**, explicando cómo funciona el 'proceso fingido' ante el Pretor para transmitir la propiedad (ej. de una servidumbre). Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué este acto transfiere el *dominium*. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Traditio (con Iusta Causa)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre la **Traditio** de una *res nec mancipi* (ej. una túnica o dinero) basada en una *iusta causa* (ej. una compraventa o donación). Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué la simple entrega, en este caso, SÍ transmite la propiedad civil. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        default: return basePrompt;
+    }
+}
+
+async function generarCaso_modos(tipoCaso) {
+    showLoader_modos();
+    const prompt = getPromptForTopic_modos(tipoCaso);
+    try {
+        const response = await callGeminiAPI_infografia(prompt);
+        hideLoader_modos();
+        openModal_modos(`Caso Práctico: ${tipoCaso}`, response);
+    } catch (error) {
+        hideLoader_modos();
+        openModal_modos('Error', 'No se pudo generar el caso práctico en este momento. Por favor, inténtelo de nuevo más tarde.');
+    }
+}
+
+// =============================================
+// --- SCRIPT PARA: garantias.html ---
+// =============================================
+function openModal_garantias(title, content) {
+    const modal = document.getElementById('geminiModal_garantias');
+    const modalTitle = document.getElementById('modalTitle_garantias');
+    const modalBody = document.getElementById('modalBody_garantias');
+    
+    modalTitle.textContent = title;
+    let htmlContent = content.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-800">$1</strong>');
+    htmlContent = htmlContent.replace(/\n/g, '<br>');
+    modalBody.innerHTML = htmlContent;
+    
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    modal.querySelector('.modal-infografia-content').classList.remove('scale-95');
+}
+
+function closeModal_garantias() {
+    const modal = document.getElementById('geminiModal_garantias');
+    modal.querySelector('.modal-infografia-content').classList.add('scale-95');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+}
+
+function showLoader_garantias() { document.getElementById('loader_garantias').classList.remove('hidden'); }
+function hideLoader_garantias() { document.getElementById('loader_garantias').classList.add('hidden'); }
+
+function getPromptForTopic_garantias(topic) {
+    const basePrompt = `Eres un profesor experto en Derecho Romano, discípulo de Ulpiano. Genera un breve caso práctico (casus) para un estudiante de primer año que involucre el concepto de '${topic}'. Después del caso, proporciona una 'Responsa' (solución) clara y concisa en un párrafo, explicando la solución jurídica y las acciones que proceden. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+    switch(topic) {
+        case 'Stipulatio Poenae': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre una **Stipulatio Poenae** (cláusula penal). El caso debe involucrar a un deudor que incumple una obligación principal (ej. construir una casa) y el acreedor reclama la pena pecuniaria prometida en la estipulación. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Fianza (Fideiussio)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre una **Fianza (Fideiussio)**. Ticio debe dinero a Cayo. Sempronio actúa como fiador ('fideiussor'). Ticio no paga. Después del caso, proporciona una 'Responsa' (solución) clara, explicando a quién puede demandar Cayo y con qué acción. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Mandatum Pecuniae Credendae': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre un **Mandatum Pecuniae Credendae**. Ticio (mandante-fiador) le pide a Cayo (mandatario-acreedor) que preste dinero a Sempronio (deudor). Sempronio no devuelve el préstamo. Después del caso, proporciona una 'Responsa' (solución) clara, explicando qué acción tiene Cayo contra Ticio (*actio mandati contraria*). Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Receptum Argentarii': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre un **Receptum Argentarii**. Un banquero (argentarius) asume de forma abstracta la deuda de su cliente Ticio frente a Cayo. La deuda original de Ticio era nula, pero el banquero se comprometió. Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué el banquero debe pagar igualmente. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'SC Veleyano': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre el **Senadoconsulto Veleyano**. Ticia, una 'sui iuris', intercede (sale fiadora) por su marido Mevio en una deuda con el banquero Cayo. Mevio no paga y Cayo demanda a Ticia. Después del caso, proporciona una 'Responsa' (solución) clara, explicando el remedio que tiene Ticia (*exceptio SC Velleiani*). Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Fiducia': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre una **Fiducia cum creditore**. Ticio (deudor) transmite la PROPIEDAD de un esclavo (*res mancipi*) a Cayo (acreedor) mediante 'mancipatio' como garantía. Ticio paga la deuda, pero Cayo se niega a devolverle el esclavo. Después del caso, proporciona una 'Responsa' (solución) clara, explicando qué acción (*actio fiduciae*) tiene Ticio. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Pignus (con Ius Vendendi)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre un **Pignus** (prenda). Ticio (deudor) entrega la POSESIÓN de una joya a Cayo (acreedor) como garantía. Ticio no paga la deuda. Después del caso, proporciona una 'Responsa' (solución) clara, explicando el derecho de Cayo (*ius vendendi*) a vender la joya y qué debe hacer con el dinero sobrante (*superfluum*). Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Hypotheca (Prior in Tempore)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre una **Hypotheca**. Ticio hipoteca su fundo (sin entregar posesión) primero a Cayo (por 1000) y un mes después a Mevio (por 500). Ticio incumple ambas deudas. El fundo vale 1200. Después del caso, proporciona una 'Responsa' (solución) clara, explicando el principio *'Prior in tempore, potior in iure'* y cómo se reparte el dinero de la venta. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        default: return basePrompt;
+    }
+}
+
+async function generarCaso_garantias(tipoCaso) {
+    showLoader_garantias();
+    const prompt = getPromptForTopic_garantias(tipoCaso);
+    try {
+        const response = await callGeminiAPI_infografia(prompt);
+        hideLoader_garantias();
+        openModal_garantias(`Caso Práctico: ${tipoCaso}`, response);
+    } catch (error) {
+        hideLoader_garantias();
+        openModal_garantias('Error', 'No se pudo generar el caso práctico en este momento. Por favor, inténtelo de nuevo más tarde.');
+    }
+}
+
+// =============================================
+// --- SCRIPT PARA: contratos.html (perfeccionamiento) ---
+// =============================================
+function openModal_contratos_perf(title, content) {
+    const modal = document.getElementById('geminiModal_contratos_perf');
+    const modalTitle = document.getElementById('modalTitle_contratos_perf');
+    const modalBody = document.getElementById('modalBody_contratos_perf');
+    
+    modalTitle.textContent = title;
+    let htmlContent = content.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-800">$1</strong>');
+    htmlContent = htmlContent.replace(/\n/g, '<br>');
+    modalBody.innerHTML = htmlContent;
+    
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    modal.querySelector('.modal-infografia-content').classList.remove('scale-95');
+}
+
+function closeModal_contratos_perf() {
+    const modal = document.getElementById('geminiModal_contratos_perf');
+    modal.querySelector('.modal-infografia-content').classList.add('scale-95');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+}
+
+function showLoader_contratos_perf() { document.getElementById('loader_contratos_perf').classList.remove('hidden'); }
+function hideLoader_contratos_perf() { document.getElementById('loader_contratos_perf').classList.add('hidden'); }
+
+async function generarCaso_contratos_perf(tipoContrato) {
+    showLoader_contratos_perf();
+    const prompt = `Eres un profesor experto en Derecho Romano, discípulo de Gayo y Papiniano. Genera un breve y claro caso práctico (casus) para un estudiante de primer año que involucre un contrato de '${tipoContrato}'. Después del caso, proporciona una 'Responsa' (solución) clara y concisa en un párrafo, explicando la acción o acciones legales que proceden y por qué. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+    try {
+        const response = await callGeminiAPI_infografia(prompt);
+        hideLoader_contratos_perf();
+        openModal_contratos_perf(`Caso Práctico: ${tipoContrato}`, response);
+    } catch (error) {
+        hideLoader_contratos_perf();
+        openModal_contratos_perf('Error', 'No se pudo generar el caso práctico en este momento. Por favor, inténtelo de nuevo más tarde.');
+    }
+}
+
+// =============================================
+// --- SCRIPT PARA: sucesion intestada.html ---
+// =============================================
+function openModal_intestada(title, content) {
+    const modal = document.getElementById('geminiModal_intestada');
+    const modalTitle = document.getElementById('modalTitle_intestada');
+    const modalBody = document.getElementById('modalBody_intestada');
+    
+    modalTitle.textContent = title;
+    let htmlContent = content.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-800">$1</strong>');
+    htmlContent = htmlContent.replace(/\n/g, '<br>');
+    modalBody.innerHTML = htmlContent;
+    
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    modal.querySelector('.modal-infografia-content').classList.remove('scale-95');
+}
+
+function closeModal_intestada() {
+    const modal = document.getElementById('geminiModal_intestada');
+    modal.querySelector('.modal-infografia-content').classList.add('scale-95');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+}
+
+function showLoader_intestada() { document.getElementById('loader_intestada').classList.remove('hidden'); }
+function hideLoader_intestada() { document.getElementById('loader_intestada').classList.add('hidden'); }
+
+function getPromptForTopic_intestada(topic) {
+    switch(topic) {
+        case 'Problema Ius Civile (Agnados vs Emancipados)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) donde un 'paterfamilias' muere sin testamento. Le sobreviven dos personas: 1. Su hermano (agnado próximo). 2. Un hijo que había emancipado en vida (cognado, pero no agnado). Después del caso, proporciona una 'Responsa' (solución) clara, explicando por qué, según el Ius Civile de las XII Tablas, hereda el hermano y no el hijo, y por qué esto era una injusticia. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Solución Pretoria (Collatio Bonorum)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) donde un 'paterfamilias' muere sin testamento. Le sobreviven dos hijos: 1. Un hijo 'sui iuris' (bajo potestad, sin patrimonio propio). 2. Un hijo 'emancipado' (fuera de potestad, con un gran patrimonio propio). Después del caso, proporciona una 'Responsa' (solución) clara, explicando cómo el Pretor (al llamar a 'Unde Liberi') obliga al emancipado a la 'Collatio Bonorum' para que el reparto sea justo. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Llamada Justinianea (Ascendientes + Hermanos)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) de la época de Justiniano. Un 'de cuius' muere sin testamento y sin descendientes. Le sobreviven: 1. Su padre (ascendiente). 2. Un hermano germano (de padre y madre). Después del caso, proporciona una 'Responsa' (solución) clara, explicando cómo heredan ambos según el Segundo Orden de las Novelas (Novela 118) y cómo se reparte la herencia (in capita). Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        default: return `Genera un caso práctico sobre ${topic}.`;
+    }
+}
+
+async function generarCaso_intestada(tipoCaso) {
+    showLoader_intestada();
+    const prompt = getPromptForTopic_intestada(tipoCaso);
+    try {
+        const response = await callGeminiAPI_infografia(prompt);
+        hideLoader_intestada();
+        openModal_intestada(`Caso Práctico: ${tipoCaso}`, response);
+    } catch (error) {
+        hideLoader_intestada();
+        openModal_intestada('Error', 'No se pudo generar el caso práctico en este momento. Por favor, inténtelo de nuevo más tarde.');
+    }
+}
+
+// =============================================
+// --- SCRIPT PARA: sucesion forzosa.html ---
+// =============================================
+function openModal_forzosa(title, content) {
+    const modal = document.getElementById('geminiModal_forzosa');
+    const modalTitle = document.getElementById('modalTitle_forzosa');
+    const modalBody = document.getElementById('modalBody_forzosa');
+    
+    modalTitle.textContent = title;
+    let htmlContent = content.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-800">$1</strong>');
+    htmlContent = htmlContent.replace(/\n/g, '<br>');
+    modalBody.innerHTML = htmlContent;
+    
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    modal.querySelector('.modal-infografia-content').classList.remove('scale-95');
+}
+
+function closeModal_forzosa() {
+    const modal = document.getElementById('geminiModal_forzosa');
+    modal.querySelector('.modal-infografia-content').classList.add('scale-95');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+}
+
+function showLoader_forzosa() { document.getElementById('loader_forzosa').classList.remove('hidden'); }
+function hideLoader_forzosa() { document.getElementById('loader_forzosa').classList.add('hidden'); }
+
+function getPromptForTopic_forzosa(topic) {
+    switch(topic) {
+        case 'Preterición Ius Civile': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre la **Preterición de un 'heres suus' (hijo varón)** según el Ius Civile. Después del caso, proporciona una 'Responsa' (solución) clara, explicando el remedio (nulidad del testamento) y por qué se abre la sucesión intestada. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Preterición Pretoria (Emancipados)': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre la **Preterición de un hijo emancipado** que el Pretor debe corregir. Después del caso, proporciona una 'Responsa' (solución) clara, explicando el remedio pretorio (Bonorum Possessio Contra Tabulas). Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Querella Inofficiosi Testamenti': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) donde un legitimario es **desheredado injustamente** (o preterido) y debe usar la **Querella Inofficiosi Testamenti**. Después del caso, proporciona una 'Responsa' (solución) clara, explicando la ficción del 'color insaniae' y el efecto (nulidad total y apertura de la intestada). Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        case 'Actio ad Supplendam Legitimam': return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) de la época de **Justiniano** donde un legitimario es **instituido heredero pero con menos de su cuota legítima**. Después del caso, proporciona una 'Responsa' (solución) clara, explicando cómo el heredero usa la **Actio ad Supplendam Legitimam** para salvar el testamento y solo reclamar el suplemento. Formato: **Caso:** [Tu caso aquí] **Solución (Responsa):** [Tu solución aquí]`;
+        default: return `Genera un caso práctico sobre ${topic}.`;
+    }
+}
+
+async function generarCaso_forzosa(tipoCaso) {
+    showLoader_forzosa();
+    const prompt = getPromptForTopic_forzosa(tipoCaso);
+    try {
+        const response = await callGeminiAPI_infografia(prompt);
+        hideLoader_forzosa();
+        openModal_forzosa(`Caso Práctico: ${tipoCaso}`, response);
+    } catch (error) {
+        hideLoader_forzosa();
+        openModal_forzosa('Error', 'No se pudo generar el caso práctico en este momento. Por favor, inténtelo de nuevo más tarde.');
+    }
+}
+
+<script>
+// =============================================
+// --- SCRIPT PARA: familia.html ---
+// =============================================
+function initInfografia_Familia() {
+    const calculateButton_familia = document.getElementById('calculate-button-familia');
+    if (calculateButton_familia) {
+        calculateButton_familia.addEventListener('click', handleCalculate_familia);
+    }
+    const modalCloseButton_familia = document.getElementById('modal-close-button-familia');
+    if (modalCloseButton_familia) {
+        modalCloseButton_familia.addEventListener('click', closeModal_familia);
+    }
+    const modalOverlay_familia = document.getElementById('modal-overlay-familia');
+    if (modalOverlay_familia) {
+        modalOverlay_familia.addEventListener('click', closeModal_familia);
+    }
+    const person2Input_familia = document.getElementById('person-2-familia');
+    if(person2Input_familia) {
+        person2Input_familia.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                handleCalculate_familia();
+            }
+        });
+    }
+}
+
+const openModal_familia = () => {
+    const modalContainer_familia = document.getElementById('modal-container-familia');
+    const modalOverlay_familia = document.getElementById('modal-overlay-familia');
+    const modalContent_familia = document.getElementById('modal-content-familia');
+    const modalSpinner_familia = document.getElementById('modal-spinner-familia');
+    const modalOutput_familia = document.getElementById('modal-output-familia');
+    const modalError_familia = document.getElementById('modal-error-familia');
+
+    modalSpinner_familia.classList.remove('hidden');
+    modalSpinner_familia.classList.add('flex');
+    modalOutput_familia.classList.add('hidden');
+    modalError_familia.classList.add('hidden');
+    modalOutput_familia.innerHTML = '';
+    
+    modalContainer_familia.classList.remove('hidden');
+    setTimeout(() => {
+        modalOverlay_familia.classList.remove('opacity-0');
+        modalContent_familia.classList.remove('scale-95', 'opacity-0');
+        modalContent_familia.classList.add('scale-100', 'opacity-100');
+    }, 10);
+};
+
+const closeModal_familia = () => {
+    const modalContainer_familia = document.getElementById('modal-container-familia');
+    const modalOverlay_familia = document.getElementById('modal-overlay-familia');
+    const modalContent_familia = document.getElementById('modal-content-familia');
+
+    modalContent_familia.classList.add('scale-95', 'opacity-0');
+    modalContent_familia.classList.remove('scale-100', 'opacity-100');
+    modalOverlay_familia.classList.add('opacity-0');
+    setTimeout(() => {
+        modalContainer_familia.classList.add('hidden');
+    }, 300);
+};
+
+// Esta función AHORA LLAMA A TU SERVIDOR RENDER
+async function handleCalculate_familia() {
+    const person1Input_familia = document.getElementById('person-1-familia');
+    const person2Input_familia = document.getElementById('person-2-familia');
+
+    openModal_familia(); 
+
+    if (!person2Input_familia || !person1Input_familia) return; 
+    
+    const person1 = person1Input_familia.value.trim();
+    const person2 = person2Input_familia.value.trim();
+
+    if (!person2) {
+        showModalError_familia("Por favor, introduce la 'Persona 2' para calcular.");
+        return;
+    }
+
+    try {
+        // Usamos la función 'callApiAndHandleErrors' que ya tienes en tu web
+        const data = await callApiAndHandleErrors('consulta-parentesco', {
+            person1: person1,
+            person2: person2
+        });
+
+        if (data.error) {
+             throw new Error(data.error);
+        }
+        
+        // El servidor nos devuelve el JSON (linea, grado, explicacion)
+        displayResults_familia(data);
+
+    } catch (error) {
+        console.error("Error al calcular:", error);
+        showModalError_familia(error.message || "Ocurrió un error desconocido.");
+    }
+}
+
+function displayResults_familia(data) {
+    const modalSpinner_familia = document.getElementById('modal-spinner-familia');
+    const modalOutput_familia = document.getElementById('modal-output-familia');
+    
+    modalOutput_familia.innerHTML = `
+        <ul class="space-y-3 text-lg text-slate-700">
+            <li class="flex items-start">
+                <strong class="w-24 inline-block flex-shrink-0 text-purple-700">Línea:</strong>
+                <span>${data.linea}</span>
+            </li>
+            <li class="flex items-start">
+                <strong class="w-24 inline-block flex-shrink-0 text-purple-700">Grado:</strong>
+                <span>${data.grado}</span>
+            </li>
+            <li class="flex items-start">
+                <strong class="w-24 inline-block flex-shrink-0 text-purple-700">Cómputo:</strong>
+                <span>${data.explicacion}</span>
+            </li>
+        </ul>`;
+    modalSpinner_familia.classList.add('hidden');
+    modalSpinner_familia.classList.remove('flex');
+    modalOutput_familia.classList.remove('hidden');
+}
+
+function showModalError_familia(message) {
+    const modalSpinner_familia = document.getElementById('modal-spinner-familia');
+    const modalError_familia = document.getElementById('modal-error-familia');
+    const modalErrorText_familia = document.getElementById('modal-error-text-familia');
+    
+    modalSpinner_familia.classList.add('hidden');
+    modalSpinner_familia.classList.remove('flex');
+    if (modalErrorText_familia) modalErrorText_familia.textContent = message;
+    if (modalError_familia) modalError_familia.classList.remove('hidden');
+}
+
+// Listener para cerrar el modal de familia al hacer clic fuera
+document.addEventListener('click', function(event) {
+    const modalContainer_familia = document.getElementById('modal-container-familia');
+    if (event.target === modalContainer_familia) {
+        closeModal_familia();
+    }
+});
+</script>
 </body>
 </html>
 

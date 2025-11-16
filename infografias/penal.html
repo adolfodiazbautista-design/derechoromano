@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infografía: Acción Penal vs. Acción Reipersecutoria</title>
+    <!-- Incluimos Tailwind CSS desde el CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Usamos la fuente Inter, que es limpia y moderna */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Animación para las tarjetas */
+        .info-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        /* Estilos para el modal y el loader */
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        .modal-content {
+            transition: transform 0.25s ease;
+        }
+        .loader {
+            border-top-color: #9f1239; /* rose-800 */
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 p-4 md:p-8 antialiased">
+
+    <!-- Contenedor principal de la infografía -->
+    <div class="max-w-6xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden">
+        
+        <!-- Cabecera -->
+        <header class="bg-gradient-to-r from-red-900 to-rose-700 p-6 md:p-8 text-white shadow-lg">
+            <h1 class="text-2xl md:text-3xl font-bold">Acción Penal vs. Acción Reipersecutoria</h1>
+            <p class="text-lg md:text-xl opacity-90 mt-1">Las dos vías de la víctima tras un delito privado.</p>
+        </header>
+
+        <!-- Contenido principal -->
+        <main class="p-6 md:p-8">
+
+            <!-- Sección 1: El Punto de Partida -->
+            <section class="mb-10 text-center">
+                <div class="inline-block bg-slate-100 p-6 rounded-lg shadow-inner border border-slate-200">
+                    <!-- Icono de "Peligro" -->
+                    <div class="w-16 h-16 bg-red-100 text-red-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.876c.54 0 .907-.58.707-1.09l-1.954-4.885A.66.66 0 0117.207 14H6.793a.66.66 0 01-.546-.225L4.293 8.91A.907.907 0 003.586 8H2.5" />
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800">EL DELITO (Punto de Partida)</h2>
+                    <p class="text-slate-600 mt-2 text-lg">La comisión de un delito privado genera <span class="font-bold">DOS OBLIGACIONES</span>:</p>
+                </div>
+            </section>
+
+            <!-- Sección 2: Las Dos Vías -->
+            <section class="mb-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                <!-- Vía 1: Acción Penal -->
+                <div class="info-card flex flex-col p-6 bg-red-50 rounded-lg shadow-lg border-t-4 border-red-600">
+                    <div class="flex items-center mb-4">
+                        <!-- Icono de "Dinero" -->
+                        <div class="w-16 h-16 bg-red-100 text-red-700 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0c-1.657 0-3-.895-3-2s1.343-2 3-2 3-.895 3-2-1.343-2-3-2m0 8c-1.11 0-2.08-.402-2.599-1M12 16v1m0-1v-8m0 0v-1m0 1v8m0 0v1m0-1c1.11 0 2.08.402 2.599 1M12 16v-1m0 1v-8" />
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-2xl text-red-800">ACCIÓN PENAL</h3>
+                    </div>
+                    <p class="text-lg text-slate-700 flex-grow">
+                        Tiende a la <span class="font-bold">pena (multa pecuniaria)</span>. Su objetivo es el <span class="font-semibold">castigo</span>.
+                    </p>
+                    <div class="bg-red-100 border-l-4 border-red-400 p-3 rounded mt-4">
+                        <p class="text-lg font-bold text-red-900">Característica Clave:</p>
+                        <p class="text-slate-700">La multa <span class="font-semibold">se pagaba a la VÍCTIMA</span>, no al Estado.</p>
+                    </div>
+                </div>
+
+                <!-- Vía 2: Acción Reipersecutoria -->
+                <div class="info-card flex flex-col p-6 bg-blue-50 rounded-lg shadow-lg border-t-4 border-blue-600">
+                    <div class="flex items-center mb-4">
+                        <!-- Icono de "Casa/Objeto" -->
+                        <div class="w-16 h-16 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2l-7-7-7 7M5 10v10a1 1 0 001 1h3m0 0a1 1 0 001-1V14a1 1 0 011-1h2a1 1 0 011 1v7a1 1 0 001 1h3a1 1 0 001-1V10M9 21h6" />
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-2xl text-blue-800">ACCIÓN REIPERSECUTORIA</h3>
+                    </div>
+                    <p class="text-lg text-slate-700 flex-grow">
+                        Tiende a la <span class="font-bold">reparación del daño</span>. Su objetivo es la <span class="font-semibold">restitución o compensación</span>.
+                    </p>
+                    <div class="bg-blue-100 border-l-4 border-blue-400 p-3 rounded mt-4">
+                        <p class="text-lg font-bold text-blue-900">Característica Clave:</p>
+                        <p class="text-slate-700">Busca recuperar <span class="font-semibold">la cosa</span> (*res*) o su valor, como si fuera un contrato.</p>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Sección 3: Concurrencia de Acciones -->
+            <section>
+                <h2 class="text-2xl md:text-3xl font-semibold text-slate-800 border-b-2 border-gray-400 pb-3 mb-6 text-center">
+                    Concurrencia: ¿Se pueden usar las dos?
+                </h2>
+                <p class="text-center text-lg text-slate-600 -mt-2 mb-6">Según el caso, la víctima tenía distintas opciones:</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                    <!-- Opción 1: Cumulativa -->
+                    <div class="info-card flex flex-col items-center p-6 bg-green-50 rounded-lg shadow-lg border-b-4 border-green-500">
+                        <div class="w-16 h-16 bg-green-100 text-green-700 rounded-full flex items-center justify-center mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-2xl text-green-800">CONCURRENCIA CUMULATIVA</h3>
+                        <p class="text-lg text-slate-700 mt-2 text-center">
+                            La víctima podía ejercer <span class="font-bold">AMBAS</span> acciones.
+                        </p>
+                        <p class="text-xl font-bold text-slate-700 mt-4">
+                            [Acción Penal] + [Acción Reipersecutoria]
+                        </p>
+                        <button onclick="generarCaso('Cumulativa (ej. Furtum)')" class="text-xs bg-rose-800 text-white px-2 py-1 rounded-md hover:bg-rose-900 transition-all mt-4">✨ Generar Caso (Furtum)</button>
+                    </div>
+
+                    <!-- Opción 2: Electiva -->
+                    <div class="info-card flex flex-col items-center p-6 bg-yellow-50 rounded-lg shadow-lg border-b-4 border-yellow-500">
+                        <div class="w-16 h-16 bg-yellow-100 text-yellow-700 rounded-full flex items-center justify-center mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-7.027a2 2 0 01-1.789-2.894l3.5-7A2 2 0 019.236 9H14M4 10h2m11 0h2" />
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-2xl text-yellow-800">CONCURRENCIA ELECTIVA</h3>
+                        <p class="text-lg text-slate-700 mt-2 text-center">
+                            La víctima debía <span class="font-bold">ELEGIR UNA</span> de las dos.
+                        </p>
+                        <p class="text-xl font-bold text-slate-700 mt-4">
+                            [Acción Penal] O [Acción Reipersecutoria]
+                        </p>
+                        <button onclick="generarCaso('Electiva (ej. Lex Aquilia)')" class="text-xs bg-rose-800 text-white px-2 py-1 rounded-md hover:bg-rose-900 transition-all mt-4">✨ Generar Caso (Lex Aquilia)</button>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal para mostrar la respuesta de Gemini -->
+    <div id="geminiModal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none">
+        <div class="modal-content bg-white rounded-lg shadow-lg w-11/12 md:w-1/2 lg:w-1/3 p-6 transform scale-95">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modalTitle" class="text-xl font-bold text-gray-800"></h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div id="modalBody" class="text-slate-700 whitespace-pre-wrap overflow-y-auto max-h-96">
+                <!-- El contenido generado por Gemini irá aquí -->
+            </div>
+            <div class="text-right mt-6">
+                <button onclick="closeModal()" class="bg-rose-800 text-white px-4 py-2 rounded-lg hover:bg-rose-900 transition-all">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay de carga -->
+    <div id="loader" class="fixed inset-0 z-60 flex items-center justify-center bg-black bg-opacity-25 hidden">
+        <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-24 w-24"></div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('geminiModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const loader = document.getElementById('loader');
+
+        function openModal(title, content) {
+            modalTitle.textContent = title;
+            // Reemplaza los saltos de línea de texto con <br> y negritas
+            let htmlContent = content.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-800">$1</strong>');
+            htmlContent = htmlContent.replace(/\n/g, '<br>');
+            modalBody.innerHTML = htmlContent;
+            
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.querySelector('.modal-content').classList.remove('scale-95');
+        }
+
+        function closeModal() {
+            modal.querySelector('.modal-content').classList.add('scale-95');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function showLoader() {
+            loader.classList.remove('hidden');
+        }
+
+        function hideLoader() {
+            loader.classList.add('hidden');
+        }
+
+        // Función de prompt personalizada
+        function getPromptForTopic(topic) {
+            switch(topic) {
+                case 'Cumulativa (ej. Furtum)':
+                    return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre un delito de **hurto (furtum)**.
+Después del caso, proporciona una 'Responsa' (solución) clara, explicando la **concurrencia cumulativa**: por qué la víctima (Ticio) puede ejercitar TANTO la *actio furti* (penal, para el castigo) COMO la *condictio furtiva* (reipersecutoria, para recuperar el valor).
+Formato:
+**Caso:** [Tu caso aquí]
+**Solución (Responsa):** [Tu solución aquí]`;
+                case 'Electiva (ej. Lex Aquilia)':
+                    return `Eres un profesor experto en Derecho Romano. Genera un breve caso práctico (casus) sobre un delito de **daño (damnum iniuria datum)** bajo la Lex Aquilia (ej. Ticio mata a un esclavo de Cayo por negligencia).
+Después del caso, proporciona una 'Responsa' (solución) clara, explicando la **concurrencia electiva**: por qué se considera que la *actio legis Aquiliae* (penal) ya incluye la reparación del daño, y por tanto, la víctima (Cayo) debe elegir entre esa acción u otra reipersecutoria.
+Formato:
+**Caso:** [Tu caso aquí]
+**Solución (Responsa):** [Tu solución aquí]`;
+                default:
+                    return `Genera un caso práctico sobre ${topic}.`;
+            }
+        }
+
+        // Función principal para llamar a Gemini
+        async function generarCaso(tipoCaso) {
+            showLoader();
+            
+            const prompt = getPromptForTopic(tipoCaso);
+
+            try {
+                const response = await callGeminiAPI(prompt);
+                hideLoader();
+                openModal(`Caso Práctico: ${tipoCaso}`, response);
+            } catch (error) {
+                hideLoader();
+                openModal('Error', 'No se pudo generar el caso práctico en este momento. Por favor, inténtelo de nuevo más tarde.');
+            }
+        }
+
+        // Función de llamada a la API con reintentos (backoff exponencial)
+        async function callGeminiAPI(prompt, retries = 3, delay = 1000) {
+            const apiKey = ""; // Dejar vacío, se gestionará en el entorno
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+            };
+
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Error en la API: ${response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        return result.candidates[0].content.parts[0].text;
+                    } else {
+                        throw new Error('Respuesta inesperada de la API.');
+                    }
+
+                } catch (error) {
+                    if (i === retries - 1) {
+                        console.error('Error al llamar a la API de Gemini:', error);
+                        throw error;
+                    }
+                    // Espera exponencial antes de reintentar
+                    await new Promise(res => setTimeout(res, delay * Math.pow(2, i)));
+                }
+            }
+            throw new Error('No se pudo obtener respuesta de la API después de varios intentos.');
+        }
+
+        // Cerrar modal si se hace clic fuera
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+
+</body>
+</html>
