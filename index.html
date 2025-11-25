@@ -20,6 +20,7 @@
       rel="stylesheet"
       media="print" 
       onload="this.media='all'">
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     
     
     <style>
@@ -413,12 +414,16 @@
         // ========================================
         
         const API_BASE_URL = 'https://derechoromano-ecma.onrender.com';       
-        function sanitizeHTML(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+       // REEMPLAZAR POR ESTA FUNCIÓN SEGURA
+function sanitizeHTML(text) {
+    if (!text) return '';
+    // Usamos DOMPurify para limpiar el contenido. 
+    // Permite etiquetas básicas de formato (p, br, strong, etc.) y atributos como 'class' o 'style'.
+    return DOMPurify.sanitize(text, {
+        ALLOWED_TAGS: ['b', 'strong', 'em', 'br', 'p', 'span', 'h3', 'h4', 'ul', 'ol', 'li', 'div', 'a'],
+        ALLOWED_ATTR: ['class', 'style', 'href', 'title'] // Permite estos atributos en las etiquetas
+    });
+}
 
         function showError(element, errorMsg) {
             element.innerHTML = `<div class="error-box" role="alert"><p><strong>Error:</strong> ${sanitizeHTML(errorMsg)}</p></div>`;
