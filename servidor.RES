@@ -295,6 +295,68 @@ El formato debe ser:
 });
 
 
+// =============================================
+// === NUEVO ENDPOINT PARA CALCULADORA DE PARENTESCO ===
+// =============================================
+const responseSchema_familia_string = JSON.stringify({
+    type: "OBJECT",
+    properties: {
+        "linea": { "type": "STRING", "description": "La línea de parentesco (Ej: 'Línea Colateral', 'Línea Recta Descendente')." },
+        "grado": { "type": "STRING", "description": "El grado de parentesco (Ej: 'Segundo Grado', 'Tercer Grado')." },
+        "explicacion": { "type": "STRING", "description": "Explicación breve (máx 2 frases) de cómo se calcula, mencionando el ancestro común." }
+    },
+    required: ["linea", "grado", "explicacion"]
+});
+
+app.post('/api/consulta-parentesco', async (req, res) => {
+    try {
+        const { person1, person2 } = req.body;
+        if (!person2) {
+            return res.status(400).json({ message: "Falta el parámetro 'person2'." });
+        }
+
+        const promptFinalParaIA = `
+Rol: Experto en Derecho Romano (Parentesco).
+Tarea: Calcular el parentesco entre "${person1 || 'Yo'}" y "${person2}".
+Instrucciones:
+1.  Usa el método romano (*tot gradus quot generationes*).
+2.  Responde *únicamente* con un objeto JSON. No incluyas "'''json" ni ningún otro texto.
+3.  El formato JSON debe ser:
+{
+  "linea": "Línea Colateral",
+  "grado": "Tercer Grado",
+  "explicacion": "Se sube de 'Yo' al 'Padre' (1), al 'Abuelo' (2) y se baja al 'Tío' (3)."
+}
+`.trim();
+
+        const payload = { 
+            contents: [{ parts: [{ text: promptFinalParaIA }] }], 
+            safetySettings 
+        };
+        
+        // Llamamos a la función genérica que ya tienes
+        const respuestaIA_texto = await callGeminiWithRetries(payload);
+
+        // Igual que en `consulta-unificada`, parseamos el texto
+        let jsonRespuesta;
+        try {
+            const cleanResponse = respuestaIA_texto.replace(/```json/g, '').replace(/```/g, '').trim();
+            jsonRespuesta = JSON.parse(cleanResponse);
+        } catch (e) {
+            console.error("Error al parsear JSON de Gemini (Parentesco):", respuestaIA_texto);
+            throw new Error('La IA no devolvió un JSON válido. Respuesta: ' + respuestaIA_texto);
+        }
+        
+        // Devolvemos el JSON parseado al frontend
+        res.json(jsonRespuesta);
+
+    } catch (error) {
+        // Reutilizamos el manejador de errores
+        handleApiError(error, res);
+    }
+});
+
+
 // --- FUNCIÓN DE ARRANQUE DEL SERVIDOR ---
 const startServer = async () => {
     try {
@@ -314,9 +376,9 @@ const startServer = async () => {
             console.log(`🚀 Servidor de Derecho Romano escuchando en http://localhost:${port}`);
         });
         
-        // CONFIGURACIÓN V15.13: Timeout máximo para la aplicación (5 minutos)
-        server.timeout = 300000; 
-        console.log("⏱️ Server Timeout ajustado a 300 segundos (5 minutos)."); 
+        // CONFIGURACIÓN V15.13: Timeout máximo para la aplicación (833 minutos)
+        server.timeout = 500000; 
+        console.log("⏱️ Server Timeout ajustado a 500000 segundos (833 minutos)."); 
 
     } catch (error) {
         console.error("✗ Error fatal durante el arranque del servidor:", error);
