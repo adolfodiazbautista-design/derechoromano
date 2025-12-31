@@ -376,9 +376,9 @@ const startServer = async () => {
             console.log(`🚀 Servidor de Derecho Romano escuchando en http://localhost:${port}`);
         });
         
-        // CONFIGURACIÓN V15.13: Timeout máximo para la aplicación (833 minutos)
-        server.timeout = 500000; 
-        console.log("⏱️ Server Timeout ajustado a 500000 segundos (833 minutos)."); 
+        // CONFIGURACIÓN V15.13: Timeout máximo para la aplicación (14 minutos)
+        server.timeout = 840000; 
+        console.log("⏱️ Server Timeout ajustado a 84000 segundos (14 minutos)."); 
 
     } catch (error) {
         console.error("✗ Error fatal durante el arranque del servidor:", error);
