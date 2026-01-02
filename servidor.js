@@ -22,7 +22,7 @@ app.set('trust proxy', 1);
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 30,
+    max: 30, // Límite ajustado para examen
     standardHeaders: true,
     legacyHeaders: false,
     message: { error: 'RATE_LIMIT_EXCEEDED', message: 'Demasiadas peticiones desde esta IP, por favor intenta de nuevo en 15 minutos.' }
@@ -35,7 +35,6 @@ function handleApiError(error, res) {
     if (error.response?.data?.error?.code === 503) {
         return res.status(503).json({ error: 'MODEL_OVERLOADED', message: 'Ulpiano parece estar desbordado. Por favor, dale un minuto y vuelve a intentarlo.' });
     }
-    // Mensaje de timeout modificado para que refleje la causa más probable
     if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
         return res.status(504).json({ error: 'REQUEST_TIMEOUT', message: 'La solicitud ha tardado demasiado tiempo. El servidor ha abortado la conexión. Por favor, inténtalo de nuevo.' });
     }
@@ -54,11 +53,12 @@ async function callGeminiWithRetries(payload) {
     let RETRY_DELAY = 1000;
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
     if (!GEMINI_API_KEY) throw new Error("API Key de Gemini no encontrada.");
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+    
+    // --- CORRECCIÓN IMPORTANTE: Usamos la versión específica -001 ---
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-001:generateContent?key=${GEMINI_API_KEY}`;
 
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
         try {
-            // TIMEOUT AUMENTADO A 4 MINUTOS 50 SEGUNDOS
             const geminiResponse = await axios.post(url, payload, { 
                 headers: { 'Content-Type': 'application/json' },
                 timeout: 290000 
@@ -84,7 +84,6 @@ function getContextoRelevante(termino) {
     if (!termino) return '';
     const terminoBusqueda = termino.toLowerCase().trim();
     
-    // *** CAMBIO: Se mantiene la excepción de POSESIÓN (V15.14) ***
     if (terminoBusqueda.includes('posesion') || terminoBusqueda.includes('interdictos')) {
         return `En Roma había dos clases de posesión: natural (solo corpus) y civil (corpus y animus domini) AMBAS FORMAS DE POSESIÓN TENÍAN PROTECCIÓN INTERDICTAL. Había una serie de casos, llamados "detentadores" (por ejemplo los arrendatarios) que, por razones desconocidas, no tenían protección de los interdictos.`;
     }
@@ -122,24 +121,17 @@ const buscarDigesto = (term) => {
 
 // --- ENDPOINTS DE LA API ---
 
-// *** CAMBIO: Este endpoint ahora solo maneja el Laboratorio de Casos (generar y resolver) ***
 app.post('/api/consulta', async (req, res) => {
     try {
-        // *** CAMBIO: Se recibe 'tipo' en lugar de 'promptOriginal' ***
         const { tipo, termino, currentCaseText } = req.body;
         if (!tipo) return res.status(400).json({ error: 'No se ha proporcionado un tipo de consulta.' });
 
         const terminoNormalizado = termino ? termino.toLowerCase().trim() : '';
-        
         const contextoFinal = getContextoRelevante(terminoNormalizado);
-
         let promptFinalParaIA;
 
-        // *** CAMBIO: La lógica se basa en 'tipo' ***
         if (tipo === 'resolver') {
             if (!currentCaseText) return res.status(400).json({ error: 'No se proporcionó texto del caso a resolver.' });
-             
-             // *** CAMBIO: Prompt modificado para respuesta CONCISA (petición del usuario) ***
              promptFinalParaIA = `Rol: Juez romano. Tarea: Resolver el caso "${currentCaseText}" aplicando principios del derecho romano. 
 Instrucciones: **Solución legal MUY BREVE, DIRECTA Y CONCISA (máximo 2-3 frases).** Ve directo a la acción legal, principio o solución. Sin saludos ni explicaciones largas.
 Basa tu solución en este contexto si es relevante: "${contextoFinal}".`;
@@ -149,7 +141,6 @@ Basa tu solución en este contexto si es relevante: "${contextoFinal}".`;
             promptFinalParaIA = `Rol: Profesor de derecho romano. Tarea: Crear un caso práctico (máx 3 frases) sobre "${termino}". Reglas: Nombres romanos. Terminar con preguntas legales. Sin explicaciones ni soluciones. Basar lógica en: "${contextoFinal}".`;
         
         } else {
-            // Si el 'tipo' no es 'resolver' o 'generar', es un error para este endpoint.
             return res.status(400).json({ error: 'Tipo de consulta no válido para este endpoint.' });
         }
 
@@ -163,23 +154,6 @@ Basa tu solución en este contexto si es relevante: "${contextoFinal}".`;
     }
 });
 
-
-// *** CAMBIO: Se mantiene /api/derecho-moderno por si se usa en otro lugar, pero UlpianoIA ya no lo llama. ***
-app.post('/api/derecho-moderno', async (req, res) => {
-    try {
-        const { termino } = req.body;
-        if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
-        const promptParaModerno = `Explica muy concisamente (máx un párrafo) la herencia del concepto romano "${termino}" en el derecho español moderno.`;
-        
-        const payload = { contents: [{ parts: [{ text: promptParaModerno }] }], safetySettings };
-        const respuestaModerno = await callGeminiWithRetries(payload);
-        res.json({ moderno: respuestaModerno });
-    } catch (error) {
-        handleApiError(error, res);
-    }
-});
-
-// *** CAMBIO: Lógica de búsqueda extraída a una función reutilizable ***
 function buscarPagina(termino) {
     if (!termino) return { pagina: null, titulo: null };
 
@@ -202,91 +176,79 @@ function buscarPagina(termino) {
     return { pagina: mejorCoincidencia?.pagina || null, titulo: mejorCoincidencia?.titulo || null };
 }
 
-// *** CAMBIO: El endpoint /api/buscar-pagina ahora usa la función helper ***
 app.post('/api/buscar-pagina', (req, res) => {
     try {
         const { termino } = req.body;
         if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
-
         const result = buscarPagina(termino);
         res.json(result);
-
     } catch (error) {
         console.error("Error en /api/buscar-pagina:", error);
         res.status(500).json({ error: 'Error interno del servidor al buscar la página.' });
     }
 });
 
-// *** CAMBIO: NUEVO ENDPOINT para optimizar UlpianoIA (Coste y Velocidad) ***
+// --- ENDPOINT UNIFICADO OPTIMIZADO (Con JSON Mode) ---
 app.post('/api/consulta-unificada', async (req, res) => {
     try {
         const { termino } = req.body;
         if (!termino) return res.status(400).json({ error: 'No se ha proporcionado un término.' });
 
         const terminoNormalizado = termino.toLowerCase().trim();
-
-        // 1. Obtener Contexto del Manual (incluye regla de posesión)
         const contextoManual = getContextoRelevante(terminoNormalizado);
-        
-        // 2. Obtener Citas del Digesto
         const coincidenciasDigesto = buscarDigesto(termino);
         let digestoPrompt = "";
         
         if (coincidenciasDigesto.length > 0) {
             digestoPrompt = "\n\n--- FUENTE ADICIONAL: DIGESTO DE JUSTINIANO ---\n" +
                             "He encontrado las siguientes citas del Digesto. Tu tarea es:\n" +
-                            "1. **SELECCIONAR LA ÚNICA CITA MÁS RELEVANTE Y ACADÉMICA.** Debes **PRIORIZAR DE FORMA EXTREMA** la cita cuyo texto latín se parezca más a una **DEFINICIÓN JURÍDICA FUNDAMENTAL** del concepto (ej: una cita con las palabras 'ius est', 'salva rerum substantia', 'actio est'). **ADVERTENCIA:** Si seleccionas una cita de un caso práctico, interdicto, o que solo menciona el término tangencialmente, el resultado será considerado erróneo. Prioriza la que contenga la DEFINICIÓN CLÁSICA.\n" +
-                            "2. Realizar una **traducción al español profesional y mejorada** del texto latino de la cita seleccionada (la traducción que acompaño es de baja calidad y no sirve).\n" +
-                            "3. Incluir la cita seleccionada (referencia, latín y tu traducción profesional) en la respuesta final, **destacándola** con el formato `# APUNTE DE ULPIANOIA: IUS ROMANUM #` justo antes de tu conclusión. **IGNORA las citas no seleccionadas**.\n\n";
+                            "1. **SELECCIONAR LA ÚNICA CITA MÁS RELEVANTE Y ACADÉMICA.** Prioriza citas que contengan 'ius est', 'actio est' o definiciones.\n" +
+                            "2. Realizar una **traducción al español profesional** del latín.\n" +
+                            "3. Incluir la cita seleccionada en la respuesta final con el formato '# APUNTE DE ULPIANOIA: IUS ROMANUM #'.\n\n";
             
             coincidenciasDigesto.forEach((match, index) => {
-                digestoPrompt += `--- Cita ${index + 1} (${match.cita}) ---\n`;
-                digestoPrompt += `TEXTO LATÍN: "${match.latin}"\n`;
-                digestoPrompt += `TRADUCCIÓN ORIGINAL POBRE (IGNORAR): "${match.espanol_original}"\n\n`;
+                digestoPrompt += `--- Cita ${index + 1} (${match.cita}) ---\nTEXTO LATÍN: "${match.latin}"\n\n`;
             });
         }
 
-        // 3. Obtener Página del Manual
         const infoPagina = buscarPagina(termino);
 
-        // 4. Construir el Master-Prompt para Gemini
         const promptFinalParaIA = `
 Rol: Jurista Ulpiano (experto didáctico en Derecho Romano).
 Tarea: Proporcionar información sobre el término "${termino}".
-Contexto de Referencia (Manual): "${contextoManual}". Si está vacío, usa tu conocimiento general.
-${digestoPrompt} // Instrucciones del Digesto (si las hay)
+Contexto de Referencia (Manual): "${contextoManual}".
+${digestoPrompt}
 
 --- INSTRUCCIONES DE FORMATO DE SALIDA ---
-Debes responder *exactamente* con un objeto JSON. No incluyas "'''json" o cualquier otro texto antes o después del objeto.
-El formato debe ser:
+Responde ÚNICAMENTE con un objeto JSON válido.
 {
-  "respuesta_principal": "Tu explicación breve y didáctica del concepto (máximo DOS PÁRRAFOS cortos). No uses saludos, ve directo al concepto. Si encontraste una cita del Digesto relevante, inclúyela aquí con el formato '# APUNTE DE ULPIANOIA: IUS ROMANUM #'.",
-  "conexion_moderna": "Tu explicación muy concisa (máximo un párrafo) de la herencia del concepto romano '${termino}' en el derecho español moderno."
+  "respuesta_principal": "Explicación breve y didáctica (máximo DOS PÁRRAFOS). Si hay cita del Digesto, úsala aquí.",
+  "conexion_moderna": "Explicación concisa de la herencia en el derecho moderno (máximo un párrafo)."
 }
 `.trim();
 
-        const payload = { contents: [{ parts: [{ text: promptFinalParaIA }] }], safetySettings };
+        const payload = { 
+            contents: [{ parts: [{ text: promptFinalParaIA }] }], 
+            safetySettings,
+            generationConfig: { response_mime_type: "application/json" } 
+        };
         
-        // 5. Llamar a Gemini (UNA SOLA VEZ)
         const respuestaIA = await callGeminiWithRetries(payload);
         
-        // 6. Parsear la respuesta JSON de Gemini
         let jsonRespuesta;
         try {
-            // Limpiar la respuesta de Gemini por si incluye ```json
             const cleanResponse = respuestaIA.replace(/```json/g, '').replace(/```/g, '').trim();
             jsonRespuesta = JSON.parse(cleanResponse);
         } catch (e) {
             console.error("Error al parsear JSON de Gemini:", respuestaIA);
-            throw new Error('La IA no devolvió un JSON válido. Respuesta recibida: ' + respuestaIA);
+            throw new Error('La IA no devolvió un JSON válido.');
         }
         
-        // 7. Enviar la respuesta unificada al frontend
         res.json({
             respuesta: jsonRespuesta.respuesta_principal,
             moderno: jsonRespuesta.conexion_moderna,
-            pagina: infoPagina.pagina, // Se añade la info de la página
-            titulo: infoPagina.titulo   // Se añade el título del tema
+            pagina: infoPagina.pagina, 
+            titulo: infoPagina.titulo   
         });
 
     } catch (error) {
@@ -294,20 +256,7 @@ El formato debe ser:
     }
 });
 
-
-// =============================================
-// === NUEVO ENDPOINT PARA CALCULADORA DE PARENTESCO ===
-// =============================================
-const responseSchema_familia_string = JSON.stringify({
-    type: "OBJECT",
-    properties: {
-        "linea": { "type": "STRING", "description": "La línea de parentesco (Ej: 'Línea Colateral', 'Línea Recta Descendente')." },
-        "grado": { "type": "STRING", "description": "El grado de parentesco (Ej: 'Segundo Grado', 'Tercer Grado')." },
-        "explicacion": { "type": "STRING", "description": "Explicación breve (máx 2 frases) de cómo se calcula, mencionando el ancestro común." }
-    },
-    required: ["linea", "grado", "explicacion"]
-});
-
+// --- ENDPOINT PARENTESCO OPTIMIZADO (Con JSON Mode) ---
 app.post('/api/consulta-parentesco', async (req, res) => {
     try {
         const { person1, person2 } = req.body;
@@ -318,44 +267,38 @@ app.post('/api/consulta-parentesco', async (req, res) => {
         const promptFinalParaIA = `
 Rol: Experto en Derecho Romano (Parentesco).
 Tarea: Calcular el parentesco entre "${person1 || 'Yo'}" y "${person2}".
-Instrucciones:
-1.  Usa el método romano (*tot gradus quot generationes*).
-2.  Responde *únicamente* con un objeto JSON. No incluyas "'''json" ni ningún otro texto.
-3.  El formato JSON debe ser:
+Usa el método romano (*tot gradus quot generationes*).
+Responde ÚNICAMENTE con un objeto JSON:
 {
-  "linea": "Línea Colateral",
-  "grado": "Tercer Grado",
-  "explicacion": "Se sube de 'Yo' al 'Padre' (1), al 'Abuelo' (2) y se baja al 'Tío' (3)."
+  "linea": "Ej: Línea Colateral",
+  "grado": "Ej: Tercer Grado",
+  "explicacion": "Breve explicación del cálculo."
 }
 `.trim();
 
         const payload = { 
             contents: [{ parts: [{ text: promptFinalParaIA }] }], 
-            safetySettings 
+            safetySettings,
+            generationConfig: { response_mime_type: "application/json" }
         };
         
-        // Llamamos a la función genérica que ya tienes
         const respuestaIA_texto = await callGeminiWithRetries(payload);
 
-        // Igual que en `consulta-unificada`, parseamos el texto
         let jsonRespuesta;
         try {
             const cleanResponse = respuestaIA_texto.replace(/```json/g, '').replace(/```/g, '').trim();
             jsonRespuesta = JSON.parse(cleanResponse);
         } catch (e) {
             console.error("Error al parsear JSON de Gemini (Parentesco):", respuestaIA_texto);
-            throw new Error('La IA no devolvió un JSON válido. Respuesta: ' + respuestaIA_texto);
+            throw new Error('La IA no devolvió un JSON válido.');
         }
         
-        // Devolvemos el JSON parseado al frontend
         res.json(jsonRespuesta);
 
     } catch (error) {
-        // Reutilizamos el manejador de errores
         handleApiError(error, res);
     }
 });
-
 
 // --- FUNCIÓN DE ARRANQUE DEL SERVIDOR ---
 const startServer = async () => {
@@ -376,7 +319,6 @@ const startServer = async () => {
             console.log(`🚀 Servidor de Derecho Romano escuchando en http://localhost:${port}`);
         });
         
-        // CONFIGURACIÓN V15.13: Timeout máximo para la aplicación (14 minutos)
         server.timeout = 840000; 
         console.log("⏱️ Server Timeout ajustado a 84000 segundos (14 minutos)."); 
 
@@ -386,5 +328,5 @@ const startServer = async () => {
     }
 };
 
-console.log("--- [OK] Ejecutando servidor.js v15.14 (Regla de Posesión y Interdictos Asegurada) ---");
+console.log("--- [OK] Ejecutando servidor.js v15.16 (Gemini Flash-001 + JSON Mode) ---");
 startServer();
