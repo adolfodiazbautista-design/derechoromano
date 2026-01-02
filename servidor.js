@@ -54,8 +54,9 @@ async function callGeminiWithRetries(payload) {
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
     if (!GEMINI_API_KEY) throw new Error("API Key de Gemini no encontrada.");
     
-    // --- CORRECCIÓN IMPORTANTE: Usamos la versión específica -001 ---
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-001:generateContent?key=${GEMINI_API_KEY}`;
+    // *** CAMBIO CRÍTICO 2026: Usamos Gemini 2.5 Flash ***
+    // Si este falla, mira la consola al arrancar para ver la lista real.
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
         try {
@@ -69,6 +70,12 @@ async function callGeminiWithRetries(payload) {
             }
             throw new Error('Respuesta de la IA inválida o vacía.');
         } catch (error) {
+            // Si el error es 404 (Modelo no encontrado), no tiene sentido reintentar. Lanzamos error directo.
+            if (error.response?.status === 404) {
+                console.error("❌ ERROR CRÍTICO: El nombre del modelo 'gemini-2.5-flash' es incorrecto o no tienes acceso.");
+                throw error;
+            }
+
             if (error.response?.status === 503 && attempt < MAX_RETRIES) {
                 console.log(`Intento ${attempt} fallido (Modelo Sobrecargado). Reintentando en ${RETRY_DELAY / 1000}s...`);
                 await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
@@ -188,7 +195,7 @@ app.post('/api/buscar-pagina', (req, res) => {
     }
 });
 
-// --- ENDPOINT UNIFICADO OPTIMIZADO (Con JSON Mode) ---
+// --- ENDPOINT UNIFICADO OPTIMIZADO ---
 app.post('/api/consulta-unificada', async (req, res) => {
     try {
         const { termino } = req.body;
@@ -202,7 +209,7 @@ app.post('/api/consulta-unificada', async (req, res) => {
         if (coincidenciasDigesto.length > 0) {
             digestoPrompt = "\n\n--- FUENTE ADICIONAL: DIGESTO DE JUSTINIANO ---\n" +
                             "He encontrado las siguientes citas del Digesto. Tu tarea es:\n" +
-                            "1. **SELECCIONAR LA ÚNICA CITA MÁS RELEVANTE Y ACADÉMICA.** Prioriza citas que contengan 'ius est', 'actio est' o definiciones.\n" +
+                            "1. **SELECCIONAR LA ÚNICA CITA MÁS RELEVANTE.**\n" +
                             "2. Realizar una **traducción al español profesional** del latín.\n" +
                             "3. Incluir la cita seleccionada en la respuesta final con el formato '# APUNTE DE ULPIANOIA: IUS ROMANUM #'.\n\n";
             
@@ -256,7 +263,7 @@ Responde ÚNICAMENTE con un objeto JSON válido.
     }
 });
 
-// --- ENDPOINT PARENTESCO OPTIMIZADO (Con JSON Mode) ---
+// --- ENDPOINT PARENTESCO OPTIMIZADO ---
 app.post('/api/consulta-parentesco', async (req, res) => {
     try {
         const { person1, person2 } = req.body;
@@ -303,6 +310,7 @@ Responde ÚNICAMENTE con un objeto JSON:
 // --- FUNCIÓN DE ARRANQUE DEL SERVIDOR ---
 const startServer = async () => {
     try {
+        // 1. CARGA DE DATOS
         const manualData = await fs.readFile('manual.json', 'utf-8');
         manualJson = JSON.parse(manualData);
         console.log(`✓ Manual JSON cargado: ${manualJson.length} conceptos.`);
@@ -315,6 +323,23 @@ const startServer = async () => {
         digestoJson = JSON.parse(digestoData);
         console.log(`✓ Digesto JSON cargado: ${digestoJson.length} citas.`);
         
+        // 2. DIAGNÓSTICO DE MODELOS (IMPORTANTE)
+        // Esto imprimirá en la consola los modelos que REALMENTE tienes disponibles
+        if (process.env.GEMINI_API_KEY) {
+            try {
+                const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${process.env.GEMINI_API_KEY}`;
+                const listResponse = await axios.get(listUrl);
+                console.log("\n📋 --- DIAGNÓSTICO DE MODELOS GEMINI ---");
+                console.log("Estos son los modelos activos en tu cuenta. Si falla 'gemini-2.5-flash', copia uno de estos:");
+                listResponse.data.models.forEach(m => {
+                    if (m.name.includes('flash')) console.log(`   👉 ${m.name.replace('models/', '')}`);
+                });
+                console.log("------------------------------------------\n");
+            } catch (e) {
+                console.log("⚠️ No se pudo obtener la lista de modelos (¿API Key incorrecta?).", e.message);
+            }
+        }
+
         const server = app.listen(port, () => {
             console.log(`🚀 Servidor de Derecho Romano escuchando en http://localhost:${port}`);
         });
@@ -328,5 +353,5 @@ const startServer = async () => {
     }
 };
 
-console.log("--- [OK] Ejecutando servidor.js v15.16 (Gemini Flash-001 + JSON Mode) ---");
+console.log("--- [OK] Ejecutando servidor.js v15.17 (Gemini 2.5 + Diagnóstico) ---");
 startServer();
