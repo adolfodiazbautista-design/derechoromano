@@ -1,23 +1,27 @@
 {
   "name": "romano",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Backend UlpianoIA",
+  "main": "servidor.js",
   "scripts": {
+    "start": "node servidor.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.11.0",
+    "axios": "^1.6.0",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.1",
-    "express": "^5.1.0",
-    "express-rate-limit": "^8.0.1",
-    "google-auth-library": "^10.2.1",
-    "google-spreadsheet": "^5.0.2",
-    "helmet": "^8.1.0",
+    "dotenv": "^16.3.0",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.0",
+    "helmet": "^7.0.0",
+    "google-auth-library": "^9.0.0",
+    "google-spreadsheet": "^4.0.0",
     "node-fetch": "^3.3.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
