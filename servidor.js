@@ -35,7 +35,6 @@ function handleApiError(error, res) {
     res.status(500).json({ error: 'INTERNAL_ERROR', message: 'Error del sistema.' });
 }
 
-// Función robusta para limpiar JSON sucio de la IA
 function limpiarYParsearJSON(texto) {
     try {
         return JSON.parse(texto);
@@ -96,19 +95,10 @@ const buscarDigesto = (term) => {
     return matches;
 };
 
-// --- NUEVA LÓGICA DE BÚSQUEDA INTELIGENTE EN EL ÍNDICE ---
 function buscarPagina(termino) {
     if (!termino || !indiceJson.length) return { pagina: null, titulo: null };
-    
-    // 1. Limpiamos la búsqueda: quitamos signos y palabras vacías cortas (de, la, el...)
-    const terminoLimpio = termino.toLowerCase()
-        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"") 
-        .trim();
-    
-    // Convertimos la frase en palabras clave (tokens)
+    const terminoLimpio = termino.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").trim();
     const palabrasBusqueda = terminoLimpio.split(/\s+/).filter(p => p.length > 3); 
-    
-    // Si no quedan palabras útiles, buscamos tal cual
     if (palabrasBusqueda.length === 0) palabrasBusqueda.push(terminoLimpio);
 
     let mejorMatch = null;
@@ -117,35 +107,22 @@ function buscarPagina(termino) {
     indiceJson.forEach(item => {
         let score = 0;
         const tituloLower = item.titulo.toLowerCase();
-        
-        // Criterio A: Coincidencia exacta del título (100 puntos)
         if (tituloLower.includes(terminoLimpio)) score += 100;
-
-        // Criterio B: Coincidencia de palabras sueltas (10 puntos cada una)
         palabrasBusqueda.forEach(palabra => {
             if (tituloLower.includes(palabra)) score += 10;
         });
-
-        // Criterio C: Palabras clave ocultas (si existen en tu json)
         if (item.palabrasClave && Array.isArray(item.palabrasClave)) {
              if (item.palabrasClave.some(k => k.toLowerCase() === terminoLimpio)) score += 50;
              palabrasBusqueda.forEach(palabra => {
                  if (item.palabrasClave.some(k => k.toLowerCase().includes(palabra))) score += 5;
              });
         }
-
         if (score > maxScore) {
             maxScore = score;
             mejorMatch = item;
         }
     });
-
-    // Solo devolvemos resultado si hay un score decente (>0)
-    if (mejorMatch && maxScore > 0) {
-        return { pagina: mejorMatch.pagina, titulo: mejorMatch.titulo };
-    }
-    
-    // Si falla todo, NO devolvemos la página 1 por defecto para no confundir.
+    if (mejorMatch && maxScore > 0) return { pagina: mejorMatch.pagina, titulo: mejorMatch.titulo };
     return { pagina: null, titulo: null }; 
 }
 
@@ -203,22 +180,44 @@ app.post('/api/buscar-pagina', (req, res) => {
     res.json(buscarPagina(req.body.termino)); 
 });
 
-// 3. ULPIANO IA (Chat)
+// 3. ULPIANO IA (CORREGIDO: Ahora recibe el Manual y Digesto completo)
 app.post('/api/consulta-unificada', async (req, res) => {
     try {
         const { termino } = req.body;
-        const coincidencias = buscarDigesto(termino);
-        const pagInfo = buscarPagina(termino); // Ahora usa la búsqueda inteligente
+        const terminoNormalizado = termino ? termino.toLowerCase().trim() : '';
         
-        let digestoTxt = coincidencias.map(c => `(${c.cita}) ${c.latin}`).join('\n');
+        // 1. Recuperamos el contexto del Manual (¡ESTO FALTABA!)
+        const contextoManual = getContextoRelevante(terminoNormalizado);
+        
+        // 2. Recuperamos citas del Digesto
+        const coincidencias = buscarDigesto(terminoNormalizado);
+        const pagInfo = buscarPagina(termino); 
+        
+        let digestoTxt = "";
+        if (coincidencias.length > 0) {
+            digestoTxt = coincidencias.map(c => `CITA: (${c.cita}) "${c.latin}" (Trad: ${c.espanol})`).join('\n');
+        } else {
+            digestoTxt = "No hay citas locales. RECURRE A TU MEMORIA para citar el Digesto o Gayo.";
+        }
 
         const prompt = `
-Eres Ulpiano, profesor de Derecho Romano. 
+Eres Ulpiano, profesor de Derecho Romano.
 Explica el término "${termino}" a un alumno en ESPAÑOL.
-TUS FUENTES: ${digestoTxt}
-FORMATO JSON:
+
+CONTEXTO OBLIGATORIO DEL MANUAL:
+"${contextoManual}"
+
+FUENTES JURÍDICAS (DIGESTO):
+${digestoTxt}
+
+INSTRUCCIONES:
+1. Basa tu explicación en el CONTEXTO DEL MANUAL proporcionado.
+2. Es OBLIGATORIO incluir al menos una cita jurídica (del Digesto proporcionado o de tu memoria si no hay).
+3. Sé claro y didáctico.
+
+FORMATO JSON (IMPORTANTE):
 {
-  "respuesta_principal": "Explicación clara citando fuentes si existen.",
+  "respuesta_principal": "Tu explicación aquí, citando expresamente las fuentes (ej: 'Según D.41.1...').",
   "conexion_moderna": "Breve referencia al Derecho Civil actual."
 }
 NO escribas nada fuera del JSON.
