@@ -35,22 +35,15 @@ function handleApiError(error, res) {
     res.status(500).json({ error: 'INTERNAL_ERROR', message: 'Error del sistema.' });
 }
 
-// FUNCIÓN DE SEGURIDAD PARA PARSEAR JSON (ESTO ARREGLA ULPIANO IA)
+// Función robusta para limpiar JSON sucio de la IA
 function limpiarYParsearJSON(texto) {
     try {
-        // 1. Intenta parseo directo
         return JSON.parse(texto);
     } catch (e) {
-        // 2. Si falla, busca el primer '{' y el último '}'
         try {
             const match = texto.match(/\{[\s\S]*\}/);
-            if (match) {
-                return JSON.parse(match[0]);
-            }
-        } catch (e2) {
-            console.error("Fallo al limpiar JSON:", e2);
-        }
-        // 3. Si todo falla, devuelve un objeto de emergencia para que la web NO se rompa
+            if (match) return JSON.parse(match[0]);
+        } catch (e2) {}
         return {
             respuesta_principal: texto.replace(/["{}]/g, ""), 
             conexion_moderna: "Consulta el Código Civil vigente."
@@ -60,7 +53,6 @@ function limpiarYParsearJSON(texto) {
 
 async function callGeminiWithRetries(payload) {
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-    // Mantenemos 2.5-flash que es el rápido
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
     try {
@@ -104,9 +96,62 @@ const buscarDigesto = (term) => {
     return matches;
 };
 
+// --- NUEVA LÓGICA DE BÚSQUEDA INTELIGENTE EN EL ÍNDICE ---
+function buscarPagina(termino) {
+    if (!termino || !indiceJson.length) return { pagina: null, titulo: null };
+    
+    // 1. Limpiamos la búsqueda: quitamos signos y palabras vacías cortas (de, la, el...)
+    const terminoLimpio = termino.toLowerCase()
+        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"") 
+        .trim();
+    
+    // Convertimos la frase en palabras clave (tokens)
+    const palabrasBusqueda = terminoLimpio.split(/\s+/).filter(p => p.length > 3); 
+    
+    // Si no quedan palabras útiles, buscamos tal cual
+    if (palabrasBusqueda.length === 0) palabrasBusqueda.push(terminoLimpio);
+
+    let mejorMatch = null;
+    let maxScore = 0;
+
+    indiceJson.forEach(item => {
+        let score = 0;
+        const tituloLower = item.titulo.toLowerCase();
+        
+        // Criterio A: Coincidencia exacta del título (100 puntos)
+        if (tituloLower.includes(terminoLimpio)) score += 100;
+
+        // Criterio B: Coincidencia de palabras sueltas (10 puntos cada una)
+        palabrasBusqueda.forEach(palabra => {
+            if (tituloLower.includes(palabra)) score += 10;
+        });
+
+        // Criterio C: Palabras clave ocultas (si existen en tu json)
+        if (item.palabrasClave && Array.isArray(item.palabrasClave)) {
+             if (item.palabrasClave.some(k => k.toLowerCase() === terminoLimpio)) score += 50;
+             palabrasBusqueda.forEach(palabra => {
+                 if (item.palabrasClave.some(k => k.toLowerCase().includes(palabra))) score += 5;
+             });
+        }
+
+        if (score > maxScore) {
+            maxScore = score;
+            mejorMatch = item;
+        }
+    });
+
+    // Solo devolvemos resultado si hay un score decente (>0)
+    if (mejorMatch && maxScore > 0) {
+        return { pagina: mejorMatch.pagina, titulo: mejorMatch.titulo };
+    }
+    
+    // Si falla todo, NO devolvemos la página 1 por defecto para no confundir.
+    return { pagina: null, titulo: null }; 
+}
+
 // --- ENDPOINTS ---
 
-// 1. LABORATORIO DE CASOS (EL QUE YA FUNCIONABA BIEN)
+// 1. LABORATORIO DE CASOS
 app.post('/api/consulta', async (req, res) => {
     try {
         const { tipo, termino, currentCaseText } = req.body;
@@ -129,7 +174,6 @@ app.post('/api/consulta', async (req, res) => {
 
         if (tipo === 'resolver') {
             if (!currentCaseText) return res.status(400).json({ error: 'Falta texto.' });
-            
             promptSystem = `
 CONFIGURACIÓN: Juez experto en Derecho Romano. IDIOMA: ESPAÑOL.
 TAREA: Sentencia para: "${currentCaseText}".
@@ -147,7 +191,7 @@ INSTRUCCIONES: Nombres romanos. Conflicto jurídico claro. Termina con "¿Quid I
 `;
         } else { return res.status(400).json({ error: 'Tipo error' }); }
 
-        const payload = { contents: [{ parts: [{ text: promptSystem }] }] }; // Sin safetySettings para ir rápido
+        const payload = { contents: [{ parts: [{ text: promptSystem }] }] };
         const respuestaIA = await callGeminiWithRetries(payload);
         res.json({ respuesta: respuestaIA }); 
         
@@ -155,46 +199,32 @@ INSTRUCCIONES: Nombres romanos. Conflicto jurídico claro. Termina con "¿Quid I
 });
 
 // 2. BUSCADOR PÁGINA
-function buscarPagina(termino) {
-    if (!termino) return { pagina: null, titulo: null };
-    const t = termino.toLowerCase();
-    const mejor = indiceJson.find(i => i.titulo.toLowerCase().includes(t)) || indiceJson[0];
-    return { pagina: mejor?.pagina, titulo: mejor?.titulo };
-}
-app.post('/api/buscar-pagina', (req, res) => { res.json(buscarPagina(req.body.termino)); });
+app.post('/api/buscar-pagina', (req, res) => { 
+    res.json(buscarPagina(req.body.termino)); 
+});
 
-// 3. ULPIANO IA (REPARADO: MÁS ROBUSTO)
+// 3. ULPIANO IA (Chat)
 app.post('/api/consulta-unificada', async (req, res) => {
     try {
         const { termino } = req.body;
         const coincidencias = buscarDigesto(termino);
-        const pagInfo = buscarPagina(termino);
+        const pagInfo = buscarPagina(termino); // Ahora usa la búsqueda inteligente
         
         let digestoTxt = coincidencias.map(c => `(${c.cita}) ${c.latin}`).join('\n');
 
-        // Eliminamos "response_mime_type: json" porque a veces falla con textos largos.
-        // Hacemos el parseo manual con limpiarYParsearJSON.
         const prompt = `
 Eres Ulpiano, profesor de Derecho Romano. 
 Explica el término "${termino}" a un alumno en ESPAÑOL.
-
-TUS FUENTES (Úsalas si sirven): 
-${digestoTxt}
-
-FORMATO DE RESPUESTA (IMPORTANTE):
-Debes responder un objeto JSON con estas claves:
+TUS FUENTES: ${digestoTxt}
+FORMATO JSON:
 {
-  "respuesta_principal": "Aquí tu explicación. Si tienes fuentes arriba, CITALAS (ej. D.41.1.1). Si no, usa tu conocimiento general.",
-  "conexion_moderna": "Breve referencia al Código Civil actual."
+  "respuesta_principal": "Explicación clara citando fuentes si existen.",
+  "conexion_moderna": "Breve referencia al Derecho Civil actual."
 }
 NO escribas nada fuera del JSON.
 `;
-
         const payload = { contents: [{ parts: [{ text: prompt }] }] };
-        
         const respuestaTexto = await callGeminiWithRetries(payload);
-        
-        // AQUÍ ESTÁ LA MAGIA QUE EVITA EL ERROR 500
         const jsonRespuesta = limpiarYParsearJSON(respuestaTexto);
         
         res.json({
@@ -204,9 +234,7 @@ NO escribas nada fuera del JSON.
             titulo: pagInfo.titulo   
         });
 
-    } catch (error) {
-        handleApiError(error, res);
-    }
+    } catch (error) { handleApiError(error, res); }
 });
 
 // 4. PARENTESCO
@@ -225,14 +253,12 @@ const startServer = async () => {
     try {
         manualJson = JSON.parse(await fs.readFile('manual.json', 'utf-8'));
         indiceJson = JSON.parse(await fs.readFile('indice.json', 'utf-8'));
-        
         try {
             digestoJson = JSON.parse(await fs.readFile('digesto_traducido_final.json', 'utf-8'));
         } catch (e) {
             console.log("⚠️ Usando digesto.json alternativo.");
             digestoJson = JSON.parse(await fs.readFile('digesto.json', 'utf-8'));
         }
-        
         console.log(`✓ TODO LISTO. Modelo: gemini-2.5-flash`);
         app.listen(port, () => console.log(`🚀 http://localhost:${port}`));
     } catch (error) {
