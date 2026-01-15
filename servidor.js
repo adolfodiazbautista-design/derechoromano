@@ -85,11 +85,11 @@ const buscarDigesto = (term) => {
     for (const entry of digestoJson) {
         if (entry.texto_espanol && entry.texto_espanol.toLowerCase().includes(termLower)) {
             matches.push({
-                cita: entry.cita,
+                cita: entry.cita, 
                 latin: entry.texto_latin ? entry.texto_latin.trim() : "",
                 espanol: entry.texto_espanol.trim()
             });
-            if (matches.length >= 6) break; 
+            if (matches.length >= 8) break; 
         }
     }
     return matches;
@@ -137,28 +137,51 @@ app.post('/api/consulta', async (req, res) => {
         const coincidencias = buscarDigesto(terminoNormalizado); 
         
         let bloqueDigesto = "";
-        let instruccionFuentes = "";
-
+        
+        // Construimos el bloque de fuentes locales
         if (coincidencias.length > 0) {
-            bloqueDigesto = coincidencias.map(c => `FUENTE LOCAL (${c.cita}): "${c.latin}" (${c.espanol})`).join("\n");
-            instruccionFuentes = "Usa PRIORITARIAMENTE las fuentes locales proporcionadas.";
+            bloqueDigesto = coincidencias.map(c => `FUENTE DIGESTO LOCAL (${c.cita}): "${c.latin}" (${c.espanol})`).join("\n");
         } else {
-            bloqueDigesto = "NO SE HAN ENCONTRADO CITAS LOCALES.";
-            instruccionFuentes = "Busca en tu memoria: Digesto, Gayo, Partidas de Alfonso X.";
+            bloqueDigesto = "NO SE HAN ENCONTRADO CITAS EXACTAS EN EL DIGESTO LOCAL.";
         }
+
+        // INSTRUCCIONES HÍBRIDAS (LO QUE PEDISTE)
+        const instruccionesSeguridad = `
+        PROTOCOLOS DE CITACIÓN (STRICT MODE):
+        
+        1. DIGESTO (CRÍTICO): 
+           - Si la cita está en 'FUENTES DISPONIBLES' (arriba), ÚSALA y cíta el número exacto.
+           - Si NO está arriba: TIENES PROHIBIDO INVENTAR UN NÚMERO (ej. D.20.3.1).
+           - En su lugar, cita solo el nombre del jurista (ej. "Según Ulpiano...") o una Regla General.
+
+        2. OTRAS FUENTES (PERMITIDO):
+           - Puedes usar tu memoria interna para citar (sin inventar):
+             * Instituciones de Gayo o Justiniano.
+             * Código Teodosiano.
+             * Las Siete Partidas de Alfonso X.
+             * Artículos reales de Códigos Civiles Modernos (España, Francia, Italia, Chile...).
+             * Reglas Jurídicas Latinas (Regulae Iuris).
+        `;
 
         let promptSystem;
 
         if (tipo === 'resolver') {
             if (!currentCaseText) return res.status(400).json({ error: 'Falta texto.' });
             promptSystem = `
-CONFIGURACIÓN: Juez experto en Derecho Romano. IDIOMA: ESPAÑOL.
-TAREA: Sentencia para: "${currentCaseText}".
-FUENTES: ${bloqueDigesto}
-INSTRUCCIONES: ${instruccionFuentes}
-FORMATO:
-1. FALLO: "Condeno/Absuelvo..."
-2. MOTIVACIÓN: Explica y CITA LA FUENTE (ej. "Como dice Ulpiano en D.9.2...").
+CONFIGURACIÓN: Juez experto en Derecho Romano y Derecho Comparado.
+IDIOMA: ESPAÑOL.
+
+TAREA: Dictar Sentencia para: "${currentCaseText}".
+FUENTES DISPONIBLES: ${bloqueDigesto}
+${instruccionesSeguridad}
+
+FORMATO DE RESPUESTA:
+1. FALLO: "Condeno..." / "Absuelvo..."
+2. MOTIVACIÓN:
+   - Argumenta con rigor.
+   - Cita obligatoriamente una fuente.
+   - Si citas el Digesto sin tener la fuente local, di: "Como señala la jurisprudencia romana..." o "Ulpiano establece...". NUNCA pongas "D.X.X.X" si no es real.
+   - Si citas Partidas o CC, hazlo con precisión.
 `;
         } else if (tipo === 'generar') {
             promptSystem = `
@@ -180,47 +203,37 @@ app.post('/api/buscar-pagina', (req, res) => {
     res.json(buscarPagina(req.body.termino)); 
 });
 
-// 3. ULPIANO IA (CORREGIDO: Ahora recibe el Manual y Digesto completo)
+// 3. ULPIANO IA (Mismas reglas híbridas)
 app.post('/api/consulta-unificada', async (req, res) => {
     try {
         const { termino } = req.body;
         const terminoNormalizado = termino ? termino.toLowerCase().trim() : '';
-        
-        // 1. Recuperamos el contexto del Manual (¡ESTO FALTABA!)
         const contextoManual = getContextoRelevante(terminoNormalizado);
-        
-        // 2. Recuperamos citas del Digesto
         const coincidencias = buscarDigesto(terminoNormalizado);
         const pagInfo = buscarPagina(termino); 
         
         let digestoTxt = "";
         if (coincidencias.length > 0) {
-            digestoTxt = coincidencias.map(c => `CITA: (${c.cita}) "${c.latin}" (Trad: ${c.espanol})`).join('\n');
+            digestoTxt = coincidencias.map(c => `CITA LOCAL: (${c.cita}) "${c.latin}"`).join('\n');
         } else {
-            digestoTxt = "No hay citas locales. RECURRE A TU MEMORIA para citar el Digesto o Gayo.";
+            digestoTxt = "No hay citas locales exactas.";
         }
 
         const prompt = `
 Eres Ulpiano, profesor de Derecho Romano.
-Explica el término "${termino}" a un alumno en ESPAÑOL.
+Explica: "${termino}".
+CONTEXTO MANUAL: "${contextoManual}"
+FUENTES DIGESTO LOCAL: ${digestoTxt}
 
-CONTEXTO OBLIGATORIO DEL MANUAL:
-"${contextoManual}"
+REGLAS DE CITACIÓN:
+1. DIGESTO: Solo usa citas numéricas (D.x.x) si están en "FUENTES DIGESTO LOCAL". Si no, cita por nombre de jurista.
+2. OTRAS FUENTES: Eres libre de citar Instituciones, Partidas, Código Teodosiano o Códigos Civiles modernos (artículos reales).
 
-FUENTES JURÍDICAS (DIGESTO):
-${digestoTxt}
-
-INSTRUCCIONES:
-1. Basa tu explicación en el CONTEXTO DEL MANUAL proporcionado.
-2. Es OBLIGATORIO incluir al menos una cita jurídica (del Digesto proporcionado o de tu memoria si no hay).
-3. Sé claro y didáctico.
-
-FORMATO JSON (IMPORTANTE):
+FORMATO JSON:
 {
-  "respuesta_principal": "Tu explicación aquí, citando expresamente las fuentes (ej: 'Según D.41.1...').",
-  "conexion_moderna": "Breve referencia al Derecho Civil actual."
+  "respuesta_principal": "Explicación clara en español. Cita fuentes según las reglas.",
+  "conexion_moderna": "Referencia al Derecho Civil actual (artículos reales)."
 }
-NO escribas nada fuera del JSON.
 `;
         const payload = { contents: [{ parts: [{ text: prompt }] }] };
         const respuestaTexto = await callGeminiWithRetries(payload);
