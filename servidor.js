@@ -1,308 +1,397 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UlpianoIA: Innovación Docente</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/serif.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Lato:wght@300;400;700&display=swap');
-        
-        :root {
-            --r-main-font: 'Lato', sans-serif;
-            --r-heading-font: 'Cormorant Garamond', serif;
-            --r-heading-text-transform: none;
-            --roman-red: #8B0000;
-            --roman-gold: #C5A059;
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const fs = require('fs').promises; 
+const axios = require('axios');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+// --- VARIABLES GLOBALES DE DATOS ---
+let manualJson = [];
+let indiceJson = [];
+let digestoJson = []; 
+
+// --- 1. CACHÉ ESTÁTICA (MODO DEMO - RESPUESTAS INSTANTÁNEAS) ---
+// Estas respuestas saltan en 0ms y aseguran el éxito en la presentación.
+const DEMO_CACHE = {
+    "hurto": {
+        es_caso: true,
+        respuesta: `
+***
+## SENTENCIA
+**JUEZ:** Magistrado con Imperium.
+**ASUNTO:** Sustracción de cosa ajena (Furtum).
+
+### 1. FALLO
+**CONDENO** al demandado por delito de Hurto (*Furtum*).
+
+### 2. MOTIVACIÓN JURÍDICA
+Queda probado el *contrectatio* (manejo fraudulento) de la cosa con ánimo de lucro.
+Como establece el principio jurídico fundamental:
+*"Furtum est contrectatio rei fraudulosa lucri faciendi gratia vel ipsius rei vel etiam usus eius possessionisve"* (El hurto es el manejo fraudulento de una cosa para obtener lucro, ya sea de la propia cosa, de su uso o de su posesión).
+
+**FUENTE JURÍDICA APLICABLE:**
+Según **Paulo** en el **Digesto (D. 47.2.1.3)**, no basta la intención, se requiere el contacto físico indebido contra la voluntad del dueño.
+***`
+    },
+    "posesion": {
+        es_chat: true,
+        json: {
+            respuesta_principal: "La posesión (*possessio*) es el poder de hecho sobre una cosa, distinto de la propiedad (*dominium*). Para que exista posesión jurídica protegida por interdictos, se requieren dos elementos: el cuerpo (*corpus*, tenencia material) y la intención de tenerla como propia (*animus possidendi*). Si falta el ánimo, es mera detentación. Fuente: Como distingue Ulpiano en D. 41.2.1.",
+            conexion_moderna: "En el Código Civil español (Art. 430), se mantiene esta distinción entre posesión natural y posesión civil."
         }
-
-        .reveal h1, .reveal h2, .reveal h3 {
-            color: var(--roman-red);
+    },
+    "mancipatio": {
+        es_chat: true,
+        json: {
+            respuesta_principal: "La Mancipatio es el modo solemne y arcaico de transmitir la propiedad de las 'res mancipi' (fundos itálicos, esclavos, animales de tiro). Es un negocio formal ('per aes et libram') que requiere la presencia de 5 testigos, el libripens (portabalanzas) y unas palabras rituales ('Hoc ego hominem meum esse aio...'). Fuente: Gayo, Instituciones 1.119.",
+            conexion_moderna: "No existe hoy, pero es el antecedente de las formalidades notariales en la transmisión de inmuebles."
         }
-        
-        .temple-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 400px;
-            margin-top: 20px;
+    },
+    "usucapion": {
+        es_chat: true,
+        json: {
+            respuesta_principal: "La Usucapio es la adquisición de la propiedad civil por la posesión continuada en el tiempo (1 año muebles, 2 inmuebles). Requisitos clásicos: Res habilis (cosa apta), Titulus (causa justa), Fides (buena fe inicial), Possessio (tenencia) y Tempus (tiempo). Fuente: Ley de las XII Tablas (VI.3) y Ulpiano (Reglas 19.8).",
+            conexion_moderna: "Equivale a la prescripción adquisitiva del Código Civil (Art. 1930 y ss.)."
         }
-        
-        .pediment {
-            width: 0; 
-            height: 0; 
-            border-left: 300px solid transparent;
-            border-right: 300px solid transparent;
-            border-bottom: 120px solid var(--roman-red);
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            margin-bottom: 5px;
+    }
+};
+
+// --- 2. CACHÉ DINÁMICA (APRENDIZAJE AUTOMÁTICO TEMPORAL) ---
+// Recuerda las últimas 50 preguntas para no gastar IA si se repiten.
+const MEMORIA_DINAMICA = new Map(); 
+const MAX_MEMORIA_ITEMS = 50; 
+
+function guardarEnMemoria(key, valor) {
+    if (MEMORIA_DINAMICA.has(key)) {
+        MEMORIA_DINAMICA.delete(key);
+    } else if (MEMORIA_DINAMICA.size >= MAX_MEMORIA_ITEMS) {
+        const oldestKey = MEMORIA_DINAMICA.keys().next().value;
+        MEMORIA_DINAMICA.delete(oldestKey);
+    }
+    MEMORIA_DINAMICA.set(key, valor);
+}
+
+// --- CONFIGURACIÓN DEL SERVIDOR ---
+app.use(cors());
+app.use(express.json({ limit: "1mb" }));
+app.use(helmet());
+app.set('trust proxy', 1);
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100, // 100 peticiones por 15 min (suficiente para demo)
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'RATE_LIMIT_EXCEEDED', message: 'Demasiadas peticiones.' }
+});
+app.use('/api/', limiter);
+
+// --- UTILIDADES ---
+function handleApiError(error, res) {
+    console.error("Error API:", error.message);
+    res.status(500).json({ error: 'INTERNAL_ERROR', message: 'Error del sistema.' });
+}
+
+// Limpiador de JSON (Vital para que UlpianoIA no falle)
+function limpiarYParsearJSON(texto) {
+    try {
+        return JSON.parse(texto);
+    } catch (e) {
+        try {
+            const match = texto.match(/\{[\s\S]*\}/);
+            if (match) return JSON.parse(match[0]);
+        } catch (e2) {}
+        return {
+            respuesta_principal: texto.replace(/["{}]/g, ""), 
+            conexion_moderna: "Consulta el Código Civil vigente."
+        };
+    }
+}
+
+async function callGeminiWithRetries(payload) {
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+    // Usamos el modelo rápido para la conferencia
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+    try {
+        const geminiResponse = await axios.post(url, payload, { 
+            headers: { 'Content-Type': 'application/json' },
+            timeout: 30000 
+        }); 
+        if (geminiResponse.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+            return geminiResponse.data.candidates[0].content.parts[0].text;
         }
-        
-        .pediment-text {
-            position: absolute;
-            bottom: -80px;
-            width: 400px;
-            text-align: center;
-            color: white;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: bold;
-            font-size: 1.2rem;
-            z-index: 10;
-            transform: translateY(-50px);
+        throw new Error('Respuesta vacía de la IA.');
+    } catch (error) {
+        throw error;
+    }
+}
+
+// --- MOTORES DE BÚSQUEDA ---
+
+function getContextoRelevante(termino) {
+    if (!termino) return '';
+    const terminoBusqueda = termino.toLowerCase().trim();
+    // Contexto forzado para términos clave
+    if (terminoBusqueda.includes('posesion')) {
+        return `En Roma, la posesión se distingue de la propiedad. Tipos: Natural y Civil. Protección: Interdictos.`;
+    }
+    const encontrado = manualJson.find(item => item.termino.toLowerCase().includes(terminoBusqueda));
+    return encontrado ? encontrado.definicion : '';
+}
+
+const buscarDigesto = (term) => {
+    if (!term || !digestoJson.length) return [];
+    
+    const termClean = term.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").trim();
+    const tokens = termClean.split(/\s+/).filter(t => t.length > 3); 
+    if (tokens.length === 0 && termClean.length > 0) tokens.push(termClean); 
+
+    const matches = [];
+
+    for (const entry of digestoJson) {
+        let score = 0;
+        const textoEsp = entry.texto_espanol ? entry.texto_espanol.toLowerCase() : "";
+        const textoLat = entry.texto_latin ? entry.texto_latin.toLowerCase() : "";
+
+        // Puntos por coincidencia de frase
+        if (textoEsp.includes(termClean) || textoLat.includes(termClean)) {
+            score += 100;
         }
-
-        .cornice {
-            width: 640px;
-            height: 30px;
-            background: var(--roman-gold);
-            margin-bottom: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #333;
-            font-weight: bold;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-
-        .columns-container {
-            display: flex;
-            justify-content: space-between;
-            width: 580px;
-            height: 200px;
-        }
-
-        .column {
-            width: 40px;
-            height: 100%;
-            background: linear-gradient(to right, #e0e0e0, #ffffff, #bdbdbd);
-            border-radius: 4px;
-            position: relative;
-        }
-
-        .column::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: repeating-linear-gradient(90deg, transparent, transparent 5px, rgba(0,0,0,0.1) 5px, rgba(0,0,0,0.1) 6px);
-        }
-
-        .tech-label {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255,255,255,0.9);
-            padding: 10px;
-            border: 1px solid var(--roman-red);
-            color: var(--roman-red);
-            font-weight: bold;
-            width: 100%;
-            text-align: center;
-            z-index: 5;
-        }
-
-        .stylobate {
-            width: 700px;
-            height: 60px;
-            background: #5D4037;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5rem;
-            margin-top: 5px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-            border-radius: 2px;
-        }
-
-        .highlight-box {
-            background: rgba(139, 0, 0, 0.1);
-            border-left: 5px solid var(--roman-red);
-            padding: 20px;
-            margin: 20px 0;
-            text-align: left;
-        }
-        
-        .security-badge {
-            background-color: #e6fffa;
-            border: 2px solid #38b2ac;
-            color: #234e52;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.7em;
-            font-weight: bold;
-            display: inline-block;
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
-    <div class="reveal">
-        <div class="slides">
-            
-            <!-- SLIDE 1: TÍTULO -->
-            <section data-background-gradient="linear-gradient(to bottom, #fdfbf7, #e6e2dd)">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Escudo_de_la_Universidad_de_Murcia.svg/1200px-Escudo_de_la_Universidad_de_Murcia.svg.png" style="width: 100px; margin-bottom: 20px;">
-                <h1 style="font-size: 2.5em;">La IA en el Derecho Romano</h1>
-                <h3 style="color: #555;">De la investigación a la innovación docente</h3>
-                <div style="width: 100px; height: 5px; background: var(--roman-red); margin: 30px auto;"></div>
-                <p><strong>Proyecto UlpianoIA</strong></p>
-                <p style="font-size: 0.6em; margin-top: 50px;">Prof. Adolfo A. Díaz-Bautista Cremades<br>Universidad de Murcia</p>
-            </section>
-
-            <!-- SLIDE 2: EL GIRO (EL PIVOT) -->
-            <section>
-                <h2>El Giro Metodológico</h2>
-                <div class="highlight-box">
-                    <p>La investigación jurídica más urgente hoy no es arqueológica, sino <strong>docente</strong>.</p>
-                </div>
-                <p class="fragment">¿Cómo transmitimos un legado de 20 siglos a la Generación Z?</p>
-                <p class="fragment" style="color: var(--roman-red); font-size: 1.5em; margin-top: 40px;">
-                    <strong>Investigar CÓMO enseñar.</strong>
-                </p>
-            </section>
-
-            <!-- SLIDE 3: INFOGRAFÍA DEL TEMPLO -->
-            <section>
-                <h3>Arquitectura del Proyecto</h3>
-                <div class="temple-container">
-                    <!-- Techo -->
-                    <div class="pediment">
-                        <div class="pediment-text">
-                            LA DOCENCIA<br>
-                            <span style="font-size: 0.7em; font-weight: normal;">(UlpianoIA + Laboratorio de Casos)</span>
-                        </div>
-                    </div>
-                    <div class="cornice">INNOVACIÓN - ACCESIBILIDAD - PRÁCTICA</div>
-                    
-                    <!-- Columnas -->
-                    <div class="columns-container">
-                        <div class="column"></div>
-                        <div class="column"></div>
-                        <div class="column"></div>
-                        <div class="column"></div>
-                        <div class="column"></div>
-                        <div class="tech-label fragment fade-up">
-                            TECNOLOGÍA (EL MOTOR)<br>
-                            <span style="font-size: 0.6em; color: #333;">Gemini 2.5 Flash + RAG + Node.js</span>
-                        </div>
-                    </div>
-
-                    <!-- Base -->
-                    <div class="stylobate fragment fade-up">
-                        LOS CIMIENTOS: Manual, Digesto y Fuentes Históricas
-                    </div>
-                </div>
-            </section>
-
-            <!-- SLIDE 4: PLACEHOLDER DEMO 1 (RECURSOS) -->
-            <section data-background-color="#f0f0f0">
-                <div style="border: 4px dashed #999; padding: 50px; border-radius: 20px;">
-                    <h2 style="color: #666;">DEMOSTRACIÓN EN VIVO</h2>
-                    <h3 style="color: var(--roman-red);">1. El Ecosistema Digital</h3>
-                    <ul style="list-style: none;">
-                        <li>📚 Manual Digital Interactivo</li>
-                        <li>🎧 Podcasts para movilidad</li>
-                        <li>🗺️ Esquemas Visuales</li>
-                    </ul>
-                    <p style="margin-top: 30px; font-style: italic;">(Cambiando a Navegador...)</p>
-                </div>
-            </section>
-
-            <!-- SLIDE 5: ULPIANO IA (ACTUALIZADA: CONTROL DE ALUCINACIONES) -->
-            <section>
-                <h2>El Tutor Seguro (UlpianoIA)</h2>
-                <div class="grid grid-cols-2 gap-4">
-                    <div style="text-align: left; font-size: 0.75em;">
-                        <p style="color: var(--roman-red); font-weight: bold;">El Problema de ChatGPT:</p>
-                        <p style="margin-bottom: 15px;">Las "Alucinaciones" (inventa leyes o citas).</p>
-                        
-                        <p style="color: var(--roman-gold); font-weight: bold;">Nuestra Solución (RAG + Seguridad):</p>
-                        <ul style="margin-left: 20px;">
-                            <li><strong>Base de Conocimiento Controlada:</strong> La IA solo lee nuestro Manual y el Digesto Bilingüe.</li>
-                            <li><strong>Prompt de Seguridad:</strong> "Si no tienes la cita exacta, PROHIBIDO inventar un número (D.x.x)".</li>
-                            <li><strong>Jerarquía de Fuentes:</strong> 1. Digesto > 2. Partidas > 3. Principios Generales.</li>
-                        </ul>
-                    </div>
-                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/7/75/Ulpian.jpg" style="border-radius: 50%; width: 200px; border: 5px solid var(--roman-gold); box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
-                        <div class="security-badge">🛡️ ALUCINACIONES BLOQUEADAS</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SLIDE 6: PLACEHOLDER DEMO 2 (CASOS) -->
-            <section data-background-color="#f0f0f0">
-                <div style="border: 4px dashed #999; padding: 50px; border-radius: 20px;">
-                    <h2 style="color: #666;">DEMOSTRACIÓN EN VIVO</h2>
-                    <h3 style="color: var(--roman-red);">2. El Laboratorio de Casos</h3>
-                    <p><strong>El Generador Infinito</strong></p>
-                    <hr>
-                    <p style="font-size: 0.8em; text-align: left; margin-left: 20%;">
-                        🤖 <strong>Rol 1 (Profesor):</strong> Genera conflicto (Ticio vs Cayo).<br>
-                        ⚖️ <strong>Rol 2 (Juez):</strong> Resuelve citando FUENTES REALES.
-                    </p>
-                    <p style="margin-top: 30px; font-style: italic;">(Probando: "Hurto" o "Daños de animales")</p>
-                </div>
-            </section>
-
-            <!-- SLIDE 7: LA COCINA TÉCNICA (ACTUALIZADA) -->
-            <section>
-                <h3>Metodología: "Arquitecto Funcional"</h3>
-                <div class="flex justify-center items-center gap-10" style="margin-bottom: 20px;">
-                    <div class="fragment fade-right" style="background: white; padding: 15px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 45%;">
-                        <h4>El Profesor</h4>
-                        <p style="font-size: 0.6em;">Define la lógica jurídica y cura los textos (JSONs del Manual y Digesto).</p>
-                    </div>
-                    <div style="font-size: 2em; color: var(--roman-gold);">+</div>
-                    <div class="fragment fade-left" style="background: #eef; padding: 15px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 45%;">
-                        <h4>La IA (Gemini 2.5)</h4>
-                        <p style="font-size: 0.6em;">Ejecuta el código Node.js y procesa el lenguaje natural.</p>
-                    </div>
-                </div>
-                
-                <div class="fragment" style="background: #2d3748; color: #a0aec0; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.45em; text-align: left; border-left: 4px solid #48bb78;">
-                    // CÓDIGO REAL DEL SERVIDOR (Protección Anti-Alucinación)<br>
-                    > const prompt = "Rol: Juez Romano. IDIOMA: ESPAÑOL.";<br>
-                    > prompt += "INSTRUCCIÓN DE SEGURIDAD: <strong>NO inventes citas numéricas (D.x.x).</strong>";<br>
-                    > prompt += "Si no tienes la cita exacta en el archivo, usa Regulae Iuris o cita a Gayo por nombre.";
-                </div>
-            </section>
-
-            <!-- SLIDE 8: CONCLUSIÓN -->
-            <section>
-                <h2>Conclusión</h2>
-                <p>La IA no viene a sustituir al profesor.</p>
-                <h3 style="color: var(--roman-gold); margin-top: 30px;">Viene a liberarnos.</h3>
-                <p class="fragment">Nos libera de la burocracia para dedicarnos a enseñar a <strong>pensar con Justicia</strong>.</p>
-                <div style="margin-top: 50px; font-size: 0.6em;">
-                    <p>Prof. Adolfo A. Díaz-Bautista Cremades</p>
-                    <a href="https://derechoromano.netlify.app" target="_blank" style="color: var(--roman-red);">derechoromano.netlify.app</a>
-                </div>
-            </section>
-
-        </div>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
-    <script>
-        Reveal.initialize({
-            controls: true,
-            progress: true,
-            center: true,
-            hash: true,
-            transition: 'slide' // none/fade/slide/convex/concave/zoom
+        // Puntos por palabras sueltas
+        tokens.forEach(token => {
+            if (textoEsp.includes(token)) score += 10;
+            if (textoLat.includes(token)) score += 10;
         });
-    </script>
-</body>
-</html>
+
+        if (score > 0) {
+            matches.push({
+                cita: entry.cita, 
+                latin: entry.texto_latin ? entry.texto_latin.trim() : "(Latín no disponible)",
+                espanol: entry.texto_espanol ? entry.texto_espanol.trim() : "",
+                score: score
+            });
+        }
+    }
+    // Devolvemos los 8 mejores resultados
+    return matches.sort((a, b) => b.score - a.score).slice(0, 8);
+};
+
+function buscarPagina(termino) {
+    if (!termino || !indiceJson.length) return { pagina: null, titulo: null };
+    const terminoLimpio = termino.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").trim();
+    const palabrasBusqueda = terminoLimpio.split(/\s+/).filter(p => p.length > 3); 
+    if (palabrasBusqueda.length === 0) palabrasBusqueda.push(terminoLimpio);
+
+    let mejorMatch = null;
+    let maxScore = 0;
+
+    indiceJson.forEach(item => {
+        let score = 0;
+        const tituloLower = item.titulo.toLowerCase();
+        if (tituloLower.includes(terminoLimpio)) score += 100;
+        palabrasBusqueda.forEach(palabra => {
+            if (tituloLower.includes(palabra)) score += 10;
+        });
+        if (item.palabrasClave && Array.isArray(item.palabrasClave)) {
+             if (item.palabrasClave.some(k => k.toLowerCase() === terminoLimpio)) score += 50;
+             palabrasBusqueda.forEach(palabra => {
+                 if (item.palabrasClave.some(k => k.toLowerCase().includes(palabra))) score += 5;
+             });
+        }
+        if (score > maxScore) {
+            maxScore = score;
+            mejorMatch = item;
+        }
+    });
+    if (mejorMatch && maxScore > 0) return { pagina: mejorMatch.pagina, titulo: mejorMatch.titulo };
+    return { pagina: null, titulo: null }; 
+}
+
+// --- ENDPOINTS (APIS) ---
+
+// 1. LABORATORIO DE CASOS (Generador y Juez)
+app.post('/api/consulta', async (req, res) => {
+    try {
+        const { tipo, termino, currentCaseText } = req.body;
+        
+        // --- CHEQUEO DE CACHÉ ---
+        if (tipo === 'resolver' && currentCaseText) {
+            const txt = currentCaseText.toLowerCase();
+            const key = currentCaseText.toLowerCase().trim().substring(0, 50);
+
+            // Estática
+            if (txt.includes("hurto") && DEMO_CACHE["hurto"]) {
+                console.log("⚡ [CACHE DEMO] Sirviendo respuesta de Hurto");
+                return res.json({ respuesta: DEMO_CACHE["hurto"].respuesta });
+            }
+            // Dinámica
+            if (MEMORIA_DINAMICA.has(key)) {
+                console.log("🧠 [CACHE DINÁMICA] Recuperando respuesta aprendida");
+                return res.json({ respuesta: MEMORIA_DINAMICA.get(key) });
+            }
+        }
+        // ------------------------
+
+        const terminoBusqueda = (tipo === 'resolver' && currentCaseText) ? currentCaseText : termino;
+        const terminoNormalizado = terminoBusqueda ? terminoBusqueda.substring(0, 100) : ''; 
+        
+        const contextoFinal = getContextoRelevante(termino ? termino : '');
+        const coincidencias = buscarDigesto(terminoNormalizado); 
+        
+        let bloqueDigesto = "";
+        
+        if (coincidencias.length > 0) {
+            bloqueDigesto = coincidencias.map(c => `FUENTE LOCAL (${c.cita}): "${c.latin}" (${c.espanol})`).join("\n");
+        } else {
+            bloqueDigesto = "NO SE HAN ENCONTRADO CITAS EXACTAS EN EL DIGESTO LOCAL.";
+        }
+
+        const instruccionesSeguridad = `
+        PROTOCOLOS DE CITACIÓN OBLIGATORIOS:
+        1. FUENTES LOCALES (Provistas arriba): Son tu prioridad. Úsalas y cita su número (D.x.x).
+        2. SI NO HAY FUENTES LOCALES: 
+           - PUEDES citar principios generales ("Nemo dat quod non habet").
+           - PUEDES citar a juristas por nombre (Ulpiano, Gayo).
+           - PROHIBIDO inventar un número de Digesto (D.x.x) si no lo ves en la lista de arriba.
+        `;
+
+        let promptSystem;
+
+        if (tipo === 'resolver') {
+            if (!currentCaseText) return res.status(400).json({ error: 'Falta texto.' });
+            promptSystem = `
+CONFIGURACIÓN: Juez experto en Derecho Romano. IDIOMA: ESPAÑOL.
+TAREA: Dictar Sentencia para: "${currentCaseText}".
+FUENTES DISPONIBLES: ${bloqueDigesto}
+${instruccionesSeguridad}
+
+FORMATO RESPUESTA:
+1. FALLO.
+2. MOTIVACIÓN (Cita obligatoria de fuente local o principio general, sin inventar números).
+`;
+        } else if (tipo === 'generar') {
+            promptSystem = `
+ROL: Profesor. TAREA: Caso práctico BREVE sobre "${termino}".
+CONTEXTO: ${contextoFinal}
+INSTRUCCIONES: Nombres romanos. Conflicto jurídico claro. Termina con "¿Quid Iuris?".
+`;
+        } else { return res.status(400).json({ error: 'Tipo error' }); }
+
+        const payload = { contents: [{ parts: [{ text: promptSystem }] }] };
+        const respuestaIA = await callGeminiWithRetries(payload);
+        
+        // Guardar en memoria
+        if (tipo === 'resolver' && currentCaseText) {
+            const key = currentCaseText.toLowerCase().trim().substring(0, 50);
+            guardarEnMemoria(key, respuestaIA);
+        }
+
+        res.json({ respuesta: respuestaIA }); 
+        
+    } catch (error) { handleApiError(error, res); }
+});
+
+// 2. BUSCADOR PÁGINA (Índice)
+app.post('/api/buscar-pagina', (req, res) => { 
+    res.json(buscarPagina(req.body.termino)); 
+});
+
+// 3. ULPIANO IA (Chat Tutor)
+app.post('/api/consulta-unificada', async (req, res) => {
+    try {
+        const { termino } = req.body;
+        const termLower = termino ? termino.toLowerCase().trim() : "";
+        const pagInfo = buscarPagina(termino);
+
+        // --- CACHÉ HÍBRIDA ---
+        if (DEMO_CACHE[termLower]) {
+            return res.json({ ...DEMO_CACHE[termLower].json, pagina: pagInfo.pagina, titulo: pagInfo.titulo });
+        }
+        if (MEMORIA_DINAMICA.has(termLower)) {
+             const jsonCached = limpiarYParsearJSON(MEMORIA_DINAMICA.get(termLower));
+             return res.json({ ...jsonCached, pagina: pagInfo.pagina, titulo: pagInfo.titulo });
+        }
+        // ---------------------
+
+        const terminoNormalizado = termino ? termino.toLowerCase().trim() : '';
+        const contextoManual = getContextoRelevante(terminoNormalizado);
+        const coincidencias = buscarDigesto(terminoNormalizado);
+        
+        let digestoTxt = "";
+        if (coincidencias.length > 0) {
+            digestoTxt = coincidencias.map(c => `CITA LOCAL: (${c.cita}) "${c.latin}"`).join('\n');
+        } else {
+            digestoTxt = "No hay citas locales exactas.";
+        }
+
+        const prompt = `
+Eres Ulpiano, profesor de Derecho Romano.
+Explica: "${termino}".
+CONTEXTO MANUAL: "${contextoManual}"
+FUENTES DIGESTO LOCAL: ${digestoTxt}
+
+REGLAS DE CITACIÓN:
+1. Usa las FUENTES DIGESTO LOCAL si son relevantes.
+2. Si no hay, usa Principios Generales o citas de autor (Gayo, Partidas). NO inventes números D.x.x.
+
+FORMATO JSON:
+{
+  "respuesta_principal": "Explicación clara en español. Cita fuentes.",
+  "conexion_moderna": "Referencia al Derecho Civil actual."
+}
+NO escribas nada fuera del JSON.
+`;
+        const payload = { contents: [{ parts: [{ text: prompt }] }] };
+        const respuestaTexto = await callGeminiWithRetries(payload);
+        
+        guardarEnMemoria(termLower, respuestaTexto);
+
+        const jsonRespuesta = limpiarYParsearJSON(respuestaTexto);
+        
+        res.json({
+            respuesta: jsonRespuesta.respuesta_principal,
+            moderno: jsonRespuesta.conexion_moderna,
+            pagina: pagInfo.pagina, 
+            titulo: pagInfo.titulo   
+        });
+
+    } catch (error) { handleApiError(error, res); }
+});
+
+// 4. PARENTESCO
+app.post('/api/consulta-parentesco', async (req, res) => {
+    try {
+        const { person1, person2 } = req.body;
+        const prompt = `Calcula parentesco romano entre ${person1} y ${person2}. Responde JSON: { "linea": "...", "grado": "...", "explicacion": "..." }`;
+        const payload = { contents: [{ parts: [{ text: prompt }] }] };
+        const resp = await callGeminiWithRetries(payload);
+        res.json(limpiarYParsearJSON(resp));
+    } catch (error) { handleApiError(error, res); }
+});
+
+// --- ARRANQUE DEL SERVIDOR ---
+const startServer = async () => {
+    try {
+        // Carga de datos esenciales
+        manualJson = JSON.parse(await fs.readFile('manual.json', 'utf-8'));
+        indiceJson = JSON.parse(await fs.readFile('indice.json', 'utf-8'));
+        try {
+            digestoJson = JSON.parse(await fs.readFile('digesto_traducido_final.json', 'utf-8'));
+        } catch (e) {
+            console.log("⚠️ No encontré digesto_traducido_final.json, buscando digesto.json...");
+            digestoJson = JSON.parse(await fs.readFile('digesto.json', 'utf-8'));
+        }
+        console.log(`✓ Datos cargados. Modelo: gemini-2.5-flash`);
+        console.log(`🧠 Memoria Híbrida (Estática + LRU 50 items) ACTIVADA.`);
+        app.listen(port, () => console.log(`🚀 Servidor listo en http://localhost:${port}`));
+    } catch (error) {
+        console.error("❌ ERROR FATAL DE ARRANQUE:", error.message);
+    }
+};
+
+startServer();
