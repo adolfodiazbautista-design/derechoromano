@@ -20,6 +20,7 @@ app.use(express.json({ limit: "1mb" }));
 app.use(helmet());
 app.set('trust proxy', 1);
 
+// Límite alto para la conferencia
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 100, 
@@ -44,8 +45,9 @@ const safetySettings = [
 
 async function callGeminiWithRetries(payload) {
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-    // Usamos el modelo estable 1.5-flash para la demo
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+    
+    // *** ACTUALIZADO A TU MODELO ACTIVO ***
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
     try {
         const geminiResponse = await axios.post(url, payload, { 
@@ -90,7 +92,7 @@ const buscarDigesto = (term) => {
 
 // --- ENDPOINTS ---
 
-// 1. LABORATORIO DE CASOS (VERSIÓN DEFINITIVA CON FUENTES AMPLIADAS)
+// 1. LABORATORIO DE CASOS (Configurado para ESPAÑOL y CITAS EXTERNAS si falla local)
 app.post('/api/consulta', async (req, res) => {
     try {
         const { tipo, termino, currentCaseText } = req.body;
@@ -106,7 +108,7 @@ app.post('/api/consulta', async (req, res) => {
             bloqueDigesto = coincidencias.map(c => `FUENTE LOCAL (${c.cita}): "${c.latin}" (${c.espanol})`).join("\n");
             instruccionFuentes = "Usa PRIORITARIAMENTE las fuentes locales proporcionadas arriba.";
         } else {
-            // AQUÍ ESTÁ EL CAMBIO QUE PEDISTE: AMPLIACIÓN DE FUENTES
+            // PROTOCOLO DE EMERGENCIA HISTÓRICA
             bloqueDigesto = "NO SE HAN ENCONTRADO CITAS EN EL ARCHIVO LOCAL.";
             instruccionFuentes = `
             ATENCIÓN: Al no haber citas locales, DEBES buscar en tu MEMORIA JURÍDICA.
@@ -128,7 +130,7 @@ app.post('/api/consulta', async (req, res) => {
             promptSystem = `
 CONFIGURACIÓN:
 Eres un Juez experto en Derecho Romano y su recepción histórica.
-IDIOMA: ESPAÑOL ACTUAL (Claro y docente).
+IDIOMA: ESPAÑOL ACTUAL (Claro y docente). NO uses latín para hablar, solo para citar.
 
 TAREA:
 Dicta sentencia para: "${currentCaseText}".
@@ -142,11 +144,11 @@ ${instruccionFuentes}
 ESTRUCTURA DE RESPUESTA REQUERIDA:
 1. FALLO: "Condeno a..." / "Absuelvo a..."
 2. FUNDAMENTACIÓN JURÍDICA:
-   - Explica el principio jurídico aplicable.
+   - Explica el principio jurídico aplicable en español.
    - OBLIGATORIO: Debes incluir una CITA EXPLÍCITA de alguna de las fuentes autorizadas.
-   - Ejemplo de formato si usas memoria: "Como establece Gayo en sus Instituciones (3.14)..." o "Siguiendo la Partida III, ley X..."
+   - Ejemplo: "Como establece Gayo en sus Instituciones (3.14)..." o "Siguiendo la Partida III, ley X..."
    
-NO INVENTES NADA. Si no estás seguro de la cita exacta, parafrasea el principio jurídico mencionando la fuente ("El principio romano 'Prior tempore...' recogido en el Código...").
+NO INVENTES NADA. Si no estás seguro de la cita exacta, parafrasea el principio jurídico mencionando la fuente.
 `;
 
         } else if (tipo === 'generar') {
@@ -241,13 +243,14 @@ const startServer = async () => {
         indiceJson = JSON.parse(await fs.readFile('indice.json', 'utf-8'));
         
         try {
+            // Intentamos cargar tu archivo específico
             digestoJson = JSON.parse(await fs.readFile('digesto_traducido_final.json', 'utf-8'));
         } catch (e) {
-            console.log("⚠️ Buscando 'digesto.json' alternativo...");
+            console.log("⚠️ No encontré 'digesto_traducido_final.json'. Buscando 'digesto.json'...");
             digestoJson = JSON.parse(await fs.readFile('digesto.json', 'utf-8'));
         }
         
-        console.log(`✓ Datos cargados correctamente.`);
+        console.log(`✓ Datos cargados correctamente. Modelo activo: gemini-2.5-flash`);
         app.listen(port, () => console.log(`🚀 SERVIDOR LISTO EN http://localhost:${port}`));
     } catch (error) {
         console.error("❌ ERROR FATAL:", error.message);
