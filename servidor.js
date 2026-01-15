@@ -9,13 +9,12 @@ const rateLimit = require('express-rate-limit');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// --- VARIABLES GLOBALES DE DATOS ---
+// Variables globales de datos
 let manualJson = [];
 let indiceJson = [];
 let digestoJson = []; 
 
-// --- 1. CACHÉ ESTÁTICA (MODO DEMO - RESPUESTAS INSTANTÁNEAS) ---
-// Estas respuestas saltan en 0ms y aseguran el éxito en la presentación.
+// --- 1. CACHÉ ESTÁTICA (MODO DEMO) ---
 const DEMO_CACHE = {
     "hurto": {
         es_caso: true,
@@ -60,8 +59,7 @@ Según **Paulo** en el **Digesto (D. 47.2.1.3)**, no basta la intención, se req
     }
 };
 
-// --- 2. CACHÉ DINÁMICA (APRENDIZAJE AUTOMÁTICO TEMPORAL) ---
-// Recuerda las últimas 50 preguntas para no gastar IA si se repiten.
+// --- 2. CACHÉ DINÁMICA (LRU) ---
 const MEMORIA_DINAMICA = new Map(); 
 const MAX_MEMORIA_ITEMS = 50; 
 
@@ -75,7 +73,12 @@ function guardarEnMemoria(key, valor) {
     MEMORIA_DINAMICA.set(key, valor);
 }
 
-// --- CONFIGURACIÓN DEL SERVIDOR ---
+// Función auxiliar para quitar tildes (normalizar)
+function normalizarTexto(texto) {
+    return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+}
+
+// --- CONFIGURACIÓN ---
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
 app.use(helmet());
@@ -83,7 +86,7 @@ app.set('trust proxy', 1);
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 100, // 100 peticiones por 15 min (suficiente para demo)
+    max: 100, 
     standardHeaders: true,
     legacyHeaders: false,
     message: { error: 'RATE_LIMIT_EXCEEDED', message: 'Demasiadas peticiones.' }
@@ -96,7 +99,6 @@ function handleApiError(error, res) {
     res.status(500).json({ error: 'INTERNAL_ERROR', message: 'Error del sistema.' });
 }
 
-// Limpiador de JSON (Vital para que UlpianoIA no falle)
 function limpiarYParsearJSON(texto) {
     try {
         return JSON.parse(texto);
@@ -114,7 +116,6 @@ function limpiarYParsearJSON(texto) {
 
 async function callGeminiWithRetries(payload) {
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-    // Usamos el modelo rápido para la conferencia
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
     try {
@@ -125,29 +126,26 @@ async function callGeminiWithRetries(payload) {
         if (geminiResponse.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
             return geminiResponse.data.candidates[0].content.parts[0].text;
         }
-        throw new Error('Respuesta vacía de la IA.');
+        throw new Error('Respuesta vacía.');
     } catch (error) {
         throw error;
     }
 }
 
-// --- MOTORES DE BÚSQUEDA ---
-
 function getContextoRelevante(termino) {
     if (!termino) return '';
-    const terminoBusqueda = termino.toLowerCase().trim();
-    // Contexto forzado para términos clave
+    const terminoBusqueda = normalizarTexto(termino);
     if (terminoBusqueda.includes('posesion')) {
         return `En Roma, la posesión se distingue de la propiedad. Tipos: Natural y Civil. Protección: Interdictos.`;
     }
-    const encontrado = manualJson.find(item => item.termino.toLowerCase().includes(terminoBusqueda));
+    const encontrado = manualJson.find(item => normalizarTexto(item.termino).includes(terminoBusqueda));
     return encontrado ? encontrado.definicion : '';
 }
 
 const buscarDigesto = (term) => {
     if (!term || !digestoJson.length) return [];
     
-    const termClean = term.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").trim();
+    const termClean = normalizarTexto(term);
     const tokens = termClean.split(/\s+/).filter(t => t.length > 3); 
     if (tokens.length === 0 && termClean.length > 0) tokens.push(termClean); 
 
@@ -155,14 +153,12 @@ const buscarDigesto = (term) => {
 
     for (const entry of digestoJson) {
         let score = 0;
-        const textoEsp = entry.texto_espanol ? entry.texto_espanol.toLowerCase() : "";
-        const textoLat = entry.texto_latin ? entry.texto_latin.toLowerCase() : "";
+        const textoEsp = entry.texto_espanol ? normalizarTexto(entry.texto_espanol) : "";
+        const textoLat = entry.texto_latin ? normalizarTexto(entry.texto_latin) : "";
 
-        // Puntos por coincidencia de frase
         if (textoEsp.includes(termClean) || textoLat.includes(termClean)) {
             score += 100;
         }
-        // Puntos por palabras sueltas
         tokens.forEach(token => {
             if (textoEsp.includes(token)) score += 10;
             if (textoLat.includes(token)) score += 10;
@@ -177,13 +173,12 @@ const buscarDigesto = (term) => {
             });
         }
     }
-    // Devolvemos los 8 mejores resultados
     return matches.sort((a, b) => b.score - a.score).slice(0, 8);
 };
 
 function buscarPagina(termino) {
     if (!termino || !indiceJson.length) return { pagina: null, titulo: null };
-    const terminoLimpio = termino.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").trim();
+    const terminoLimpio = normalizarTexto(termino);
     const palabrasBusqueda = terminoLimpio.split(/\s+/).filter(p => p.length > 3); 
     if (palabrasBusqueda.length === 0) palabrasBusqueda.push(terminoLimpio);
 
@@ -192,15 +187,15 @@ function buscarPagina(termino) {
 
     indiceJson.forEach(item => {
         let score = 0;
-        const tituloLower = item.titulo.toLowerCase();
+        const tituloLower = normalizarTexto(item.titulo);
         if (tituloLower.includes(terminoLimpio)) score += 100;
         palabrasBusqueda.forEach(palabra => {
             if (tituloLower.includes(palabra)) score += 10;
         });
         if (item.palabrasClave && Array.isArray(item.palabrasClave)) {
-             if (item.palabrasClave.some(k => k.toLowerCase() === terminoLimpio)) score += 50;
+             if (item.palabrasClave.some(k => normalizarTexto(k) === terminoLimpio)) score += 50;
              palabrasBusqueda.forEach(palabra => {
-                 if (item.palabrasClave.some(k => k.toLowerCase().includes(palabra))) score += 5;
+                 if (item.palabrasClave.some(k => normalizarTexto(k).includes(palabra))) score += 5;
              });
         }
         if (score > maxScore) {
@@ -212,30 +207,20 @@ function buscarPagina(termino) {
     return { pagina: null, titulo: null }; 
 }
 
-// --- ENDPOINTS (APIS) ---
+// --- ENDPOINTS ---
 
-// 1. LABORATORIO DE CASOS (Generador y Juez)
+// 1. LABORATORIO DE CASOS
 app.post('/api/consulta', async (req, res) => {
     try {
         const { tipo, termino, currentCaseText } = req.body;
         
-        // --- CHEQUEO DE CACHÉ ---
         if (tipo === 'resolver' && currentCaseText) {
-            const txt = currentCaseText.toLowerCase();
-            const key = currentCaseText.toLowerCase().trim().substring(0, 50);
+            const txt = normalizarTexto(currentCaseText);
+            const key = txt.substring(0, 50);
 
-            // Estática
-            if (txt.includes("hurto") && DEMO_CACHE["hurto"]) {
-                console.log("⚡ [CACHE DEMO] Sirviendo respuesta de Hurto");
-                return res.json({ respuesta: DEMO_CACHE["hurto"].respuesta });
-            }
-            // Dinámica
-            if (MEMORIA_DINAMICA.has(key)) {
-                console.log("🧠 [CACHE DINÁMICA] Recuperando respuesta aprendida");
-                return res.json({ respuesta: MEMORIA_DINAMICA.get(key) });
-            }
+            if (txt.includes("hurto") && DEMO_CACHE["hurto"]) return res.json({ respuesta: DEMO_CACHE["hurto"].respuesta });
+            if (MEMORIA_DINAMICA.has(key)) return res.json({ respuesta: MEMORIA_DINAMICA.get(key) });
         }
-        // ------------------------
 
         const terminoBusqueda = (tipo === 'resolver' && currentCaseText) ? currentCaseText : termino;
         const terminoNormalizado = terminoBusqueda ? terminoBusqueda.substring(0, 100) : ''; 
@@ -252,12 +237,12 @@ app.post('/api/consulta', async (req, res) => {
         }
 
         const instruccionesSeguridad = `
-        PROTOCOLOS DE CITACIÓN OBLIGATORIOS:
-        1. FUENTES LOCALES (Provistas arriba): Son tu prioridad. Úsalas y cita su número (D.x.x).
+        PROTOCOLOS DE CITACIÓN:
+        1. FUENTES LOCALES (Arriba): Son tu prioridad absoluta. Úsalas y cita su número (D.x.x).
         2. SI NO HAY FUENTES LOCALES: 
            - PUEDES citar principios generales ("Nemo dat quod non habet").
            - PUEDES citar a juristas por nombre (Ulpiano, Gayo).
-           - PROHIBIDO inventar un número de Digesto (D.x.x) si no lo ves en la lista de arriba.
+           - PROHIBIDO inventar un número de Digesto (D.x.x) si no lo ves arriba.
         `;
 
         let promptSystem;
@@ -272,7 +257,7 @@ ${instruccionesSeguridad}
 
 FORMATO RESPUESTA:
 1. FALLO.
-2. MOTIVACIÓN (Cita obligatoria de fuente local o principio general, sin inventar números).
+2. MOTIVACIÓN (Cita obligatoria de fuente local o principio general).
 `;
         } else if (tipo === 'generar') {
             promptSystem = `
@@ -285,9 +270,8 @@ INSTRUCCIONES: Nombres romanos. Conflicto jurídico claro. Termina con "¿Quid I
         const payload = { contents: [{ parts: [{ text: promptSystem }] }] };
         const respuestaIA = await callGeminiWithRetries(payload);
         
-        // Guardar en memoria
         if (tipo === 'resolver' && currentCaseText) {
-            const key = currentCaseText.toLowerCase().trim().substring(0, 50);
+            const key = normalizarTexto(currentCaseText).substring(0, 50);
             guardarEnMemoria(key, respuestaIA);
         }
 
@@ -296,7 +280,7 @@ INSTRUCCIONES: Nombres romanos. Conflicto jurídico claro. Termina con "¿Quid I
     } catch (error) { handleApiError(error, res); }
 });
 
-// 2. BUSCADOR PÁGINA (Índice)
+// 2. BUSCADOR PÁGINA
 app.post('/api/buscar-pagina', (req, res) => { 
     res.json(buscarPagina(req.body.termino)); 
 });
@@ -305,18 +289,33 @@ app.post('/api/buscar-pagina', (req, res) => {
 app.post('/api/consulta-unificada', async (req, res) => {
     try {
         const { termino } = req.body;
-        const termLower = termino ? termino.toLowerCase().trim() : "";
+        const termLower = termino ? normalizarTexto(termino) : "";
         const pagInfo = buscarPagina(termino);
 
-        // --- CACHÉ HÍBRIDA ---
+        // --- CACHÉ HÍBRIDA (CORREGIDA) ---
+        // 1. Estática
         if (DEMO_CACHE[termLower]) {
-            return res.json({ ...DEMO_CACHE[termLower].json, pagina: pagInfo.pagina, titulo: pagInfo.titulo });
+            console.log(`⚡ [DEMO CACHE] ${termLower}`);
+            const data = DEMO_CACHE[termLower].json;
+            return res.json({
+                respuesta: data.respuesta_principal, // Mapeo correcto
+                moderno: data.conexion_moderna,      // Mapeo correcto
+                pagina: pagInfo.pagina, 
+                titulo: pagInfo.titulo
+            });
         }
+        // 2. Dinámica
         if (MEMORIA_DINAMICA.has(termLower)) {
+             console.log(`🧠 [MEMORIA] ${termLower}`);
              const jsonCached = limpiarYParsearJSON(MEMORIA_DINAMICA.get(termLower));
-             return res.json({ ...jsonCached, pagina: pagInfo.pagina, titulo: pagInfo.titulo });
+             return res.json({
+                respuesta: jsonCached.respuesta_principal, // MAPEO CORRECTO AÑADIDO
+                moderno: jsonCached.conexion_moderna,      // MAPEO CORRECTO AÑADIDO
+                pagina: pagInfo.pagina, 
+                titulo: pagInfo.titulo
+            });
         }
-        // ---------------------
+        // ---------------------------------
 
         const terminoNormalizado = termino ? termino.toLowerCase().trim() : '';
         const contextoManual = getContextoRelevante(terminoNormalizado);
@@ -377,7 +376,6 @@ app.post('/api/consulta-parentesco', async (req, res) => {
 // --- ARRANQUE DEL SERVIDOR ---
 const startServer = async () => {
     try {
-        // Carga de datos esenciales
         manualJson = JSON.parse(await fs.readFile('manual.json', 'utf-8'));
         indiceJson = JSON.parse(await fs.readFile('indice.json', 'utf-8'));
         try {
@@ -386,11 +384,11 @@ const startServer = async () => {
             console.log("⚠️ No encontré digesto_traducido_final.json, buscando digesto.json...");
             digestoJson = JSON.parse(await fs.readFile('digesto.json', 'utf-8'));
         }
-        console.log(`✓ Datos cargados. Modelo: gemini-2.5-flash`);
-        console.log(`🧠 Memoria Híbrida (Estática + LRU 50 items) ACTIVADA.`);
-        app.listen(port, () => console.log(`🚀 Servidor listo en http://localhost:${port}`));
+        console.log(`✓ TODO LISTO. Modelo: gemini-2.5-flash`);
+        console.log(`🧠 Memoria Híbrida (Estática + LRU) ACTIVADA.`);
+        app.listen(port, () => console.log(`🚀 http://localhost:${port}`));
     } catch (error) {
-        console.error("❌ ERROR FATAL DE ARRANQUE:", error.message);
+        console.error("❌ ERROR DE ARRANQUE:", error.message);
     }
 };
 
