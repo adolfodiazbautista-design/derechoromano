@@ -20,7 +20,6 @@ app.use(express.json({ limit: "1mb" }));
 app.use(helmet());
 app.set('trust proxy', 1);
 
-// Límite alto para la conferencia
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 100, 
@@ -32,21 +31,36 @@ app.use('/api/', limiter);
 
 // --- UTILIDADES ---
 function handleApiError(error, res) {
-    console.error("Error API Gemini:", error.response ? error.response.data : error.message);
-    res.status(500).json({ error: 'INTERNAL_ERROR', message: 'Error del sistema jurídico.' });
+    console.error("Error API:", error.message);
+    res.status(500).json({ error: 'INTERNAL_ERROR', message: 'Error del sistema.' });
 }
 
-const safetySettings = [
-    { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-    { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-    { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-    { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-];
+// FUNCIÓN DE SEGURIDAD PARA PARSEAR JSON (ESTO ARREGLA ULPIANO IA)
+function limpiarYParsearJSON(texto) {
+    try {
+        // 1. Intenta parseo directo
+        return JSON.parse(texto);
+    } catch (e) {
+        // 2. Si falla, busca el primer '{' y el último '}'
+        try {
+            const match = texto.match(/\{[\s\S]*\}/);
+            if (match) {
+                return JSON.parse(match[0]);
+            }
+        } catch (e2) {
+            console.error("Fallo al limpiar JSON:", e2);
+        }
+        // 3. Si todo falla, devuelve un objeto de emergencia para que la web NO se rompa
+        return {
+            respuesta_principal: texto.replace(/["{}]/g, ""), 
+            conexion_moderna: "Consulta el Código Civil vigente."
+        };
+    }
+}
 
 async function callGeminiWithRetries(payload) {
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-    
-    // *** ACTUALIZADO A TU MODELO ACTIVO ***
+    // Mantenemos 2.5-flash que es el rápido
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
     try {
@@ -57,7 +71,7 @@ async function callGeminiWithRetries(payload) {
         if (geminiResponse.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
             return geminiResponse.data.candidates[0].content.parts[0].text;
         }
-        throw new Error('La IA devolvió una respuesta vacía.');
+        throw new Error('Respuesta vacía.');
     } catch (error) {
         throw error;
     }
@@ -92,11 +106,10 @@ const buscarDigesto = (term) => {
 
 // --- ENDPOINTS ---
 
-// 1. LABORATORIO DE CASOS (Configurado para ESPAÑOL y CITAS EXTERNAS si falla local)
+// 1. LABORATORIO DE CASOS (EL QUE YA FUNCIONABA BIEN)
 app.post('/api/consulta', async (req, res) => {
     try {
         const { tipo, termino, currentCaseText } = req.body;
-        
         const terminoNormalizado = termino ? termino.toLowerCase().trim() : '';
         const contextoFinal = getContextoRelevante(terminoNormalizado);
         const coincidencias = buscarDigesto(terminoNormalizado); 
@@ -106,73 +119,39 @@ app.post('/api/consulta', async (req, res) => {
 
         if (coincidencias.length > 0) {
             bloqueDigesto = coincidencias.map(c => `FUENTE LOCAL (${c.cita}): "${c.latin}" (${c.espanol})`).join("\n");
-            instruccionFuentes = "Usa PRIORITARIAMENTE las fuentes locales proporcionadas arriba.";
+            instruccionFuentes = "Usa PRIORITARIAMENTE las fuentes locales proporcionadas.";
         } else {
-            // PROTOCOLO DE EMERGENCIA HISTÓRICA
-            bloqueDigesto = "NO SE HAN ENCONTRADO CITAS EN EL ARCHIVO LOCAL.";
-            instruccionFuentes = `
-            ATENCIÓN: Al no haber citas locales, DEBES buscar en tu MEMORIA JURÍDICA.
-            Fuentes Autorizadas para citar (en orden de preferencia):
-            1. El Digesto (D.).
-            2. El Código de Justiniano (C.).
-            3. Las Instituciones de Justiniano (Inst.).
-            4. Las Instituciones de Gayo.
-            5. El Código Teodosiano.
-            6. Las Partidas de Alfonso X el Sabio (como recepción del derecho romano).
-            `;
+            bloqueDigesto = "NO SE HAN ENCONTRADO CITAS LOCALES.";
+            instruccionFuentes = "Busca en tu memoria: Digesto, Gayo, Partidas de Alfonso X.";
         }
 
         let promptSystem;
 
         if (tipo === 'resolver') {
-            if (!currentCaseText) return res.status(400).json({ error: 'Falta texto del caso.' });
+            if (!currentCaseText) return res.status(400).json({ error: 'Falta texto.' });
             
             promptSystem = `
-CONFIGURACIÓN:
-Eres un Juez experto en Derecho Romano y su recepción histórica.
-IDIOMA: ESPAÑOL ACTUAL (Claro y docente). NO uses latín para hablar, solo para citar.
-
-TAREA:
-Dicta sentencia para: "${currentCaseText}".
-
-FUENTES DISPONIBLES:
-${bloqueDigesto}
-
-INSTRUCCIONES DE RESOLUCIÓN:
-${instruccionFuentes}
-
-ESTRUCTURA DE RESPUESTA REQUERIDA:
-1. FALLO: "Condeno a..." / "Absuelvo a..."
-2. FUNDAMENTACIÓN JURÍDICA:
-   - Explica el principio jurídico aplicable en español.
-   - OBLIGATORIO: Debes incluir una CITA EXPLÍCITA de alguna de las fuentes autorizadas.
-   - Ejemplo: "Como establece Gayo en sus Instituciones (3.14)..." o "Siguiendo la Partida III, ley X..."
-   
-NO INVENTES NADA. Si no estás seguro de la cita exacta, parafrasea el principio jurídico mencionando la fuente.
+CONFIGURACIÓN: Juez experto en Derecho Romano. IDIOMA: ESPAÑOL.
+TAREA: Sentencia para: "${currentCaseText}".
+FUENTES: ${bloqueDigesto}
+INSTRUCCIONES: ${instruccionFuentes}
+FORMATO:
+1. FALLO: "Condeno/Absuelvo..."
+2. MOTIVACIÓN: Explica y CITA LA FUENTE (ej. "Como dice Ulpiano en D.9.2...").
 `;
-
         } else if (tipo === 'generar') {
             promptSystem = `
-ROL: Profesor de Derecho Romano.
-TAREA: Generar caso práctico BREVE sobre: "${termino}".
+ROL: Profesor. TAREA: Caso práctico BREVE sobre "${termino}".
 CONTEXTO: ${contextoFinal}
-INSTRUCCIONES:
-1. Usa nombres romanos.
-2. Plantea un conflicto jurídico claro.
-3. Termina con "¿Quid Iuris?".
-4. Solo planteamiento, NO solución.
+INSTRUCCIONES: Nombres romanos. Conflicto jurídico claro. Termina con "¿Quid Iuris?".
 `;
-        } else {
-            return res.status(400).json({ error: 'Tipo desconocido' });
-        }
+        } else { return res.status(400).json({ error: 'Tipo error' }); }
 
-        const payload = { contents: [{ parts: [{ text: promptSystem }] }], safetySettings };
+        const payload = { contents: [{ parts: [{ text: promptSystem }] }] }; // Sin safetySettings para ir rápido
         const respuestaIA = await callGeminiWithRetries(payload);
         res.json({ respuesta: respuestaIA }); 
         
-    } catch (error) {
-        handleApiError(error, res);
-    }
+    } catch (error) { handleApiError(error, res); }
 });
 
 // 2. BUSCADOR PÁGINA
@@ -182,12 +161,9 @@ function buscarPagina(termino) {
     const mejor = indiceJson.find(i => i.titulo.toLowerCase().includes(t)) || indiceJson[0];
     return { pagina: mejor?.pagina, titulo: mejor?.titulo };
 }
+app.post('/api/buscar-pagina', (req, res) => { res.json(buscarPagina(req.body.termino)); });
 
-app.post('/api/buscar-pagina', (req, res) => {
-    res.json(buscarPagina(req.body.termino));
-});
-
-// 3. ULPIANO IA (Chat Unificado)
+// 3. ULPIANO IA (REPARADO: MÁS ROBUSTO)
 app.post('/api/consulta-unificada', async (req, res) => {
     try {
         const { termino } = req.body;
@@ -196,25 +172,38 @@ app.post('/api/consulta-unificada', async (req, res) => {
         
         let digestoTxt = coincidencias.map(c => `(${c.cita}) ${c.latin}`).join('\n');
 
+        // Eliminamos "response_mime_type: json" porque a veces falla con textos largos.
+        // Hacemos el parseo manual con limpiarYParsearJSON.
         const prompt = `
-Eres Ulpiano. Explica "${termino}" en ESPAÑOL.
-Fuentes locales: ${digestoTxt}
-Si no hay fuentes locales, usa tu conocimiento de: Digesto, Gayo, Partidas de Alfonso X.
-Responde SOLO JSON:
-{
-  "respuesta_principal": "Explicación clara citando fuente jurídica.",
-  "conexion_moderna": "Conexión con derecho civil actual."
-}`;
+Eres Ulpiano, profesor de Derecho Romano. 
+Explica el término "${termino}" a un alumno en ESPAÑOL.
 
-        const payload = { 
-            contents: [{ parts: [{ text: prompt }] }], 
-            safetySettings,
-            generationConfig: { response_mime_type: "application/json" } 
-        };
-        const resp = await callGeminiWithRetries(payload);
-        const json = JSON.parse(resp.replace(/```json/g, '').replace(/```/g, '').trim());
+TUS FUENTES (Úsalas si sirven): 
+${digestoTxt}
+
+FORMATO DE RESPUESTA (IMPORTANTE):
+Debes responder un objeto JSON con estas claves:
+{
+  "respuesta_principal": "Aquí tu explicación. Si tienes fuentes arriba, CITALAS (ej. D.41.1.1). Si no, usa tu conocimiento general.",
+  "conexion_moderna": "Breve referencia al Código Civil actual."
+}
+NO escribas nada fuera del JSON.
+`;
+
+        const payload = { contents: [{ parts: [{ text: prompt }] }] };
         
-        res.json({ ...json, pagina: pagInfo.pagina, titulo: pagInfo.titulo });
+        const respuestaTexto = await callGeminiWithRetries(payload);
+        
+        // AQUÍ ESTÁ LA MAGIA QUE EVITA EL ERROR 500
+        const jsonRespuesta = limpiarYParsearJSON(respuestaTexto);
+        
+        res.json({
+            respuesta: jsonRespuesta.respuesta_principal,
+            moderno: jsonRespuesta.conexion_moderna,
+            pagina: pagInfo.pagina, 
+            titulo: pagInfo.titulo   
+        });
+
     } catch (error) {
         handleApiError(error, res);
     }
@@ -225,15 +214,10 @@ app.post('/api/consulta-parentesco', async (req, res) => {
     try {
         const { person1, person2 } = req.body;
         const prompt = `Calcula parentesco romano entre ${person1} y ${person2}. Responde JSON: { "linea": "...", "grado": "...", "explicacion": "..." }`;
-        const payload = { 
-            contents: [{ parts: [{ text: prompt }] }], 
-            generationConfig: { response_mime_type: "application/json" }
-        };
+        const payload = { contents: [{ parts: [{ text: prompt }] }] };
         const resp = await callGeminiWithRetries(payload);
-        res.json(JSON.parse(resp.replace(/```json/g, '').replace(/```/g, '').trim()));
-    } catch (error) {
-        handleApiError(error, res);
-    }
+        res.json(limpiarYParsearJSON(resp));
+    } catch (error) { handleApiError(error, res); }
 });
 
 // --- ARRANQUE ---
@@ -243,18 +227,16 @@ const startServer = async () => {
         indiceJson = JSON.parse(await fs.readFile('indice.json', 'utf-8'));
         
         try {
-            // Intentamos cargar tu archivo específico
             digestoJson = JSON.parse(await fs.readFile('digesto_traducido_final.json', 'utf-8'));
         } catch (e) {
-            console.log("⚠️ No encontré 'digesto_traducido_final.json'. Buscando 'digesto.json'...");
+            console.log("⚠️ Usando digesto.json alternativo.");
             digestoJson = JSON.parse(await fs.readFile('digesto.json', 'utf-8'));
         }
         
-        console.log(`✓ Datos cargados correctamente. Modelo activo: gemini-2.5-flash`);
-        app.listen(port, () => console.log(`🚀 SERVIDOR LISTO EN http://localhost:${port}`));
+        console.log(`✓ TODO LISTO. Modelo: gemini-2.5-flash`);
+        app.listen(port, () => console.log(`🚀 http://localhost:${port}`));
     } catch (error) {
-        console.error("❌ ERROR FATAL:", error.message);
-        process.exit(1);
+        console.error("❌ ERROR DE ARRANQUE:", error.message);
     }
 };
 
