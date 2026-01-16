@@ -16,26 +16,16 @@ let indiceJson = [];
 let digestoJson = []; 
 
 // --- 1. CACHÉ ESTÁTICA (MODO DEMO) ---
+// --- 1. CACHÉ ESTÁTICA (MODO DEMO) ---
 const DEMO_CACHE = {
     "hurto": {
-        es_caso: true,
-        respuesta: `
-***
-## SENTENCIA
-**JUEZ:** Magistrado con Imperium.
-**ASUNTO:** Sustracción de cosa ajena (Furtum).
-
-### 1. FALLO
-**CONDENO** al demandado por la comisión de un delito de Hurto (*Furtum*).
-
-### 2. MOTIVACIÓN JURÍDICA
-Ha quedado probado el elemento objetivo (*contrectatio*) y el subjetivo (*animus furandi*).
-El Derecho Romano no exige el desplazamiento de la cosa, sino el "manejo fraudulento".
-
-**FUENTE JURÍDICA (DEFINICIÓN CLÁSICA):**
-Como establece el jurista **Paulo** en el **Digesto (D. 47.2.1.3)**:
-*"Furtum est contrectatio rei fraudulosa lucri faciendi gratia vel ipsius rei vel etiam usus eius possessionisve"* (El hurto es el manejo fraudulento de una cosa con ánimo de lucro, ya sea de la propia cosa, de su uso o de su posesión).
-***`
+        es_chat: true,
+        json: {
+            respuesta_principal: "**DEFINICIÓN JURÍDICA:**\nEl hurto (*Furtum*) es el manejo fraudulento de una cosa (*contrectatio*) con ánimo de lucro, ya sea de la propia cosa, de su uso o de su posesión.\n\n**ELEMENTOS CLAVE:**\n1. **Contrectatio:** No se exige el desplazamiento físico, basta con tocar o manejar indebidamente.\n2. **Animus Furandi:** La intención subjetiva de robar.\n3. **Invito Domino:** Debe hacerse contra la voluntad del dueño.",
+            conexion_moderna: "En la actualidad, el hurto está tipificado en el Código Penal (arts. 234 y ss.) y se distingue del robo por la ausencia de fuerza en las cosas o violencia en las personas."
+        },
+        // Mantenemos esto por si usas la función antigua de resolver casos
+        respuesta: "SENTENCIA: CONDENO al demandado. Ha quedado probado el elemento objetivo (contrectatio) y el subjetivo (animus furandi)."
     },
     "posesion": {
         es_chat: true,
@@ -59,7 +49,6 @@ Como establece el jurista **Paulo** en el **Digesto (D. 47.2.1.3)**:
         }
     }
 };
-
 // --- 2. CACHÉ DINÁMICA (LRU) ---
 const MEMORIA_DINAMICA = new Map(); 
 const MAX_MEMORIA_ITEMS = 50; 
