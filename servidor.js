@@ -116,8 +116,7 @@ function limpiarYParsearJSON(texto) {
 async function callGeminiWithRetries(payload) {
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
     // Sustitución al modelo estable actual
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent?key=${GEMINI_API_KEY}`;
-
+const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
     // Límite de gasto por petición
     payload.generationConfig = {
         maxOutputTokens: 450, 
