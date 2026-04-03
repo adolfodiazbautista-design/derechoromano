@@ -10,7 +10,7 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Archivo de caché física para no pagar por consultas repetidas
+// Archivo de caché física para máxima protección de vuestro presupuesto
 const CACHE_FILE = path.join(__dirname, 'cache_respuestas.json');
 
 let manualJson = [];
@@ -44,14 +44,13 @@ app.use(helmet({ contentSecurityPolicy: false }));
 app.set('trust proxy', 1);
 app.use(express.static(__dirname));
 
-// Limitador estricto para proteger vuestra cuenta bancaria
 const apiLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, 
-    max: 15, // Máximo 15 consultas por hora por cada IP
-    message: { error: 'LÍMITE_ALCANZADO', message: 'Habéis excedido las consultas permitidas. Volved en una hora.' }
+    max: 15, // Límite de 15 consultas/hora para evitar gastos imprevistos
+    message: { error: 'LÍMITE_ALCANZADO', message: 'Límite horario excedido. Volved en una hora.' }
 });
 
-// --- 3. UTILIDADES ---
+// --- 3. UTILIDADES DE BÚSQUEDA Y IA ---
 function normalizarTexto(texto) {
     return texto ? texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim() : "";
 }
@@ -64,19 +63,28 @@ function limpiarYParsearJSON(texto) {
     } catch (e) { return { respuesta_principal: texto, conexion_moderna: "" }; }
 }
 
+function buscarPagina(termino) {
+    if (!termino || !indiceJson.length) return { pagina: null, titulo: null };
+    const termClean = normalizarTexto(termino);
+    const mejorMatch = indiceJson.find(item => normalizarTexto(item.titulo).includes(termClean));
+    return mejorMatch ? { pagina: mejorMatch.pagina, titulo: mejorMatch.titulo } : { pagina: null, titulo: null };
+}
+
 async function callGeminiWithRetries(payload) {
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-    // Uso de Gemini 3 Flash (Alta eficiencia y bajo coste)
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent?key=${GEMINI_API_KEY}`;
 
     payload.generationConfig = {
-        maxOutputTokens: 450, // Límite físico de tokens para ahorrar dinero
+        maxOutputTokens: 450, // Ahorro: limitamos la longitud de la respuesta
         temperature: 0.1,     
         topP: 0.8
     };
 
     try {
-        const resp = await axios.post(url, payload, { timeout: 35000 }); 
+        const resp = await axios.post(url, payload, { 
+            headers: { 'Content-Type': 'application/json' }, // ¡RESTAURADO!
+            timeout: 35000 
+        }); 
         if (resp.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
             return resp.data.candidates[0].content.parts[0].text;
         }
@@ -84,73 +92,79 @@ async function callGeminiWithRetries(payload) {
     } catch (error) { throw error; }
 }
 
-// --- 4. ENDPOINTS ---
+// --- 4. ENDPOINTS (RESTAURADOS PARA AMBAS WEBS) ---
 
+// Para la Guía Interactiva (Laboratorio de Casos)
+app.post('/api/consulta', apiLimiter, async (req, res) => {
+    try {
+        const { tipo, termino, currentCaseText } = req.body;
+        const prompt = tipo === 'generar' 
+            ? `Crea un caso práctico de Derecho Romano breve sobre: ${termino}`
+            : `Resuelve este caso como un juez romano experto: ${currentCaseText}`;
+        
+        const payload = { contents: [{ parts: [{ text: prompt }] }] };
+        const respuesta = await callGeminiWithRetries(payload);
+        res.json({ respuesta });
+    } catch (error) { res.status(500).json({ error: 'Error en el laboratorio.' }); }
+});
+
+// Para la Biblioteca de Ulpiano e index2.html
 app.post('/api/consulta-unificada', apiLimiter, async (req, res) => {
     try {
         const { termino } = req.body;
         const termKey = normalizarTexto(termino);
+        const pagInfo = buscarPagina(termino);
 
-        // Si existe en caché, el coste para vos es 0 €
         if (MEMORIA_PERSISTENTE[termKey]) {
-            console.log(`⚡ Sirviendo desde caché local: ${termKey}`);
-            return res.json(MEMORIA_PERSISTENTE[termKey]);
+            console.log(`⚡ Sirviendo desde caché: ${termKey}`);
+            return res.json({ ...MEMORIA_PERSISTENTE[termKey], ...pagInfo });
         }
 
-        const prompt = `Eres Ulpiano, profesor de Derecho Romano. Explica: "${termino}". Responde solo JSON: { "respuesta_principal": "...", "conexion_moderna": "..." }`;
+        const prompt = `Eres Ulpiano. Explica brevemente: "${termino}". Responde solo JSON: { "respuesta_principal": "...", "conexion_moderna": "..." }`;
         const payload = { contents: [{ parts: [{ text: prompt }] }] };
-        
         const respuestaTexto = await callGeminiWithRetries(payload);
         const jsonRespuesta = limpiarYParsearJSON(respuestaTexto);
         
-        const respuestaFinal = {
+        const resultado = {
             respuesta: jsonRespuesta.respuesta_principal,
             moderno: jsonRespuesta.conexion_moderna
         };
 
-        await guardarEnCache(termKey, respuestaFinal);
-        res.json(respuestaFinal);
-    } catch (error) {
-        res.status(500).json({ error: 'Error procesando la consulta.' });
-    }
+        await guardarEnCache(termKey, resultado);
+        res.json({ ...resultado, ...pagInfo });
+    } catch (error) { res.status(500).json({ error: 'Error en la consulta unificada.' }); }
 });
 
 app.post('/api/consulta-parentesco', apiLimiter, async (req, res) => {
     try {
         const { person1, person2 } = req.body;
-        const key = normalizarTexto(`fam-${person1}-${person2}`);
-        if (MEMORIA_PERSISTENTE[key]) return res.json(MEMORIA_PERSISTENTE[key]);
-
         const prompt = `Calcula parentesco romano entre ${person1} y ${person2}. Responde JSON: { "linea": "...", "grado": "...", "explicacion": "..." }`;
-        const payload = { contents: [{ parts: [{ text: prompt }] }] };
-        const resp = await callGeminiWithRetries(payload);
-        const finalJson = limpiarYParsearJSON(resp);
-
-        await guardarEnCache(key, finalJson);
-        res.json(finalJson);
+        const resp = await callGeminiWithRetries({ contents: [{ parts: [{ text: prompt }] }] });
+        res.json(limpiarYParsearJSON(resp));
     } catch (error) { res.status(500).json({ error: 'Error en parentesco.' }); }
 });
 
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
-// --- 5. ARRANQUE DEL SISTEMA ---
+// --- 5. ARRANQUE ROBUSTO ---
 const startServer = async () => {
     try {
-        // Carga de archivos doctrina
         manualJson = JSON.parse(await fs.readFile('manual.json', 'utf-8'));
         indiceJson = JSON.parse(await fs.readFile('indice.json', 'utf-8'));
         
-        // CORRECCIÓN QUIRÚRGICA: Nombre de vuestro archivo corregido
-        digestoJson = JSON.parse(await fs.readFile('digesto_traducido_final.json', 'utf-8'));
+        // Carga flexible del Digesto (intenta varios nombres)
+        try {
+            digestoJson = JSON.parse(await fs.readFile('digesto_traducido_final.json', 'utf-8'));
+            console.log("✓ Archivo digesto_traducido_final.json cargado.");
+        } catch (e) {
+            console.log("⚠️ Intentando con digest.json...");
+            digestoJson = JSON.parse(await fs.readFile('digest.json', 'utf-8'));
+        }
         
         await cargarCache();
-
-        app.listen(port, () => {
-            console.log(`🚀 SERVIDOR ACTIVO EN PUERTO ${port}`);
-            console.log(`✓ Modelo: Gemini 3 Flash. Archivo: digesto_traducido_final.json`);
-        });
+        app.listen(port, () => console.log(`🚀 Servidor activo en puerto ${port}. Modelo: Gemini 3 Flash`));
     } catch (error) {
-        console.error("❌ ERROR CRÍTICO DE ARRANQUE:", error.message);
+        console.error("❌ ERROR CRÍTICO:", error.message);
         process.exit(1); 
     }
 };
