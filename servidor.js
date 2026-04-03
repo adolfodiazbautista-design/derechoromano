@@ -180,19 +180,27 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// --- 5. ARRANQUE DEL SISTEMA ---
+// --- CORRECCIÓN EN EL ARRANQUE DEL SISTEMA ---
 const startServer = async () => {
     try {
         manualJson = JSON.parse(await fs.readFile('manual.json', 'utf-8'));
         indiceJson = JSON.parse(await fs.readFile('indice.json', 'utf-8'));
-        digestoJson = JSON.parse(await fs.readFile('digesto.json', 'utf-8'));
+        
+        // Ajustamos la búsqueda al nombre exacto de vuestro archivo
+        try {
+            digestoJson = JSON.parse(await fs.readFile('digest.json', 'utf-8'));
+            console.log("✓ Archivo digest.json cargado correctamente.");
+        } catch (e) {
+            console.log("⚠️ No se encontró digest.json, intentando digesto.json...");
+            digestoJson = JSON.parse(await fs.readFile('digesto.json', 'utf-8'));
+        }
         
         await cargarCachePersistente();
 
-        console.log(`✓ Archivos cargados. Caché activa.`);
-        app.listen(port, () => console.log(`🚀 Servidor en puerto ${port}. Modelo: Gemini 3 Flash`));
+        console.log(`✓ TODO LISTO. Modelo: Gemini 3 Flash`);
+        app.listen(port, () => console.log(`🚀 Servidor activo en puerto ${port}`));
     } catch (error) {
-        console.error("❌ Error de arranque:", error.message);
+        console.error("❌ ERROR DE ARRANQUE:", error.message);
     }
 };
 
