@@ -16,6 +16,7 @@ let indiceJson = [];
 let digestoJson = []; 
 
 // --- 1. CACHÉ ESTÁTICA (MODO DEMO) ---
+// --- 1. CACHÉ ESTÁTICA (MODO DEMO) ---
 const DEMO_CACHE = {
     "hurto": {
         es_chat: true,
@@ -23,6 +24,7 @@ const DEMO_CACHE = {
             respuesta_principal: "**DEFINICIÓN JURÍDICA:**\nEl hurto (*Furtum*) es el manejo fraudulento de una cosa (*contrectatio*) con ánimo de lucro, ya sea de la propia cosa, de su uso o de su posesión.\n\n**ELEMENTOS CLAVE:**\n1. **Contrectatio:** No se exige el desplazamiento físico, basta con tocar o manejar indebidamente.\n2. **Animus Furandi:** La intención subjetiva de robar.\n3. **Invito Domino:** Debe hacerse contra la voluntad del dueño.",
             conexion_moderna: "En la actualidad, el hurto está tipificado en el Código Penal (arts. 234 y ss.) y se distingue del robo por la ausencia de fuerza en las cosas o violencia en las personas."
         },
+        // Mantenemos esto por si usas la función antigua de resolver casos
         respuesta: "SENTENCIA: CONDENO al demandado. Ha quedado probado el elemento objetivo (contrectatio) y el subjetivo (animus furandi)."
     },
     "posesion": {
@@ -47,27 +49,18 @@ const DEMO_CACHE = {
         }
     }
 };
+// --- 2. CACHÉ DINÁMICA (LRU) ---
+const MEMORIA_DINAMICA = new Map(); 
+const MAX_MEMORIA_ITEMS = 50; 
 
-// --- 2. CACHÉ PERSISTENTE (PROTECCIÓN DE GASTO) ---
-const CACHE_FILE = path.join(__dirname, 'cache_respuestas.json');
-let MEMORIA_PERSISTENTE = {}; 
-
-async function cargarCache() {
-    try {
-        const data = await fs.readFile(CACHE_FILE, 'utf-8');
-        MEMORIA_PERSISTENTE = JSON.parse(data);
-        console.log("✓ Caché persistente cargada.");
-    } catch (e) {
-        console.log("⚠️ Iniciando nueva caché persistente.");
-        MEMORIA_PERSISTENTE = {};
+function guardarEnMemoria(key, valor) {
+    if (MEMORIA_DINAMICA.has(key)) {
+        MEMORIA_DINAMICA.delete(key);
+    } else if (MEMORIA_DINAMICA.size >= MAX_MEMORIA_ITEMS) {
+        const oldestKey = MEMORIA_DINAMICA.keys().next().value;
+        MEMORIA_DINAMICA.delete(oldestKey);
     }
-}
-
-async function guardarEnMemoria(key, valor) {
-    MEMORIA_PERSISTENTE[key] = valor;
-    try {
-        await fs.writeFile(CACHE_FILE, JSON.stringify(MEMORIA_PERSISTENTE, null, 2));
-    } catch (e) { console.error("Error al escribir caché:", e); }
+    MEMORIA_DINAMICA.set(key, valor);
 }
 
 function normalizarTexto(texto) {
@@ -77,17 +70,20 @@ function normalizarTexto(texto) {
 // --- CONFIGURACIÓN ---
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
-app.use(helmet({ contentSecurityPolicy: false }));
+app.use(helmet({
+    contentSecurityPolicy: false,
+}));
 app.set('trust proxy', 1);
+
+// <--- CAMBIO: Servimos archivos desde la raíz actual (sin carpeta public) --->
 app.use(express.static(__dirname));
 
-// Límite estricto para evitar ataques o usos abusivos
 const limiter = rateLimit({
-    windowMs: 60 * 60 * 1000, // 1 hora
-    max: 20, // 20 peticiones por hora por IP
+    windowMs: 15 * 60 * 1000,
+    max: 100, 
     standardHeaders: true,
     legacyHeaders: false,
-    message: { error: 'RATE_LIMIT_EXCEEDED', message: 'Límite horario excedido. Volved en una hora.' }
+    message: { error: 'RATE_LIMIT_EXCEEDED', message: 'Demasiadas peticiones.' }
 });
 app.use('/api/', limiter);
 
@@ -115,14 +111,7 @@ function limpiarYParsearJSON(texto) {
 
 async function callGeminiWithRetries(payload) {
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-    // Sustitución al modelo estable actual
-const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-    // Límite de gasto por petición
-    payload.generationConfig = {
-        maxOutputTokens: 450, 
-        temperature: 0.1,     
-        topP: 0.8
-    };
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
     try {
         const geminiResponse = await axios.post(url, payload, { 
@@ -138,7 +127,7 @@ const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-
     }
 }
 
-// --- BÚSQUEDA (FUNCIONES RESTAURADAS EXACTAS) ---
+// --- BÚSQUEDA ---
 function getContextoRelevante(termino) {
     if (!termino || !manualJson.length) return '';
     const termClean = normalizarTexto(termino);
@@ -243,7 +232,7 @@ app.post('/api/consulta', async (req, res) => {
             const txt = normalizarTexto(currentCaseText);
             const key = txt.substring(0, 50);
             if (txt.includes("hurto") && DEMO_CACHE["hurto"]) return res.json({ respuesta: DEMO_CACHE["hurto"].respuesta });
-            if (MEMORIA_PERSISTENTE[key]) return res.json({ respuesta: MEMORIA_PERSISTENTE[key] });
+            if (MEMORIA_DINAMICA.has(key)) return res.json({ respuesta: MEMORIA_DINAMICA.get(key) });
         }
 
         const terminoBusqueda = (tipo === 'resolver' && currentCaseText) ? currentCaseText : termino;
@@ -286,7 +275,7 @@ INSTRUCCIONES: Usa el contexto del manual para crear un caso realista.
         
         if (tipo === 'resolver' && currentCaseText) {
             const key = normalizarTexto(currentCaseText).substring(0, 50);
-            await guardarEnMemoria(key, respuestaIA);
+            guardarEnMemoria(key, respuestaIA);
         }
         res.json({ respuesta: respuestaIA }); 
     } catch (error) { handleApiError(error, res); }
@@ -311,8 +300,8 @@ app.post('/api/consulta-unificada', async (req, res) => {
                 titulo: pagInfo.titulo
             });
         }
-        if (MEMORIA_PERSISTENTE[termLower]) {
-             const jsonCached = limpiarYParsearJSON(MEMORIA_PERSISTENTE[termLower]);
+        if (MEMORIA_DINAMICA.has(termLower)) {
+             const jsonCached = limpiarYParsearJSON(MEMORIA_DINAMICA.get(termLower));
              return res.json({
                 respuesta: jsonCached.respuesta_principal, 
                 moderno: jsonCached.conexion_moderna,      
@@ -339,7 +328,7 @@ NO escribas nada fuera del JSON.
 `;
         const payload = { contents: [{ parts: [{ text: prompt }] }] };
         const respuestaTexto = await callGeminiWithRetries(payload);
-        await guardarEnMemoria(termLower, respuestaTexto);
+        guardarEnMemoria(termLower, respuestaTexto);
         const jsonRespuesta = limpiarYParsearJSON(respuestaTexto);
         
         res.json({
@@ -361,6 +350,7 @@ app.post('/api/consulta-parentesco', async (req, res) => {
     } catch (error) { handleApiError(error, res); }
 });
 
+// <--- CAMBIO: Ruta para servir index.html desde la raíz --->
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
@@ -369,20 +359,14 @@ const startServer = async () => {
     try {
         manualJson = JSON.parse(await fs.readFile('manual.json', 'utf-8'));
         indiceJson = JSON.parse(await fs.readFile('indice.json', 'utf-8'));
-        
-        // Bloque flexible para localizar el archivo del Digesto independientemente del nombre
-        const archivosPosibles = ['digesto_traducido_final.json', 'digest.json', 'digesto.json'];
-        for (const f of archivosPosibles) {
-            try {
-                digestoJson = JSON.parse(await fs.readFile(f, 'utf-8'));
-                console.log(`✓ Archivo de fuentes cargado: ${f}`);
-                break;
-            } catch (e) { continue; }
+        try {
+            digestoJson = JSON.parse(await fs.readFile('digesto_traducido_final.json', 'utf-8'));
+        } catch (e) {
+            console.log("⚠️ Usando digesto.json...");
+            digestoJson = JSON.parse(await fs.readFile('digesto.json', 'utf-8'));
         }
-        
-        await cargarCache();
-        console.log(`✓ TODO LISTO. Modelo: gemini-3-flash`);
-        app.listen(port, () => console.log(`🚀 Servidor activo en puerto ${port}`));
+        console.log(`✓ TODO LISTO. Modelo: gemini-2.5-flash`);
+        app.listen(port, () => console.log(`🚀 http://localhost:${port}`));
     } catch (error) {
         console.error("❌ ERROR DE ARRANQUE:", error.message);
     }
