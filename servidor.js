@@ -16,7 +16,6 @@ let indiceJson = [];
 let digestoJson = []; 
 
 // --- 1. CACHÉ ESTÁTICA (MODO DEMO) ---
-// --- 1. CACHÉ ESTÁTICA (MODO DEMO) ---
 const DEMO_CACHE = {
     "hurto": {
         es_chat: true,
@@ -24,7 +23,6 @@ const DEMO_CACHE = {
             respuesta_principal: "**DEFINICIÓN JURÍDICA:**\nEl hurto (*Furtum*) es el manejo fraudulento de una cosa (*contrectatio*) con ánimo de lucro, ya sea de la propia cosa, de su uso o de su posesión.\n\n**ELEMENTOS CLAVE:**\n1. **Contrectatio:** No se exige el desplazamiento físico, basta con tocar o manejar indebidamente.\n2. **Animus Furandi:** La intención subjetiva de robar.\n3. **Invito Domino:** Debe hacerse contra la voluntad del dueño.",
             conexion_moderna: "En la actualidad, el hurto está tipificado en el Código Penal (arts. 234 y ss.) y se distingue del robo por la ausencia de fuerza en las cosas o violencia en las personas."
         },
-        // Mantenemos esto por si usas la función antigua de resolver casos
         respuesta: "SENTENCIA: CONDENO al demandado. Ha quedado probado el elemento objetivo (contrectatio) y el subjetivo (animus furandi)."
     },
     "posesion": {
@@ -49,6 +47,7 @@ const DEMO_CACHE = {
         }
     }
 };
+
 // --- 2. CACHÉ DINÁMICA (LRU) ---
 const MEMORIA_DINAMICA = new Map(); 
 const MAX_MEMORIA_ITEMS = 50; 
@@ -75,7 +74,6 @@ app.use(helmet({
 }));
 app.set('trust proxy', 1);
 
-// <--- CAMBIO: Servimos archivos desde la raíz actual (sin carpeta public) --->
 app.use(express.static(__dirname));
 
 const limiter = rateLimit({
@@ -111,7 +109,8 @@ function limpiarYParsearJSON(texto) {
 
 async function callGeminiWithRetries(payload) {
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+    // URL actualizada al modelo 3.1 Pro Preview
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent?key=${GEMINI_API_KEY}`;
 
     try {
         const geminiResponse = await axios.post(url, payload, { 
@@ -270,7 +269,14 @@ INSTRUCCIONES: Usa el contexto del manual para crear un caso realista.
 `;
         } else { return res.status(400).json({ error: 'Tipo error' }); }
 
-        const payload = { contents: [{ parts: [{ text: promptSystem }] }] };
+       // Bloque corregido con variables correctas y temperatura 0
+       const payload = { 
+            contents: [{ parts: [{ text: promptSystem }] }],
+            generationConfig: {
+                temperature: 0,
+                topP: 0.1
+            }
+        };
         const respuestaIA = await callGeminiWithRetries(payload);
         
         if (tipo === 'resolver' && currentCaseText) {
@@ -326,7 +332,14 @@ INSTRUCCIONES: Prioridad Absoluta al Manual.
 FORMATO JSON: { "respuesta_principal": "...", "conexion_moderna": "..." }
 NO escribas nada fuera del JSON.
 `;
-        const payload = { contents: [{ parts: [{ text: prompt }] }] };
+        // Bloque corregido con temperatura 0
+        const payload = { 
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+                temperature: 0,
+                topP: 0.1
+            }
+        };
         const respuestaTexto = await callGeminiWithRetries(payload);
         guardarEnMemoria(termLower, respuestaTexto);
         const jsonRespuesta = limpiarYParsearJSON(respuestaTexto);
@@ -344,13 +357,15 @@ app.post('/api/consulta-parentesco', async (req, res) => {
     try {
         const { person1, person2 } = req.body;
         const prompt = `Calcula parentesco romano entre ${person1} y ${person2}. Responde JSON: { "linea": "...", "grado": "...", "explicacion": "..." }`;
-        const payload = { contents: [{ parts: [{ text: prompt }] }] };
+        const payload = { 
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0 } 
+        };
         const resp = await callGeminiWithRetries(payload);
         res.json(limpiarYParsearJSON(resp));
     } catch (error) { handleApiError(error, res); }
 });
 
-// <--- CAMBIO: Ruta para servir index.html desde la raíz --->
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
@@ -365,7 +380,8 @@ const startServer = async () => {
             console.log("⚠️ Usando digesto.json...");
             digestoJson = JSON.parse(await fs.readFile('digesto.json', 'utf-8'));
         }
-        console.log(`✓ TODO LISTO. Modelo: gemini-2.5-flash`);
+        // Mensaje de consola actualizado
+        console.log(`✓ SERVIDOR ACTIVO. Modelo de Alta Precisión: Gemini 3.1 Pro Preview`);
         app.listen(port, () => console.log(`🚀 http://localhost:${port}`));
     } catch (error) {
         console.error("❌ ERROR DE ARRANQUE:", error.message);
