@@ -109,7 +109,6 @@ function limpiarYParsearJSON(texto) {
 
 async function callGeminiWithRetries(payload) {
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-    // URL actualizada al modelo 3.1 Pro Preview
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent?key=${GEMINI_API_KEY}`;
 
     try {
@@ -243,11 +242,12 @@ app.post('/api/consulta', async (req, res) => {
             ? coincidencias.map(c => `FUENTE LOCAL (${c.cita}): "${c.latin}" (${c.espanol})`).join("\n")
             : "NO SE HAN ENCONTRADO CITAS EXACTAS EN EL DIGESTO LOCAL.";
 
+        // --- OPTIMIZACIÓN: Conocimiento general permitido, pero SIN inventar fuentes ---
         const instruccionesSeguridad = `
-        FUENTES Y AUTORIDAD:
-        1. Tu fuente principal es el DIGESTO LOCAL provisto.
-        2. Puedes citar conocimiento general (Gayo, Instituciones) si es pertinente.
-        3. NO inventes citas numéricas (D.x.x) si no las ves en el bloque de fuentes.
+        REGLAS DE RESOLUCIÓN:
+        1. Basa tu fallo prioritariamente en el DIGESTO LOCAL y el CONTEXTO aportados.
+        2. Si las fuentes no cubren el caso, utiliza principios generales del Derecho Romano para resolverlo.
+        3. Tienes terminantemente prohibido inventar fuentes concretas. NO generes bibliografía ficticia. NO inventes citas numéricas (D.x.x) ni menciones a juristas específicos si no los ves expresamente en el bloque de fuentes.
         `;
 
         let promptSystem;
@@ -264,16 +264,15 @@ FORMATO: 1. FALLO. 2. MOTIVACIÓN JURÍDICA.
             promptSystem = `
 ROL: Profesor Derecho Romano. 
 TAREA: Caso práctico BREVE sobre "${termino}".
-CONTEXTO MANUAL: ${contextoFinal}
-INSTRUCCIONES: Usa el contexto del manual para crear un caso realista.
+CONTEXTO MANUAL: ${contextoFinal || "Sin contexto adicional."}
+INSTRUCCIONES: Usa el contexto del manual para crear un caso realista. Si el manual no es suficiente, emplea doctrina romana general, pero sin inventar citas textuales o numéricas ficticias.
 `;
         } else { return res.status(400).json({ error: 'Tipo error' }); }
 
-       // Bloque corregido con variables correctas y temperatura 0
        const payload = { 
             contents: [{ parts: [{ text: promptSystem }] }],
             generationConfig: {
-                temperature: 0,
+                temperature: 0.2, // Ligero aumento para permitir que tire de su conocimiento general
                 topP: 0.1
             }
         };
@@ -323,20 +322,27 @@ app.post('/api/consulta-unificada', async (req, res) => {
             ? coincidencias.map(c => `CITA: (${c.cita}) "${c.latin}"`).join('\n')
             : "";
 
+        // --- OPTIMIZACIÓN: Conocimiento general permitido, invención de fuentes prohibida ---
         const prompt = `
 Eres Ulpiano, profesor de Derecho Romano de la Universidad de Murcia.
 Explica al alumno: "${termino}".
-CONTEXTO DEL MANUAL DE LA CÁTEDRA: ${contextoManual || "Usa principios generales."}
-FUENTES DIGESTO: ${digestoTxt}
-INSTRUCCIONES: Prioridad Absoluta al Manual.
-FORMATO JSON: { "respuesta_principal": "...", "conexion_moderna": "..." }
+CONTEXTO DEL MANUAL DE LA CÁTEDRA: ${contextoManual || "No hay contexto del manual disponible."}
+FUENTES DIGESTO: ${digestoTxt || "No hay fuentes del Digesto disponibles."}
+
+INSTRUCCIONES Y REGLAS:
+1. Responde basándote prioritariamente en el CONTEXTO DEL MANUAL y las FUENTES DIGESTO aportadas.
+2. Si los textos proporcionados no contienen información suficiente, utiliza tus conocimientos generales sobre principios de Derecho Romano para dar una explicación didáctica.
+3. Prohibición total de inventar fuentes concretas: No cites a juristas específicos, no te inventes fragmentos del Corpus Iuris Civilis y no generes bibliografía ficticia. Si aportas conocimiento general, explícalo como teoría o doctrina sin atribuirlo a citas inexistentes.
+4. Redacta la respuesta utilizando exclusivamente vocabulario y gramática de España (uso de vosotros, etc.).
+
+FORMATO JSON OBLIGATORIO: { "respuesta_principal": "...", "conexion_moderna": "..." }
 NO escribas nada fuera del JSON.
 `;
-        // Bloque corregido con temperatura 0
+        
         const payload = { 
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: {
-                temperature: 0,
+                temperature: 0.2, // Ligero aumento de temperatura
                 topP: 0.1
             }
         };
@@ -380,7 +386,7 @@ const startServer = async () => {
             console.log("⚠️ Usando digesto.json...");
             digestoJson = JSON.parse(await fs.readFile('digesto.json', 'utf-8'));
         }
-        // Mensaje de consola actualizado
+        
         console.log(`✓ SERVIDOR ACTIVO. Modelo de Alta Precisión: Gemini 3.1 Pro Preview`);
         app.listen(port, () => console.log(`🚀 http://localhost:${port}`));
     } catch (error) {
