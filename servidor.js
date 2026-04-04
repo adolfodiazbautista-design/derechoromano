@@ -242,19 +242,18 @@ app.post('/api/consulta', async (req, res) => {
             ? coincidencias.map(c => `FUENTE LOCAL (${c.cita}): "${c.latin}" (${c.espanol})`).join("\n")
             : "NO SE HAN ENCONTRADO CITAS EXACTAS EN EL DIGESTO LOCAL.";
 
-        // --- OPTIMIZACIÓN: Conocimiento general permitido, pero SIN inventar fuentes ---
         const instruccionesSeguridad = `
         REGLAS DE RESOLUCIÓN:
         1. Basa tu fallo prioritariamente en el DIGESTO LOCAL y el CONTEXTO aportados.
-        2. Si las fuentes no cubren el caso, utiliza principios generales del Derecho Romano para resolverlo.
-        3. Tienes terminantemente prohibido inventar fuentes concretas. NO generes bibliografía ficticia. NO inventes citas numéricas (D.x.x) ni menciones a juristas específicos si no los ves expresamente en el bloque de fuentes.
+        2. Si las fuentes no cubren el caso, utiliza principios generales del Derecho Romano.
+        3. Tienes terminantemente prohibido inventar fuentes concretas. NO generes bibliografía ficticia ni cites juristas o numeraciones (D.x.x) que no estén en el bloque de fuentes.
         `;
 
         let promptSystem;
         if (tipo === 'resolver') {
             if (!currentCaseText) return res.status(400).json({ error: 'Falta texto.' });
             promptSystem = `
-ROL: Juez Romano experto.
+ROL: Juez Romano experto. Estilo directo y resolutivo. Cero retórica.
 TAREA: Dictar Sentencia para: "${currentCaseText}".
 FUENTES: ${bloqueDigesto}
 INSTRUCCIONES: ${instruccionesSeguridad}
@@ -262,17 +261,17 @@ FORMATO: 1. FALLO. 2. MOTIVACIÓN JURÍDICA.
 `;
         } else if (tipo === 'generar') {
             promptSystem = `
-ROL: Profesor Derecho Romano. 
+ROL: Profesor de Derecho Romano. Estilo académico, directo y al grano. Sin saludos ni florituras.
 TAREA: Caso práctico BREVE sobre "${termino}".
 CONTEXTO MANUAL: ${contextoFinal || "Sin contexto adicional."}
-INSTRUCCIONES: Usa el contexto del manual para crear un caso realista. Si el manual no es suficiente, emplea doctrina romana general, pero sin inventar citas textuales o numéricas ficticias.
+INSTRUCCIONES: Usa el contexto del manual para crear un caso realista. Si no es suficiente, emplea doctrina romana general, pero sin inventar citas.
 `;
         } else { return res.status(400).json({ error: 'Tipo error' }); }
 
        const payload = { 
             contents: [{ parts: [{ text: promptSystem }] }],
             generationConfig: {
-                temperature: 0.2, // Ligero aumento para permitir que tire de su conocimiento general
+                temperature: 0.2, 
                 topP: 0.1
             }
         };
@@ -322,18 +321,17 @@ app.post('/api/consulta-unificada', async (req, res) => {
             ? coincidencias.map(c => `CITA: (${c.cita}) "${c.latin}"`).join('\n')
             : "";
 
-        // --- OPTIMIZACIÓN: Conocimiento general permitido, invención de fuentes prohibida ---
         const prompt = `
-Eres Ulpiano, profesor de Derecho Romano de la Universidad de Murcia.
-Explica al alumno: "${termino}".
+Eres un académico riguroso de Derecho Romano.
+Define y explica objetivamente el concepto: "${termino}".
 CONTEXTO DEL MANUAL DE LA CÁTEDRA: ${contextoManual || "No hay contexto del manual disponible."}
 FUENTES DIGESTO: ${digestoTxt || "No hay fuentes del Digesto disponibles."}
 
 INSTRUCCIONES Y REGLAS:
-1. Responde basándote prioritariamente en el CONTEXTO DEL MANUAL y las FUENTES DIGESTO aportadas.
-2. Si los textos proporcionados no contienen información suficiente, utiliza tus conocimientos generales sobre principios de Derecho Romano para dar una explicación didáctica.
-3. Prohibición total de inventar fuentes concretas: No cites a juristas específicos, no te inventes fragmentos del Corpus Iuris Civilis y no generes bibliografía ficticia. Si aportas conocimiento general, explícalo como teoría o doctrina sin atribuirlo a citas inexistentes.
-4. Redacta la respuesta utilizando exclusivamente vocabulario y gramática de España (uso de vosotros, etc.).
+1. Responde basándote prioritariamente en el CONTEXTO DEL MANUAL y las FUENTES DIGESTO aportadas. Si no son suficientes, utiliza principios generales.
+2. Prohibición total de inventar fuentes concretas o bibliografía ficticia. 
+3. ESTILO ESTRICTO: Ve directamente al grano. Tienes totalmente prohibido usar saludos, introducciones teatrales o frases como "Bienvenido a la cátedra" o "Según el manual de la asignatura". Sé conciso, objetivo y estructurado (usa listas o encabezados si ayuda a la claridad).
+4. Redacta la respuesta utilizando exclusivamente vocabulario y gramática de España.
 
 FORMATO JSON OBLIGATORIO: { "respuesta_principal": "...", "conexion_moderna": "..." }
 NO escribas nada fuera del JSON.
@@ -342,7 +340,7 @@ NO escribas nada fuera del JSON.
         const payload = { 
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: {
-                temperature: 0.2, // Ligero aumento de temperatura
+                temperature: 0.2, 
                 topP: 0.1
             }
         };
