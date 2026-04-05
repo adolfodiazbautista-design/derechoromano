@@ -262,9 +262,14 @@ FORMATO: 1. FALLO. 2. MOTIVACIÓN JURÍDICA.
         } else if (tipo === 'generar') {
             promptSystem = `
 ROL: Profesor de Derecho Romano. Estilo académico, directo y al grano. Sin saludos ni florituras.
-TAREA: Caso práctico BREVE sobre "${termino}".
+TAREA: Redactar ÚNICAMENTE el planteamiento (los hechos) de un caso práctico BREVE sobre "${termino}".
 CONTEXTO MANUAL: ${contextoFinal || "Sin contexto adicional."}
-INSTRUCCIONES: Usa el contexto del manual para crear un caso realista. Si no es suficiente, emplea doctrina romana general, pero sin inventar citas.
+
+INSTRUCCIONES Y REGLAS ABSOLUTAS:
+1. Usa el contexto del manual para crear una situación realista con personajes romanos (Ticio, Cayo, Seya...).
+2. PROHIBICIÓN TOTAL DE RESOLVER EL CASO: Tu respuesta debe contener exclusivamente los hechos del problema y terminar con una pregunta dirigida al alumno (ej. "¿Quién es el propietario?", "¿Qué acción puede interponer Ticio?"). 
+3. TIENES TERMINANTEMENTE PROHIBIDO incluir la solución, dar pistas jurídicas, mencionar el fallo o explicar qué figura jurídica aplica. Solo los hechos.
+4. Si el contexto del manual no es suficiente, emplea doctrina romana general, pero sin inventar citas.
 `;
         } else { return res.status(400).json({ error: 'Tipo error' }); }
 
