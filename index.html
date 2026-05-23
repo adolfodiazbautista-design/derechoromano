@@ -358,7 +358,25 @@
         .persona.premuerto { border-color: #9ca3af; color: #4b5563; background-color: #f3f4f6; font-style: italic; }
         
         /* FIN DEL CÓDIGO CSS UNIFICADO */
-    </style>  
+    
+/* Mejoras ligeras de interfaz para herramientas IA */
+.tool-notice { background: #fff7ed; border: 1px solid #fdba74; color: #9a3412; border-radius: 0.75rem; padding: 0.875rem 1rem; margin: 0 0 1rem 0; }
+.tool-notice strong { color: #7c2d12; }
+.example-chips { display:flex; flex-wrap:wrap; gap:0.5rem; margin:0.75rem 0 1rem 0; }
+.example-chip { border:1px solid #fed7aa; background:#fffbeb; color:#9a3412; border-radius:9999px; padding:0.4rem 0.8rem; font-size:0.875rem; font-weight:600; cursor:pointer; transition:all .2s ease; }
+.example-chip:hover { background:#fef3c7; color:#7c2d12; }
+.status-pill { display:inline-flex; align-items:center; gap:0.45rem; padding:0.35rem 0.75rem; border-radius:9999px; font-size:0.85rem; font-weight:600; margin-bottom:1rem; }
+.status-pill::before { content:''; width:0.55rem; height:0.55rem; border-radius:9999px; background:#f59e0b; box-shadow:0 0 0 3px rgba(245,158,11,.18); }
+.status-pill.status-online { background:#ecfdf5; color:#166534; }
+.status-pill.status-online::before { background:#22c55e; box-shadow:0 0 0 3px rgba(34,197,94,.15); }
+.status-pill.status-offline { background:#fef2f2; color:#991b1b; }
+.status-pill.status-offline::before { background:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,.16); }
+.result-panel { background:#ffffff; border:1px solid #e5e7eb; border-radius:0.75rem; box-shadow:0 4px 6px -1px rgb(0 0 0 / 0.05); overflow:hidden; margin-top:1rem; }
+.result-panel-header { background:#f8fafc; border-bottom:1px solid #e5e7eb; padding:0.85rem 1rem; font-family:Inter,sans-serif; font-weight:700; color:#334155; }
+.result-panel-body { padding:1rem 1.1rem; }
+.subtle-helper { font-size:0.95rem; color:#64748b; margin-top:0.5rem; }
+
+</style>  
     
      
 
@@ -377,21 +395,21 @@
         <nav class="flex-grow">
             <ul class="space-y-1">
                 <li><a href="#home" class="sidebar-link block p-2 rounded-md">Presentación</a></li>
-                <li><a href="#bloque1" class="sidebar-link block p-2 rounded-md">Bloque I: Fundamentos</a></li>
+                <li><a href="#bloque1" class="sidebar-link block p-2 rounded-md">Bloque I: Fundamentos e Historia</a></li>
                 <li><a href="#bloque2" class="sidebar-link block p-2 rounded-md">Bloque II: Sujetos de Derecho</a></li>
                 <li><a href="#bloque3" class="sidebar-link block p-2 rounded-md">Bloque III: Negocio Jurídico</a></li>
-                <li><a href="#bloque4" class="sidebar-link block p-2 rounded-md">Bloque IV: Procedimiento</a></li>
+                <li><a href="#bloque4" class="sidebar-link block p-2 rounded-md">Bloque IV: El Proceso</a></li>
                 <li><a href="#bloque5" class="sidebar-link block p-2 rounded-md">Bloque V: Derechos Reales</a></li>
                 <li><a href="#bloque6" class="sidebar-link block p-2 rounded-md">Bloque VI: Obligaciones y Contratos</a></li>
                 <li><a href="#bloque7" class="sidebar-link block p-2 rounded-md">Bloque VII: Sucesiones</a></li>
                 <li><a href="#caselab" class="sidebar-link block p-2 rounded-md">Laboratorio de Casos</a></li>
                 <li><a href="#ulpiano" class="sidebar-link block p-2 rounded-md">Consulta a UlpianoIA</a></li>
-                <li><a href="#mapamental" class="sidebar-link block p-2 rounded-md">🗺️ Mapa Mental del Manual</a></li>
+                <li><a href="#mapamental" class="sidebar-link block p-2 rounded-md">🗺️ Mapa Mental de la Asignatura</a></li>
                 <li><a href="#bibliografia" class="sidebar-link block p-2 rounded-md">Recursos</a></li>
             </ul>
         </nav>
         <div class="mt-8 text-sm text-slate-400">
-            <p>© 2025. <a href="https://webs.um.es/adiaz-bautista/" target="_blank" rel="noopener noreferrer" class="hover:underline text-amber-500">Adolfo A. Díaz-Bautista Cremades</a>. Universidad de Murcia</p>
+            <p>(c) <a href="https://diaz-bautista.netlify.app/" target="_blank" rel="noopener noreferrer" class="hover:underline text-amber-500">Adolfo A. Díaz-Bautista Cremades</a> 2026</p>
         </div>
     </aside>
 
@@ -504,654 +522,384 @@
         // ========================================
         
         const mapaMentalData = {
-            "name": "Derecho Romano (Manual)",
+            "name": "Derecho Romano · Manual 2026",
             "children": [
                 {
-                    "name": "1. Ideas Fundamentales",
+                    "name": "Bloque I · Fundamentos e Historia",
                     "children": [
-                        { 
-                            "name": "Las reglas de conducta", 
+                        {
+                            "name": "Tema 1. Ideas fundamentales acerca del Derecho",
                             "children": [
-                                { 
-                                    "name": "Tipos de normas", 
-                                    "children": [
-                                        { "name": "Usos sociales" },
-                                        { "name": "Reglas éticas o morales" },
-                                        { "name": "Reglas religiosas" },
-                                        { "name": "Reglas jurídicas", "children": [
-                                            { "name": "Coercibilidad" },
-                                            { "name": "Aplicadas por jueces" },
-                                            { "name": "Origen estatal" }
-                                        ]}
-                                    ]
-                                }
-                            ] 
+                                {"name": "1.1 El Derecho como norma de conducta"},
+                                {"name": "1.2 La aportación singular de Roma: la laicización del ius"},
+                                {"name": "1.3 Clasificaciones fundamentales del Derecho", "children": [
+                                    {"name": "Derecho objetivo y derecho subjetivo"},
+                                    {"name": "Derecho público y Derecho privado"},
+                                    {"name": "Ius cogens y ius dispositivum"}
+                                ]}
+                            ]
                         },
-                        { 
-                            "name": "Roma y el derecho", 
+                        {
+                            "name": "Tema 2. Historia y persistencia del Derecho romano",
                             "children": [
-                                { "name": "Separación: Fas, Mores, Ius" },
-                                { "name": "Iustitia (Definición)" },
-                                { "name": "Ius naturale" },
-                                { "name": "Ius gentium" },
-                                { "name": "Ius civile" },
-                                { "name": "Juristas" }
-                            ] 
-                        },
-                        { 
-                            "name": "D. objetivo y D. subjetivo", 
-                            "children": [
-                                { "name": "D. objetivo", "children": [
-                                    { "name": "D. privado" },
-                                    { "name": "D. público" }
+                                {"name": "2.1 Época arcaica: monopolio de los pontífices"},
+                                {"name": "2.2 República: equilibrio de poderes y dualismo jurídico", "children": [
+                                    {"name": "2.2.1 Ius civile vs. ius gentium"}
                                 ]},
-                                { "name": "D. subjetivo" }
-                            ] 
-                        },
-                        { "name": "Ius cogens y ius dispositivum" },
-                        { 
-                            "name": "Sentidos de 'Derecho romano'", 
-                            "children": [
-                                { "name": "Como acontecimiento histórico" },
-                                { "name": "Como contenido de textos" },
-                                { "name": "Como tradición histórica" }
-                            ] 
-                        },
-                        { 
-                            "name": "Periodificación (753 aC - 565 dC)", 
-                            "children": [
-                                { "name": "Época arcaica (753-130 aC)" },
-                                { "name": "Época clásica (130 aC-230 dC)", "children": [
-                                    { "name": "Preclásica (130-30 aC)" },
-                                    { "name": "Clásica alta (30 aC-130 dC)" },
-                                    { "name": "Clásica tardía (130-230 dC)" }
-                                ]},
-                                { "name": "Época postclásica (230-530 dC)" }
-                            ] 
+                                {"name": "2.3 La jurisprudencia romana"},
+                                {"name": "2.4 Crisis de la República y Principado"},
+                                {"name": "2.5 Dominado y reforma de Diocleciano"},
+                                {"name": "2.6 Justiniano y destino del Derecho romano"},
+                                {"name": "2.7 La segunda vida: el ius commune medieval"},
+                                {"name": "2.8 La era moderna y la codificación racionalista"},
+                                {"name": "2.9 Derecho continental y common law"}
+                            ]
                         }
                     ]
                 },
                 {
-                    "name": "2. Historia del D. Romano",
+                    "name": "Bloque II · Sujetos de Derecho y Familia",
                     "children": [
                         {
-                            "name": "Época arcaica (753-130 aC)",
+                            "name": "Tema 3. El sujeto de derecho. Persona y capacidad",
                             "children": [
-                                { "name": "Contexto (Pueblos, Leyendas)" },
-                                { "name": "Monarquía (Reyes)" },
-                                { "name": "República (Patricios y plebeyos)" },
-                                { "name": "Organización política (Comicios, Magistrados, Senado)" },
-                                { "name": "D. arcaico pre-XII tablas (Simple, formal, autotutela)" },
-                                { "name": "Las XII tablas (451-449 aC)" },
-                                { "name": "Fuentes post-XII tablas (Leyes, edictos, juristas)" }
+                                {"name": "3.1 Introducción: persona y sujeto de derecho"},
+                                {"name": "3.2 Los tres status y la capitis deminutio"},
+                                {"name": "3.3 Status libertatis: libres y esclavos", "children": [
+                                    {"name": "3.3.1 Causas de esclavitud"},
+                                    {"name": "3.3.2 Extinción de la esclavitud: la manumisión"}
+                                ]},
+                                {"name": "3.4 Status civitatis: ciudadanos, latinos y extranjeros"},
+                                {"name": "3.5 Status familiae: sui iuris y alieni iuris"},
+                                {"name": "3.6 Capacidad jurídica y capacidad de obrar"},
+                                {"name": "3.7 Circunstancias modificativas de la capacidad de obrar: tutela y curatela", "children": [
+                                    {"name": "3.7.1 Razón de edad"},
+                                    {"name": "3.7.2 Razón de sexo: tutela mulierum"},
+                                    {"name": "3.7.3 Enfermedad mental o prodigalidad"},
+                                    {"name": "3.7.4 La infamia"}
+                                ]},
+                                {"name": "3.8 Las personas jurídicas"}
                             ]
                         },
                         {
-                            "name": "Época clásica (130 aC-230 dC)",
+                            "name": "Tema 4. La familia romana",
                             "children": [
-                                { "name": "Crisis de la república (Causas, Gracos, Sila, César)" },
-                                { "name": "El principado (Augusto)" },
-                                { "name": "Fuentes (Jurisprudencia, Constituciones, ius respondendi)" },
-                                { "name": "D. provincial (Ius gentium, colonias, municipios)" }
+                                {"name": "4.1 Concepto de familia y parentesco", "children": [
+                                    {"name": "4.1.1 Parentesco agnaticio y cognaticio"},
+                                    {"name": "4.1.2 Cómputo del parentesco: líneas y grados"}
+                                ]},
+                                {"name": "4.2 Los poderes del paterfamilias"},
+                                {"name": "4.3 La patria potestas", "children": [
+                                    {"name": "4.3.1 Adquisición de la patria potestas"},
+                                    {"name": "4.3.2 Extinción de la patria potestas"}
+                                ]},
+                                {"name": "4.4 El matrimonio", "children": [
+                                    {"name": "4.4.1 Esponsales y ceremonias nupciales"},
+                                    {"name": "4.4.2 Régimen de bienes: manus y dote"},
+                                    {"name": "4.4.3 Matrimonio cum manu y sine manu"},
+                                    {"name": "4.4.4 La dote"}
+                                ]},
+                                {"name": "4.5 Disolución del matrimonio: divortium y repudium"}
                             ]
-                        },
+                        }
+                    ]
+                },
+                {
+                    "name": "Bloque III · Negocio Jurídico",
+                    "children": [
                         {
-                            "name": "Época posclásica (230-530 dC)",
+                            "name": "Tema 5. Hechos, actos y negocio jurídico",
                             "children": [
-                                { "name": "El dominado (Crisis s.III, Diocleciano, Constantino)" },
-                                { "name": "El Derecho posclásico (Leyes, costumbre, interpolaciones)" }
-                            ]
-                        },
-                        {
-                            "name": "Época justinianea (527-565 dC)",
-                            "children": [
-                                { "name": "Compilación ('Corpus Iuris Civilis')", "children": [
-                                    { "name": "Codex" },
-                                    { "name": "Instituciones" },
-                                    { "name": "Digesto (Pandectas)" },
-                                    { "name": "Novelas" }
+                                {"name": "5.1 Hechos jurídicos y actos jurídicos"},
+                                {"name": "5.2 El negocio jurídico: concepto y clases", "children": [
+                                    {"name": "5.2.1 Clasificaciones de los negocios jurídicos"}
+                                ]},
+                                {"name": "5.3 Elementos esenciales del negocio jurídico"},
+                                {"name": "5.4 Representación"},
+                                {"name": "5.5 Vicios de la voluntad", "children": [
+                                    {"name": "5.5.1 Error"},
+                                    {"name": "5.5.2 Dolo"},
+                                    {"name": "5.5.3 Violencia o miedo"}
+                                ]},
+                                {"name": "5.6 Discrepancia entre voluntad y declaración", "children": [
+                                    {"name": "5.6.1 Simulación"},
+                                    {"name": "5.6.2 Error obstativo"}
+                                ]},
+                                {"name": "5.7 Elementos accidentales del negocio jurídico", "children": [
+                                    {"name": "5.7.1 Condiciones impropias"}
+                                ]},
+                                {"name": "5.8 Ineficacia del negocio jurídico", "children": [
+                                    {"name": "5.8.1 Invalidez"},
+                                    {"name": "5.8.2 Rescisión"},
+                                    {"name": "5.8.3 Ineficacia por hechos posteriores"},
+                                    {"name": "5.8.4 Convalidación y conversión"}
                                 ]}
                             ]
                         }
                     ]
                 },
                 {
-                    "name": "3. Persistencia del D. Romano",
+                    "name": "Bloque IV · El Proceso",
                     "children": [
-                        { "name": "Occidente post-caída (Leges romanae barabarorum)" },
-                        { "name": "Oriente post-justinianeo" },
-                        { "name": "Occidente (Edad Media)", "children": [
-                            { "name": "Sacro Imperio Romano Germánico" }
-                        ]},
-                        { "name": "Baja Edad Media (Recepción)", "children": [
-                            { "name": "Ius commune" },
-                            { "name": "Glosadores y Postglosadores" },
-                            { "name": "Recepción en Europa (España, Inglaterra)" }
-                        ]},
-                        { "name": "Edad Moderna", "children": [
-                            { "name": "Mos gallicus vs Mos italicus" },
-                            { "name": "Iusnaturalismo racionalista" }
-                        ]},
-                        { "name": "Edad Contemporánea", "children": [
-                            { "name": "Positivismo (Código Napoleón, Exégesis)" },
-                            { "name": "Escuela Histórica (Savigny)" },
-                            { "name": "Pandectística" },
-                            { "name": "Historicismo crítico" }
-                        ]},
-                        { "name": "Actualidad" }
+                        {
+                            "name": "Tema 6. El proceso. Generalidades",
+                            "children": [
+                                {"name": "6.1 Justicia privada y evolución hacia el proceso"},
+                                {"name": "6.2 Presupuestos de la actuación procesal", "children": [
+                                    {"name": "6.2.1 Capacidad para ser parte"},
+                                    {"name": "6.2.2 Capacidad procesal"},
+                                    {"name": "6.2.3 Legitimación"}
+                                ]},
+                                {"name": "6.3 Marco de la justicia: órganos, tiempo y lugar", "children": [
+                                    {"name": "6.3.1 Órganos jurisdiccionales y judiciales"},
+                                    {"name": "6.3.2 Tiempo y lugar de la justicia"},
+                                    {"name": "6.3.3 Competencia judicial e ius domum revocandi"}
+                                ]},
+                                {"name": "6.4 Características generales de las legis actiones"},
+                                {"name": "6.5 La tramitación"},
+                                {"name": "6.6 Tipos de acciones de ley", "children": [
+                                    {"name": "6.6.1 Acciones declarativas"},
+                                    {"name": "6.6.2 Acciones ejecutivas"}
+                                ]},
+                                {"name": "6.7 Decadencia de las legis actiones"}
+                            ]
+                        },
+                        {
+                            "name": "Tema 7. El proceso formulario (fase in iure)",
+                            "children": [
+                                {"name": "7.1 La bipartición procesal"},
+                                {"name": "7.2 Concepto de fórmula"},
+                                {"name": "7.3 Iudicium legitimum y iudicia quod imperio continetur"},
+                                {"name": "7.4 La fase in iure", "children": [
+                                    {"name": "7.4.1 Citación y vadimonium"},
+                                    {"name": "7.4.2 Representación procesal"},
+                                    {"name": "7.4.3 Cautio iudicatum solvi"},
+                                    {"name": "7.4.4 Postulatio actionis y cognitio del pretor"}
+                                ]},
+                                {"name": "7.5 Terminación anormal del proceso in iure"},
+                                {"name": "7.6 Concesión o denegación de la acción"},
+                                {"name": "7.7 La fórmula y sus partes", "children": [
+                                    {"name": "7.7.1 Partes principales"},
+                                    {"name": "7.7.2 Partes accesorias"}
+                                ]},
+                                {"name": "7.8 Clases de fórmulas"},
+                                {"name": "7.9 Nombramiento del juez"}
+                            ]
+                        },
+                        {
+                            "name": "Tema 8. El proceso formulario (litis contestatio, fase apud iudicem y ejecución)",
+                            "children": [
+                                {"name": "8.1 La litis contestatio"},
+                                {"name": "8.2 La fase apud iudicem", "children": [
+                                    {"name": "8.2.1 Alegaciones de las partes y prueba"},
+                                    {"name": "8.2.2 Medios de prueba"}
+                                ]},
+                                {"name": "8.3 La sentencia"},
+                                {"name": "8.4 Ejecución de la sentencia", "children": [
+                                    {"name": "8.4.1 Bonorum venditio"},
+                                    {"name": "8.4.2 Protección contra el fraude de acreedores"}
+                                ]},
+                                {"name": "8.5 Cessio bonorum"},
+                                {"name": "8.6 Protección pretoria extrajudicial"}
+                            ]
+                        },
+                        {
+                            "name": "Tema 9. La cognitio extra ordinem y la protección pretoria",
+                            "children": [
+                                {"name": "9.1 La cognitio extra ordinem", "children": [
+                                    {"name": "9.1.1 Características principales"},
+                                    {"name": "9.1.2 Tramitación general"},
+                                    {"name": "9.1.3 Ejecución de la sentencia"}
+                                ]},
+                                {"name": "9.2 Procedimientos arbitrales", "children": [
+                                    {"name": "9.2.1 Episcopalis audientia"}
+                                ]}
+                            ]
+                        }
                     ]
                 },
                 {
-                    "name": "4. El Sujeto del Derecho",
+                    "name": "Bloque V · Derechos Reales",
                     "children": [
-                        { "name": "Personas físicas y jurídicas" },
-                        {
-                            "name": "Persona física (Status)",
-                            "children": [
-                                { "name": "Status libertatis (Libres y esclavos)", "children": [
-                                    { "name": "Origen esclavitud (Nacimiento, Cautiverio)" },
-                                    { "name": "Extinción (Manumisión solemne y no solemne)" }
-                                ]},
-                                { "name": "Status civitatis (Cives y extranjeros)", "children": [
-                                    { "name": "Adquisición ciudadanía" },
-                                    { "name": "Extranjeros (Peregrinos, Latinos)" },
-                                    { "name": "Constitutio antoniniana (212 dC)" }
-                                ]},
-                                { "name": "Status familiae (Sui iuris y alieni iuris)" }
-                            ]
-                        },
-                        { "name": "Capitis deminutio (Máxima, Media, Mínima)" },
-                        { "name": "Comienzo y fin de la persona", "children": [
-                            { "name": "Nacimiento (Requisitos, Nasciturus)" },
-                            { "name": "Muerte (Conmoriencia, Fictio legis cornelia)" }
-                        ]},
-                        {
-                            "name": "Capacidad",
-                            "children": [
-                                { "name": "Capacidad jurídica (requisitos en Roma)" },
-                                { "name": "Capacidad de obrar (Pubertad 14/12 años)" },
-                                { "name": "Circunstancias modificativas (Edad, Sexo, Prodigalidad, etc.)" }
-                            ]
-                        },
-                        { "name": "Tutela y curatela" }
-                    ]
-                },
-                {
-                    "name": "5. La Familia",
-                    "children": [
-                        { "name": "Concepto y Clases (Nuclear, Extensa)" },
-                        { "name": "Parentesco (Cognaticio, Agnaticio, Línea, Grado)" },
-                        { "name": "Poderes del pater familias" },
-                        { "name": "Matrimonio y manus", "children": [
-                            { "name": "Ius connubii, Impedimentos, Disolución" },
-                            { "name": "Clases: Cum manu (Coemptio, Usus) vs Sine manu" }
-                        ]},
-                        { "name": "La dote (Concepto, Clases, Restitución)" },
-                        { "name": "Patria potestad (Origen, Extinción)" },
-                        { "name": "Dominica potestas y patronato" },
-                        { "name": "Peculios (Hijos y esclavos)" },
-                        { "name": "Protección sui iuris incapaces", "children": [
-                            { "name": "Tutela (Impúberes, Mujeres)", "children": [
-                                { "name": "Clases (Testamentaria, Legítima, Dativa)" },
-                                { "name": "Actuación (Gestio, Auctoritas)" }
+                        {"name": "Tema 10. Introducción a los derechos reales. Las cosas. La posesión", "children": [
+                            {"name": "10.1 Los derechos reales y las cosas", "children": [
+                                {"name": "10.1.1 Las cosas"},
+                                {"name": "10.1.2 Uso, disfrute y disposición"}
                             ]},
-                            { "name": "Curatelas (Minorum, Incapaces)" }
+                            {"name": "10.2 Posesión y propiedad", "children": [
+                                {"name": "10.2.1 Elementos y clases de posesión: corpus y animus"}
+                            ]},
+                            {"name": "10.3 La protección interdictal", "children": [
+                                {"name": "10.3.1 Cláusula de posesión viciosa"},
+                                {"name": "10.3.2 Clases de interdictos posesorios"}
+                            ]}
+                        ]},
+                        {"name": "Tema 11. La propiedad", "children": [
+                            {"name": "11.1 Concepto y tipos de propiedad"},
+                            {"name": "11.2 Limitaciones al derecho de propiedad"},
+                            {"name": "11.3 Modos de adquirir la propiedad", "children": [
+                                {"name": "11.3.1 Modos formales"},
+                                {"name": "11.3.2 Modos no formales"},
+                                {"name": "11.3.3 La traditio"}
+                            ]},
+                            {"name": "11.4 La copropiedad"}
+                        ]},
+                        {"name": "Tema 12. Derechos reales sobre cosa ajena", "children": [
+                            {"name": "12.1 Servidumbres prediales", "children": [
+                                {"name": "12.1.1 Principios y características"},
+                                {"name": "12.1.2 Clases de servidumbres prediales"},
+                                {"name": "12.1.3 Constitución y extinción"}
+                            ]},
+                            {"name": "12.2 Usufructo, uso y habitación", "children": [
+                                {"name": "12.2.1 El usufructo"},
+                                {"name": "12.2.2 Uso, habitación y operae servorum"}
+                            ]},
+                            {"name": "12.3 Enfiteusis y superficie"},
+                            {"name": "12.4 Derechos reales de garantía"}
+                        ]},
+                        {"name": "Tema 13. Protección procesal de los derechos reales", "children": [
+                            {"name": "13.1 Protección de la propiedad civil", "children": [
+                                {"name": "13.1.1 Actio reivindicatoria"},
+                                {"name": "13.1.2 Actio negatoria"},
+                                {"name": "13.1.3 Otras acciones del propietario"}
+                            ]},
+                            {"name": "13.2 Protección de la propiedad peregrina", "children": [
+                                {"name": "13.2.1 Propiedad provincial"},
+                                {"name": "13.2.2 Dominio útil"}
+                            ]},
+                            {"name": "13.3 Protección procesal de las servidumbres"},
+                            {"name": "13.4 Protección procesal del usufructo"}
+                        ]},
+                        {"name": "Tema 14. La propiedad pretoria", "children": [
+                            {"name": "14.1 Desprotección del adquirente de buena fe", "children": [
+                                {"name": "14.1.1 Problema de la rigidez"},
+                                {"name": "14.1.2 Problema de la titularidad"}
+                            ]},
+                            {"name": "14.2 La solución: in bonis habere"},
+                            {"name": "14.3 Triple protección del propietario pretorio", "children": [
+                                {"name": "14.3.1 Interdictos posesorios"},
+                                {"name": "14.3.2 Usucapión"},
+                                {"name": "14.3.3 Acción publiciana"}
+                            ]}
                         ]}
                     ]
                 },
                 {
-                    "name": "6. Negocio Jurídico",
+                    "name": "Bloque VI · Obligaciones y Contratos",
                     "children": [
-                        { "name": "Hechos, actos y negocios (Lícitos e Ilícitos)" },
-                        {
-                            "name": "Elementos esenciales",
-                            "children": [
-                                { "name": "Objeto (Posible, Lícito, Determinado)" },
-                                { "name": "Causa lícita" },
-                                { "name": "Forma (Ad solemnitatem, Ad probationem)" },
-                                { "name": "Voluntad (Capacidad, Conciencia, Libertad)" },
-                                { "name": "Manifestación (Expresa, Tácita, Presunta)" },
-                                { "name": "Representación (Directa, Indirecta, Nuntius)" },
-                                { "name": "Discrepancias (Error obstativo, Simulación)" }
-                            ]
-                        },
-                        { 
-                            "name": "Elementos accidentales",
-                            "children": [
-                                { "name": "Condición (Clases, Caución muciana)" },
-                                { "name": "Término" },
-                                { "name": "Modo" }
-                            ]
-                        },
-                        { "name": "Clases de negocios (Onerosos, Causales, Inter vivos...)" },
-                        { 
-                            "name": "Ineficacia",
-                            "children": [
-                                { "name": "Invalidez", "children": [
-                                    { "name": "Nulidad (Ipso iure, ex tunc)" },
-                                    { "name": "Anulabilidad (Ope exceptionis, ex nunc, convalidación)" }
-                                ]},
-                                { "name": "Otras (Resolución, Revocación, Rescisión)" }
-                            ]
-                        }
+                        {"name": "Tema 15. La relación obligacional. Introducción", "children": [
+                            {"name": "15.1 Obligaciones naturales"},
+                            {"name": "15.2 Transmisión de las obligaciones"},
+                            {"name": "15.3 Pluralidad de sujetos"},
+                            {"name": "15.4 Nacimiento y extinción"},
+                            {"name": "15.5 Extinción de las obligaciones"},
+                            {"name": "15.6 Responsabilidad por incumplimiento"}
+                        ]},
+                        {"name": "Tema 16. Los delitos", "children": [
+                            {"name": "16.1 Introducción"},
+                            {"name": "16.2 Delitos de hurto"},
+                            {"name": "16.3 Delitos de daño"},
+                            {"name": "16.4 Delitos de iniuriae"},
+                            {"name": "16.5 Delitos pretorios"},
+                            {"name": "16.6 Delitos pretorios sin prueba de culpabilidad"},
+                            {"name": "16.7 Delitos pretorios y administración de justicia"}
+                        ]},
+                        {"name": "Tema 17. Los contratos en general. Contratos reales", "children": [
+                            {"name": "17.1 Introducción a los contratos", "children": [
+                                {"name": "17.1.1 Situaciones similares a los contratos"}
+                            ]},
+                            {"name": "17.2 Contratos reales", "children": [
+                                {"name": "17.2.1 Mutuo"},
+                                {"name": "17.2.2 Comodato"},
+                                {"name": "17.2.3 Depósito"},
+                                {"name": "17.2.4 Contratos reales de garantía"}
+                            ]},
+                            {"name": "17.3 Contratos innominados"},
+                            {"name": "17.4 Supuestos no contractuales semejantes"}
+                        ]},
+                        {"name": "Tema 18. Contratos formales y contratos de garantía", "children": [
+                            {"name": "18.1 Los contratos formales", "children": [
+                                {"name": "18.1.1 Contratos verbales"},
+                                {"name": "18.1.2 Contratos literales"}
+                            ]}
+                        ]},
+                        {"name": "Tema 19. Contratos consensuales", "children": [
+                            {"name": "19.1 Introducción"},
+                            {"name": "19.2 Compraventa", "children": [
+                                {"name": "19.2.1 Obligaciones del vendedor"},
+                                {"name": "19.2.2 Pactos añadidos a la compraventa"}
+                            ]},
+                            {"name": "19.3 Arrendamiento", "children": [
+                                {"name": "19.3.1 Arrendamiento de cosa"},
+                                {"name": "19.3.2 Arrendamiento de obra"}
+                            ]},
+                            {"name": "19.4 Sociedad"},
+                            {"name": "19.5 Mandato", "children": [
+                                {"name": "19.5.1 Figuras especiales del mandato"}
+                            ]},
+                            {"name": "19.6 Donación"}
+                        ]},
+                        {"name": "Tema 20. Refuerzo y garantía de las obligaciones", "children": [
+                            {"name": "20.1 Garantías personales", "children": [
+                                {"name": "20.1.1 Fianza"},
+                                {"name": "20.1.2 Constitutum"},
+                                {"name": "20.1.3 Receptum argentarii"},
+                                {"name": "20.1.4 Estipulación penal"},
+                                {"name": "20.1.5 Mandato de crédito"},
+                                {"name": "20.1.6 Senadoconsulto Veleyano"}
+                            ]},
+                            {"name": "20.2 Garantías reales", "children": [
+                                {"name": "20.2.1 Fiducia"},
+                                {"name": "20.2.2 Prenda"},
+                                {"name": "20.2.3 Hipoteca"}
+                            ]}
+                        ]}
                     ]
                 },
                 {
-                    "name": "7. Proceso (Intro y Legis Actiones)",
+                    "name": "Bloque VII · Sucesiones",
                     "children": [
-                        { "name": "Resolución de conflictos (Negociación, Arbitraje, Jurisdicción)" },
-                        { "name": "Conceptos (Proceso, Acción, Excepción)" },
-                        { "name": "Partes (Legitimación, Representación, Litisconsorcio)" },
-                        { "name": "Sistemas procesales (Legis actiones, Formulario, Cognitio)" },
-                        { "name": "Órganos (Pretores, Iudex privatus, Funcionarios)" },
-                        { "name": "Lugar, tiempo, competencia" },
-                        { 
-                            "name": "Procedimiento (Legis Actiones)",
-                            "children": [
-                                { "name": "Sacramentum (In rem, In personam?)" },
-                                { "name": "Manus iniectio (Ejecutiva)" },
-                                { "name": "Iudicis arbitrive postulatio" },
-                                { "name": "Condictio (Deudas abstractas)" },
-                                { "name": "Pignoris capionem" }
-                            ]
-                        },
-                        { "name": "Ley Ebucia (Intro Fórmulas)" }
-                    ]
-                },
-                {
-                    "name": "8. Proceso (Formulario - Fase In Iure)",
-                    "children": [
-                        { "name": "Fase in iure (Ante el pretor)" },
-                        {
-                            "name": "La fórmula y sus partes",
-                            "children": [
-                                { "name": "Intentio" },
-                                { "name": "Demonstratio" },
-                                { "name": "Condemnatio" },
-                                { "name": "Adiudicatio" },
-                                { "name": "Exceptio" },
-                                { "name": "Praescriptio" }
-                            ]
-                        },
-                        { "name": "Clases de fórmulas (acciones)" },
-                        { "name": "Concesión/denegación acción" }
-                    ]
-                },
-                {
-                    "name": "9. Proceso (Formulario - Apud Iudicem)",
-                    "children": [
-                        { 
-                            "name": "La litis contestatio",
-                            "children": [
-                                { "name": "Efectos (Fijación, Consumición, Non bis in idem)" }
-                            ]
-                        },
-                        { 
-                            "name": "Fase apud iudicem",
-                            "children": [
-                                { "name": "Deber del juez (Non liquet, Responsabilidad)" },
-                                { "name": "Alegaciones (Inmediación)" },
-                                { "name": "La prueba (Onus probandi, Clases, Presunciones)" }
-                            ]
-                        },
-                        { 
-                            "name": "La sentencia",
-                            "children": [
-                                { "name": "Tipos (Absolutoria, Condenatoria)" },
-                                { "name": "Eficacia (Cosa juzgada)" },
-                                { "name": "Revisión (Nulidad, Apelación)" }
-                            ]
-                        },
-                        { 
-                            "name": "Ejecución de sentencia",
-                            "children": [
-                                { "name": "Actio iudicati" },
-                                { "name": "Ejecución personal (XII Tablas)" },
-                                { "name": "Ejecución patrimonial (Universal, Concursal)" }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "name": "10. Otros Procesos",
-                    "children": [
-                        { 
-                            "name": "Cognitio extra ordinem",
-                            "children": [
-                                { "name": "Características (Unificado, Apelación, Inquisitivo, Condena en especie)" },
-                                { "name": "Ejecución singular (Manu militari, Pignus...)" }
-                            ]
-                        },
-                        { 
-                            "name": "Protección pretoria extrajudicial",
-                            "children": [
-                                { "name": "Cautiones" },
-                                { "name": "Interdictos" },
-                                { "name": "Missiones in possessionem" },
-                                { "name": "Restitutiones in integrum" }
-                            ]
-                        },
-                        { 
-                            "name": "Procedimientos arbitrales",
-                            "children": [
-                                { "name": "Compromissum (Convenio)" },
-                                { "name": "Receptum (Aceptación)" },
-                                { "name": "Laudo arbitral" }
-                            ]
-                        },
-                        { "name": "Episcopalis audientia (Obispo como árbitro/juez)" }
-                    ]
-                },
-                {
-                    "name": "11. D. Reales (Intro y Posesión)",
-                    "children": [
-                        { "name": "Concepto (Erga omnes)" },
-                        { 
-                            "name": "Las cosas (Clasificación)",
-                            "children": [
-                                { "name": "In/Extra commercium" },
-                                { "name": "Fungibles/No fungibles" },
-                                { "name": "Consumibles/No consumibles" },
-                                { "name": "Muebles/Inmuebles" },
-                                { "name": "Mancipi/Nec mancipi" },
-                                { "name": "Principales/Accesorias" }
-                            ]
-                        },
-                        { "name": "Utilidades (Uso, Disfrute, Disposición)" },
-                        { "name": "Posesión vs. Propiedad" },
-                        { "name": "Elementos posesión (Corpus y Animus)" },
-                        { "name": "Clases de Posesión (Natural, Civil)" },
-                        { 
-                            "name": "Protección interdictal",
-                            "children": [
-                                { "name": "Cláusula de posesión viciosa (Vi, Clam, Precario)" },
-                                { "name": "Clases de interdictos", "children": [
-                                    { "name": "Retener (Uti possidetis, Utrubi)" },
-                                    { "name": "Recobrar (Unde vi, Unde vi armata, Quod precario)" }
-                                ]}
-                            ]
-                        },
-                        { "name": "Posesión civil (Buena fe, Mala fe)" }
-                    ]
-                },
-                {
-                    "name": "12. Propiedad y otros D. Reales",
-                    "children": [
-                        { "name": "Propiedad (Concepto, Clases, Límites)" },
-                        {
-                            "name": "Modos de adquirir propiedad",
-                            "children": [
-                                { "name": "Modos formales (Mancipatio, In iure cessio)" },
-                                { "name": "Modos no formales (Ocupación, Tesoro, Especificación, Frutos, Accesión)" },
-                                { "name": "Traditio (Clases, Causa, Recepción moderna)" },
-                                { "name": "Usucapión (Requisitos, Plazos, Longi temporis...)" }
-                            ]
-                        },
-                        { "name": "Copropiedad (Origen, División)" },
-                        { "name": "Servidumbres (Concepto, Clases, Constitución, Extinción)" },
-                        { "name": "Usufructo (Concepto, Constitución, Extinción)" },
-                        { "name": "Uso, habitación, operae servorum" },
-                        { "name": "Enfiteusis y superficie" },
-                        { "name": "Derechos reales de garantía (Fiducia, Prenda, Hipoteca)" }
-                    ]
-                },
-                {
-                    "name": "13. Protección D. Reales",
-                    "children": [
-                        {
-                            "name": "Protección propiedad civil",
-                            "children": [
-                                { "name": "Acción reivindicatoria (Partes, Objeto, Efectos)" },
-                                { "name": "Actio negatoria (Cautio...)" }
-                            ]
-                        },
-                        { 
-                            "name": "Protección propiedad pretoria (Bonitaria)",
-                            "children": [
-                                { "name": "Interdictos" },
-                                { "name": "Acción publiciana" }
-                            ]
-                        },
-                        { "name": "Caso de la doble venta" },
-                        { "name": "Protección propiedad peregrina/provincial/útil" },
-                        { "name": "Protección servidumbres (Vindicatio servitutis)" },
-                        { "name": "Protección usufructo (Vindicatio ususfructus)" }
-                    ]
-                },
-                {
-                    "name": "14. Obligaciones (Intro)",
-                    "children": [
-                        { "name": "Concepto y Elementos (Sujetos, Objeto)" },
-                        { "name": "Clases (Específicas, Genéricas, Alternativas)" },
-                        { "name": "Contenido (Dare, Facere, Praestare)" },
-                        { "name": "Acciones personales (Principio relatividad)" },
-                        { "name": "Obligaciones naturales (Soluti retentio...)" },
-                        { "name": "Transmisión (Delegatio, Expromissio)" },
-                        { "name": "Pluralidad de sujetos (Mancomunidad, Solidaridad)" },
-                        { "name": "Nacimiento (Contratos, Delitos, Cuasi...)" },
-                        { 
-                            "name": "Extinción",
-                            "children": [
-                                { "name": "El pago (Identidad, Integridad, Tiempo)" },
-                                { "name": "Mora (Solvendi, Accipiendi)" },
-                                { "name": "Otras (Confusión, Compensación, Condonación, Novación)" }
-                            ]
-                        },
-                        { "name": "Incumplimiento (Imposibilidad)" },
-                        { 
-                            "name": "Responsabilidad (Contractual, Extracontractual)",
-                            "children": [
-                                { "name": "Grado (Subjetiva: Dolo, Culpa; Objetiva: Custodia, Periculum)" }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "name": "15. Delitos",
-                    "children": [
-                        { "name": "Concepto (Delicta vs Crimina)" },
-                        { "name": "Responsabilidad (Dolo, Culpa, Exención, Participación)" },
-                        { "name": "Acciones (Penal, Civil, Cumulatividad)" },
-                        {
-                            "name": "Delitos civiles",
-                            "children": [
-                                { "name": "Furtum (Hurto) (Concepto, Furtum usus/possessionis, Acciones)" },
-                                { "name": "Damnum (Daño) (Lex Aquilia, Culpa)" },
-                                { "name": "Iniuriae (Lesiones) (Animus iniurandi)" }
-                            ]
-                        },
-                        {
-                            "name": "Delitos pretorios",
-                             "children": [
-                                { "name": "Intimidación (Metus)" },
-                                { "name": "Engaño (Dolus) (Actio, Exceptio)" }
-                            ]
-                        },
-                        { "name": "Cuasi delitos (Rel. Adm. Justicia)" }
-                    ]
-                },
-                {
-                    "name": "16. Contratos Reales (y Cuasi)",
-                    "children": [
-                        { "name": "Contratos en General (Concepto, Clases, Pacta)" },
-                        { 
-                            "name": "Contratos Reales (Concepto)",
-                            "children": [
-                                { "name": "Mutuo (Intereses, Fenus nauticum)" },
-                                { "name": "Comodato" },
-                                { "name": "Depósito (Regular, Irregular)" },
-                                { "name": "Fiducia cum creditore" },
-                                { "name": "Prenda (pignus) y Hipoteca" }
-                            ]
-                        },
-                        { 
-                            "name": "Contratos innominados (Do ut des...)",
-                            "children": [
-                                { "name": "Regulación (Condictio, Actiones in factum...)" }
-                            ]
-                        },
-                        { 
-                            "name": "Cuasicontratos reales",
-                            "children": [
-                                { "name": "Ausencia de causa (Condictio)" },
-                                { "name": "Enriquecimiento injusto" }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "name": "17. Contratos Consensuales",
-                    "children": [
-                        { "name": "Concepto (Sinalagmáticos, Arras)" },
-                        { 
-                            "name": "Compraventa (Emptio venditio)",
-                            "children": [
-                                { "name": "Objeto (Emptio spei)" },
-                                { "name": "Precio (Justo, Rescisión)" },
-                                { "name": "Responsabilidad (Evicción, Vicios ocultos)" }
-                            ]
-                        },
-                        {
-                            "name": "Arrendamiento (Locatio conductio)",
-                            "children": [
-                                { "name": "De cosa (rei)" },
-                                { "name": "De obra (operis)" },
-                                { "name": "De servicios (operarum)" }
-                            ]
-                        },
-                        { "name": "Sociedad (Societas) (Clases, Acciones)" },
-                        { "name": "Mandato (Mandatum) (Clases, Gratuidad, Acciones)" },
-                        { "name": "Donación (Concepto, Irrevocabilidad, Modal)" },
-                        { "name": "Pollicitatio" }
-                    ]
-                },
-                {
-                    "name": "18. Contratos Formales y Garantía",
-                    "children": [
-                        { "name": "Concepto (Forma ad solemnitatem)" },
-                        {
-                            "name": "Contratos verbales",
-                            "children": [
-                                { "name": "Stipulatio (Sujetos, Acciones, Extinción)" }
-                            ]
-                        },
-                        { "name": "Contratos literales (Transcriptio, Cheirographa...)" },
-                        { "name": "Garantías (Reales vs Personales)" },
-                        { 
-                            "name": "Refuerzo y Garantías Personales",
-                            "children": [
-                                { "name": "Constitutum (Préstamo de plazo)" },
-                                { "name": "Receptum argentarii (Aval bancario)" },
-                                { "name": "Estipulación penal" },
-                                { "name": "Expromisio" },
-                                { "name": "Fianza (vs Solidaridad pasiva)" },
-                                { "name": "Mandato de crédito" },
-                                { "name": "Intercesión de mujeres (SC Veleyano)" }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "name": "19. Sucesión (Intro)",
-                    "children": [
-                        { "name": "Conceptos (Universal/Particular, Inter vivos/Mortis causa)" },
-                        { "name": "Herencia (Patrimonio, de cuius, caudal relicto)" },
-                        { "name": "Delación (Intestada, Testamentaria, Forzosa)" },
-                        { 
-                            "name": "Adición (Aceptación)",
-                            "children": [
-                                { "name": "Automática (Necesarios)" },
-                                { "name": "Voluntaria (Expresa, Tácita, Retraso)" },
-                                { "name": "Herencia yacente" },
-                                { "name": "Irrevocabilidad (Semel heres...)" }
-                            ]
-                        },
-                        {
-                            "name": "Efectos Adición",
-                            "children": [
-                                { "name": "Confusión de patrimonios" },
-                                { "name": "Responsabilidad Ultra Vires" },
-                                { "name": "Remedios (Separatio, Beneficio inventario)" }
-                            ]
-                        },
-                        { 
-                            "name": "Pluralidad de herederos",
-                            "children": [
-                                { "name": "Derecho de acrecer (Testamentaria)" },
-                                { "name": "Sustitución (Vulgar, Pupilar, Ejemplar, Fideicomisaria)" },
-                                { "name": "Derecho de representación (Intestada)" }
-                            ]
-                        },
-                        { "name": "Hereditas y Bonorum possessio" }
-                    ]
-                },
-                {
-                    "name": "20. Sucesión Intestada",
-                    "children": [
-                        { "name": "Casos (Falta testamento, inválido...)" },
-                        { 
-                            "name": "Herencia civil (XII Tablas)",
-                            "children": [
-                                { "name": "1. Heredes sui (In capita, por estirpes)" },
-                                { "name": "2. Agnado más próximo" },
-                                { "name": "3. Gentiles" }
-                            ]
-                        },
-                        { 
-                            "name": "Herencia pretoria (Bonorum possessio sine tabulis)",
-                            "children": [
-                                { "name": "1. Unde liberi (Incl. emancipados, Colación)" },
-                                { "name": "2. Unde legitimi (Heredes sui, Agnados)" },
-                                { "name": "3. Unde cognati (Parentesco sangre)" },
-                                { "name": "4. Unde vir et uxor (Cónyuge)" },
-                                { "name": "5. Cui heres no extabit (Fisco)" }
-                            ]
-                        },
-                        { 
-                            "name": "Herencia justinianea (Novelas)",
-                            "children": [
-                                { "name": "1. Descendientes" },
-                                { "name": "2. Ascendientes y Hermanos germanos" },
-                                { "name": "3. Hermanos de vínculo sencillo" },
-                                { "name": "4. Colaterales" },
-                                { "name": "5. Cónyuge viudo" },
-                                { "name": "6. Fisco" }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "name": "21. Sucesión Testamentaria",
-                    "children": [
-                        { "name": "Testamento (Concepto, Características, Formas)" },
-                        { "name": "Testamentifactio (Activa y Pasiva)" },
-                        { 
-                            "name": "Contenido del testamento",
-                            "children": [
-                                { "name": "Institución de heredero" },
-                                { "name": "Sustitución (Vulgar, Pupilar, etc.)" },
-                                { "name": "Legados" },
-                                { "name": "Fideicomisos" },
-                                { "name": "Manumisiones" }
-                            ]
-                        },
-                        { "name": "Interpretación e Ineficacia (Inválido, Desierto, Inoficioso)" },
-                        { 
-                            "name": "Legados",
-                            "children": [
-                                { "name": "Clases (Vindicatorio, Damnatorio)" },
-                                { "name": "Objeto (Cosa específica, genérica, ajena...)" }
-                            ]
-                        },
-                        { "name": "Fideicomisos (Concepto, Sujetos, Forma)" },
-                        { 
-                            "name": "Sucesión forzosa (Legitimaria)",
-                            "children": [
-                                { "name": "Preterición y Testamento inoficioso" },
-                                { "name": "Legítima formal (Desheredación)" },
-                                { "name": "Legítima material (Herederos legitimarios)" }
-                            ]
-                        }
+                        {"name": "Tema 21. La sucesión mortis causa", "children": [
+                            {"name": "21.1 Delación de la herencia: vías sucesorias", "children": [
+                                {"name": "21.1.1 Sucesión testamentaria"},
+                                {"name": "21.1.2 Sucesión intestada"}
+                            ]},
+                            {"name": "21.2 Sucesión forzosa"},
+                            {"name": "21.3 Adquisición de la herencia", "children": [
+                                {"name": "21.3.1 Herederos necesarios"},
+                                {"name": "21.3.2 Herederos voluntarios"}
+                            ]},
+                            {"name": "21.4 Efectos de la adquisición", "children": [
+                                {"name": "21.4.1 Remedios contra la confusión de patrimonios"},
+                                {"name": "21.4.2 Pluralidad de herederos"}
+                            ]},
+                            {"name": "21.5 Herencia pretoria"}
+                        ]},
+                        {"name": "Tema 22. Sucesión intestada", "children": [
+                            {"name": "22.1 Sucesión intestada en el ius civile"},
+                            {"name": "22.2 Sucesión intestada en el Derecho pretorio"},
+                            {"name": "22.3 Sucesión intestada en el Derecho justinianeo"}
+                        ]},
+                        {"name": "Tema 23. Sucesión testamentaria y sucesión forzosa", "children": [
+                            {"name": "23.1 Sucesión testamentaria", "children": [
+                                {"name": "23.1.1 Formas de testamento"},
+                                {"name": "23.1.2 Capacidad testamentifactio"},
+                                {"name": "23.1.3 Contenido del testamento"},
+                                {"name": "23.1.4 Sustituciones"},
+                                {"name": "23.1.5 Legados"},
+                                {"name": "23.1.6 Fideicomisos"},
+                                {"name": "23.1.7 Codicilos"}
+                            ]},
+                            {"name": "23.2 Ineficacia e invalidez del testamento", "children": [
+                                {"name": "23.2.1 Nulidad inicial"},
+                                {"name": "23.2.2 Invalidez sobrevenida"}
+                            ]},
+                            {"name": "23.3 Sucesión forzosa o legitimaria", "children": [
+                                {"name": "23.3.1 Legítima formal"},
+                                {"name": "23.3.2 Legítima material"},
+                                {"name": "23.3.3 Reforma de Justiniano"}
+                            ]}
+                        ]}
                     ]
                 }
             ]
@@ -1165,18 +913,18 @@
         const contentMap = {
             '#home': {
                 title: 'Presentación',
-                html: `<div class="prose"><div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 items-center"><div><h2 class="text-3xl font-bold text-secondary mb-4 !mt-0">Bienvenida al curso de Derecho Romano</h2><p class="text-secondary">Esta asignatura es vuestra primera toma de contacto con el razonamiento jurídico. El objetivo principal es que aprendáis a identificar problemas, a encontrar la norma o principio aplicable y a argumentar una solución.</p><p class="text-secondary mb-6">Este enfoque será la base de vuestra evaluación y de vuestra formación como juristas.</p><a href="0. presentacion.pdf" target="_blank" rel="noopener noreferrer" class="no-prose inline-block bg-amber-600 text-white font-bold py-2 px-5 rounded-lg hover:bg-amber-700 transition-colors no-underline mb-8">Ver Presentación de la Asignatura</a></div><div class="not-prose mt-6 md:mt-0"><button id="open-video-modal-btn" class="relative w-full max-w-md mx-auto rounded-lg overflow-hidden group focus:outline-none focus:ring-4 focus:ring-amber-500 shadow-xl" aria-label="Ver video de presentación"><img src="video_preview.jpg" alt="Vista previa del vídeo sobre Derecho Romano" class="w-full h-auto"><div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center"><svg class="w-16 h-16 text-white opacity-80 group-hover:opacity-100 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg></div></button></div></div><h3 class="text-2xl font-semibold text-secondary mt-12 mb-2">Metodología y Recursos</h3><p class="text-secondary">Para facilitar vuestro aprendizaje, hemos preparado una serie de guiones y recursos. Es fundamental que los uséis como un mapa de estudio antes de cada clase junto con el manual, completándolos con las explicaciones del profesor.</p></div>`
+                html: `<div class="prose"><div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 items-center"><div><h2 class="text-3xl font-bold text-secondary mb-4 !mt-0">Bienvenida al curso de Derecho Romano</h2><p class="text-secondary">Esta asignatura es vuestra primera toma de contacto con el razonamiento jurídico. El objetivo principal es que aprendáis a identificar problemas, a encontrar la norma o principio aplicable y a argumentar una solución.</p><p class="text-secondary mb-6">Este enfoque será la base de vuestra evaluación y de vuestra formación como juristas.</p><details class="infografia-container not-prose mb-8"><summary><span>Ver presentación de la asignatura</span><svg class="w-6 h-6 infografia-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path></svg></summary><div class="infografia-content"><div class="bg-white rounded-lg border border-amber-200 p-5 text-slate-700 space-y-2"><p><strong>Derecho Romano</strong> · 6 ECTS · primer cuatrimestre del Grado en Derecho.</p><p><strong>Profesor:</strong> Adolfo A. Díaz-Bautista Cremades (<a href="https://diaz-bautista.netlify.app/" target="_blank" rel="noopener noreferrer" class="text-amber-700 hover:text-amber-800 font-semibold">web personal</a>).</p><p><strong>Contacto:</strong> <a href="mailto:adiaz-bautista@um.es" class="text-amber-700 hover:text-amber-800 font-semibold">adiaz-bautista@um.es</a> / 868883103.</p><p><strong>Manuales:</strong> <em>Lecciones de Derecho Romano</em> (Diego Marín, 2026) y <em>Bases del Sistema Jurídico Continental</em> (Tirant lo Blanch, 2026).</p><p><strong>Evaluación:</strong> 80% examen oral, 20% casos prácticos.</p></div></div></details></div><div class="not-prose mt-6 md:mt-0"><button id="open-video-modal-btn" class="relative w-full max-w-md mx-auto rounded-lg overflow-hidden group focus:outline-none focus:ring-4 focus:ring-amber-500 shadow-xl" aria-label="Ver video de presentación"><img src="video_preview.jpg" alt="Vista previa del vídeo sobre Derecho Romano" class="w-full h-auto"><div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center"><svg class="w-16 h-16 text-white opacity-80 group-hover:opacity-100 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg></div></button></div></div><h3 class="text-2xl font-semibold text-secondary mt-12 mb-2">Metodología y Recursos</h3><p class="text-secondary">Para facilitar vuestro aprendizaje, hemos preparado una serie de guiones y recursos. Es fundamental que los uséis como un mapa de estudio antes de cada clase junto con el manual, completándolos con las explicaciones del profesor.</p></div>`
             },
             '#caselab': {
                 title: 'Laboratorio de Casos',
-                html: `<section class="infographic-font bg-white rounded-lg shadow-md p-6"><h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">Laboratorio de Casos Romanos</h2><p class="text-center max-w-4xl mx-auto mb-6">Introduce un concepto de derecho romano (ej: usufructo, dote, compraventa) y la IA generará un caso de estudio para que lo analices.</p><div class="text-center text-sm text-gray-500 mb-6 bg-amber-50 border border-amber-200 rounded-lg p-3 max-w-xl mx-auto"><p><strong>Advertencia:</strong> Los casos y soluciones son generados por la IA de Google (Gemini) y no han sido supervisados por el profesor. Úsalos como una herramienta de práctica y no como una fuente autorizada.</p></div><div class="max-w-xl mx-auto"><div class="flex flex-col sm:flex-row gap-2"><input type="text" id="case-study-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5733]" placeholder="Ej: Usufructo" maxlength="100" aria-label="Concepto de derecho romano"><button id="generate-case-btn" class="bg-[#C70039] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#900C3F] transition-colors flex items-center justify-center" aria-busy="false"><span id="btn-text">✨ Generar Caso</span><div id="btn-loader" class="loader hidden" style="width:20px; height:20px; border-width:3px;" aria-hidden="true"></div></button></div><div id="case-study-result" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[100px]" role="region" aria-live="polite" aria-atomic="true"><p class="text-gray-500">Aquí aparecerá tu caso de estudio...</p></div><div class="text-center mt-4"><button id="solve-case-btn" class="hidden bg-[#FF5733] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#C70039] transition-colors flex items-center justify-center mx-auto" aria-busy="false"><span id="solve-btn-text">Ver Solución</span><div id="solve-btn-loader" class="loader hidden" style="width:20px; height:20px; border-width:3px;" aria-hidden="true"></div></button></div><div id="case-solution-result" class="hidden mt-6 p-4 bg-green-50 rounded-lg border border-green-200" role="region" aria-live="polite" aria-atomic="true"></div></div></section>`
+                html: `<section class="infographic-font bg-white rounded-lg shadow-md p-6"><h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">Laboratorio de Casos Romanos</h2><p class="text-center max-w-4xl mx-auto mb-6">Introduce un concepto de Derecho romano y la herramienta generará un caso breve para analizarlo y, si lo deseas, propondrá después una solución orientativa.</p><div class="status-pill" id="caselab-status">Comprobando conexión con el servidor…</div><div class="tool-notice"><strong>Herramienta experimental.</strong> Los casos y las soluciones son generados automáticamente y deben contrastarse con el manual, las explicaciones de clase y el criterio del profesor.</div><div class="example-chips" data-target-input="case-study-input"><button type="button" class="example-chip">usufructo</button><button type="button" class="example-chip">dote</button><button type="button" class="example-chip">compraventa</button><button type="button" class="example-chip">litis contestatio</button></div><div class="text-center text-sm text-gray-500 mb-6 bg-amber-50 border border-amber-200 rounded-lg p-3 max-w-xl mx-auto"><p><strong>Advertencia:</strong> Los casos y soluciones son generados por la IA de Google (Gemini) y no han sido supervisados por el profesor. Úsalos como una herramienta de práctica y no como una fuente autorizada.</p></div><div class="max-w-xl mx-auto"><div class="flex flex-col sm:flex-row gap-2"><input type="text" id="case-study-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5733]" placeholder="Ej: Usufructo" maxlength="100" aria-label="Concepto de derecho romano"><button id="generate-case-btn" class="bg-[#C70039] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#900C3F] transition-colors flex items-center justify-center" aria-busy="false"><span id="btn-text">✨ Generar Caso</span><div id="btn-loader" class="loader hidden" style="width:20px; height:20px; border-width:3px;" aria-hidden="true"></div></button></div><div class="result-panel"><div class="result-panel-header">Caso generado</div><div class="result-panel-body"><div id="case-study-result" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[100px]" role="region" aria-live="polite" aria-atomic="true"><p class="text-gray-500">Aquí aparecerá tu caso de estudio...</p></div><div class="text-center mt-4"><button id="solve-case-btn" class="hidden bg-[#FF5733] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#C70039] transition-colors flex items-center justify-center mx-auto" aria-busy="false"><span id="solve-btn-text">Ver Solución</span><div id="solve-btn-loader" class="loader hidden" style="width:20px; height:20px; border-width:3px;" aria-hidden="true"></div></button></div><div></div></div></div><div id="case-solution-result" class="hidden result-panel"><div class="result-panel-header">Solución orientativa</div><div class="result-panel-body" mt-6 p-4 bg-green-50 rounded-lg border border-green-200" role="region" aria-live="polite" aria-atomic="true"></div></div></section>`
             },
             '#ulpiano': {
                 title: 'Consulta a UlpianoIA',
-                html: `<section class="infographic-font bg-white rounded-lg shadow-md p-6" style="color: #333;"><h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">Consulta a UlpianoIA</h2><p class="text-center max-w-4xl mx-auto mb-6">Hazle una pregunta a UlpianoIA sobre cualquier tema de Derecho Romano.</p><div class="text-center text-sm text-gray-500 mb-6 bg-amber-50 border border-amber-200 rounded-lg p-3 max-w-xl mx-auto"><p><strong>Advertencia:</strong> Las respuestas de Ulpiano son generadas por la IA de Google (Gemini) y no han sido supervisadas por el profesor. Úsalas como una herramienta de apoyo y no como una fuente autorizada para tus exámenes.</p></div><div class="max-w-xl mx-auto"><div class="flex flex-col sm:flex-row gap-2"><textarea id="queryInput" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5733]" placeholder="Escribe tu pregunta aquí..." maxlength="500" aria-label="Tu pregunta sobre Derecho Romano"></textarea><button id="submitQueryBtn" class="bg-[#C70039] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#900C3F] transition-colors flex items-center justify-center" aria-busy="false"><span id="submit-btn-text">✨ Enviar consulta</span><div id="submit-btn-loader" class="loader hidden" style="border-top-color: #fff; width:20px; height:20px; border-width:3px;" aria-hidden="true"></div></button></div><div id="queryResult" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 hidden" role="region" aria-live="polite" aria-atomic="true"><h3 class="text-xl font-semibold mb-2 text-[#900C3F]">Respuesta de UlpianoIA:</h3><div id="queryResultText"></div></div></div></section>`
+                html: `<section class="infographic-font bg-white rounded-lg shadow-md p-6" style="color: #333;"><h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">Consulta a UlpianoIA</h2><p class="text-center max-w-4xl mx-auto mb-6">Plantea una duda breve sobre una institución de Derecho romano y obtendrás una respuesta orientativa conectada con el manual y con referencias de actualización.</p><div class="status-pill" id="ulpiano-status">Comprobando conexión con el servidor…</div><div class="tool-notice"><strong>Herramienta experimental.</strong> La respuesta es de apoyo al estudio y no sustituye la explicación de clase ni constituye una fuente oficial para el examen.</div><div class="example-chips" data-target-input="queryInput"><button type="button" class="example-chip">posesión</button><button type="button" class="example-chip">servidumbre</button><button type="button" class="example-chip">stipulatio</button><button type="button" class="example-chip">herencia yacente</button></div><div class="text-center text-sm text-gray-500 mb-6 bg-amber-50 border border-amber-200 rounded-lg p-3 max-w-xl mx-auto"><p><strong>Advertencia:</strong> Las respuestas de Ulpiano son generadas por la IA de Google (Gemini) y no han sido supervisadas por el profesor. Úsalas como una herramienta de apoyo y no como una fuente autorizada para tus exámenes.</p></div><div class="max-w-xl mx-auto"><div class="flex flex-col sm:flex-row gap-2"><textarea id="queryInput" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5733]" placeholder="Escribe tu pregunta aquí..." maxlength="500" aria-label="Tu pregunta sobre Derecho Romano"></textarea><button id="submitQueryBtn" class="bg-[#C70039] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#900C3F] transition-colors flex items-center justify-center" aria-busy="false"><span id="submit-btn-text">✨ Enviar consulta</span><div id="submit-btn-loader" class="loader hidden" style="border-top-color: #fff; width:20px; height:20px; border-width:3px;" aria-hidden="true"></div></button></div><div id="queryResult" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 hidden" role="region" aria-live="polite" aria-atomic="true"><h3 class="text-xl font-semibold mb-2 text-[#900C3F]">Respuesta de UlpianoIA:</h3><div id="queryResultText"></div></div></div></div></div></section>`
             },
 '#bloque1': {
-                title: 'Bloque I: Fundamentos',
+                title: 'Bloque I: Fundamentos e Historia',
                 html: `<div class="prose"><p class="text-secondary">Este bloque introduce los conceptos más básicos para comprender el Derecho. Exploraremos la diferencia entre los distintos tipos de normas de conducta, la aportación fundamental de Roma al Derecho y su evolución histórica, así como su pervivencia hasta nuestros días.</p></div>
                 
                 <details class="infografia-container">
@@ -1198,9 +946,9 @@
                     </summary>
                     <div class="infografia-content">
                         <div class="space-y-4">
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 1: Ideas fundamentales</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/7EBPwjNWNeesrvtUgn1z1H?si=Zq5Yc1qDSxuhWl97MVkboA" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 2: Historia del Derecho Romano</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/6cU7dpW7hutUqkMGgh8Skc?si=DsBw44jfQoap7pBlo6t_zQ" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 3: Persistencia del Derecho Romano</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/2HKvLfGckWNzmzewxHrnYv?si=kTlHzhCJTF--_8qMbK-DpQ" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Ideas fundamentales</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/7EBPwjNWNeesrvtUgn1z1H?si=Zq5Yc1qDSxuhWl97MVkboA" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Historia del Derecho Romano</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/6cU7dpW7hutUqkMGgh8Skc?si=DsBw44jfQoap7pBlo6t_zQ" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Persistencia del Derecho Romano</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/2HKvLfGckWNzmzewxHrnYv?si=kTlHzhCJTF--_8qMbK-DpQ" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
                         </div>
                     </div>
                 </details>
@@ -1333,8 +1081,8 @@
                     </summary>
                     <div class="infografia-content">
                         <div class="space-y-4">
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 4: El sujeto del derecho</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/6D2mPBSBGo8AcyGWXO914i?si=btU9P3-nRryXxr_vFvu0Kw" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 5: La familia</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/677MZlIOUO1eCMyec6AtnZ?si=9etnCEy0S92jHp88-NXWog" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">El sujeto del derecho</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/6D2mPBSBGo8AcyGWXO914i?si=btU9P3-nRryXxr_vFvu0Kw" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">La familia</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/677MZlIOUO1eCMyec6AtnZ?si=9etnCEy0S92jHp88-NXWog" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
                         </div>
                     </div>
                 </details>
@@ -1510,7 +1258,7 @@
                     </summary>
                     <div class="infografia-content">
                         <div class="space-y-4">
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 6: Hechos, actos y negocios jurídicos</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/4o6JhmuT1p0ghazrVCR36z?si=ENP_QlRGQXay7bZF_HpOtg" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Hechos, actos y negocios jurídicos</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/4o6JhmuT1p0ghazrVCR36z?si=ENP_QlRGQXay7bZF_HpOtg" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
                         </div>
                     </div>
                 </details>
@@ -1614,7 +1362,7 @@
                 `
             },
     '#bloque4': {
-                title: 'Bloque IV: Procedimiento',
+                title: 'Bloque IV: El Proceso',
                 html: `<div class="prose"><p class="text-secondary">En este bloque se analiza la defensa de los derechos, centrada en los mecanismos judiciales que permitían a los ciudadanos romanos resolver sus conflictos.</p></div>
                 
                 <details class="infografia-container">
@@ -1634,10 +1382,10 @@
                     </summary>
                     <div class="infografia-content">
                         <div class="space-y-4">
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 7: Generalidades sobre el proceso. Las legis actiones</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/4Kxm6qJUtJOr6sY2BswiJd?si=n1wMFv9FSYaMq1tvjrvwAQ" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 8: La acción y el procedimiento formulario</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/5GhFnFfrdhxX7Nh8GEaDU0" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 9: La litis contestatio y los efectos de la sentencia</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/2LBOetDA2jmWk5LS1M4KRn?si=XRgqZ46rSg2Qd4p2CrY_pA" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 10: La cognitio extra ordinem y la protección pretoria</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/72D8BGd96H4YvJmk5cuqJd?si=qrdoDx0VQ-ex-2uIVodkSA" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Generalidades del proceso romano</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/4Kxm6qJUtJOr6sY2BswiJd?si=n1wMFv9FSYaMq1tvjrvwAQ" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">El procedimiento formulario</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/5GhFnFfrdhxX7Nh8GEaDU0" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Litis contestatio, sentencia y ejecución</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/2LBOetDA2jmWk5LS1M4KRn?si=XRgqZ46rSg2Qd4p2CrY_pA" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Cognitio extra ordinem y protección pretoria</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/72D8BGd96H4YvJmk5cuqJd?si=qrdoDx0VQ-ex-2uIVodkSA" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
                         </div>
                     </div>
                 </details>
@@ -1843,9 +1591,9 @@
                     </summary>
                     <div class="infografia-content">
                         <div class="space-y-4">
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 11: Derechos Reales (I)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/7f7hE70hq8ZBjhptnMZB8l?si=DnGCgFrLQYKPcxV187dOKQ" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 12: Derechos Reales (II)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/2TJUMq96W2ZZpjmZ93fqSJ?si=8cCSj59HS5ac7fuh-6MCgA" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 13: Derechos Reales (III)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/1ogj4z9c7svGaA5rws6vX2?si=XDBRM1b6QRmEXEIHsuppeQ" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Derechos Reales (I)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/7f7hE70hq8ZBjhptnMZB8l?si=DnGCgFrLQYKPcxV187dOKQ" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Derechos Reales (II)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/2TJUMq96W2ZZpjmZ93fqSJ?si=8cCSj59HS5ac7fuh-6MCgA" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Derechos Reales (III)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/1ogj4z9c7svGaA5rws6vX2?si=XDBRM1b6QRmEXEIHsuppeQ" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
                         </div>
                     </div>
                 </details>
@@ -2099,11 +1847,11 @@
                     </summary>
                     <div class="infografia-content">
                         <div class="space-y-4">
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 14: Obligaciones (I)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/37Y0yAOpQhEVSmbM3Ms0ZM?si=kD_aVR3nSOOfCtT7zOW88w" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 15: Obligaciones (II)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/4dpBJ4zlYf3pC434CwQdPd?si=7DRazvsURbWosyEChBNQMA" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 16: Obligaciones (III)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/6UH5Hs5ffo2mPmVeGYSWLg?si=o6YqSQXrS0qo_zp19UbDLw" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 17: Obligaciones (IV)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/61wnFMJtSj14T5EtqnqmAG?si=NydVTDnIR2OwSFls9y0Qvg" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 18: Obligaciones (V)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/6bBrEq8ahyB3mHj8Btay16?si=J36R3fvvSbu6WSDCrx31LQ" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Obligaciones (I)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/37Y0yAOpQhEVSmbM3Ms0ZM?si=kD_aVR3nSOOfCtT7zOW88w" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Obligaciones (II)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/4dpBJ4zlYf3pC434CwQdPd?si=7DRazvsURbWosyEChBNQMA" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Obligaciones (III)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/6UH5Hs5ffo2mPmVeGYSWLg?si=o6YqSQXrS0qo_zp19UbDLw" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Obligaciones (IV)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/61wnFMJtSj14T5EtqnqmAG?si=NydVTDnIR2OwSFls9y0Qvg" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Obligaciones (V)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/6bBrEq8ahyB3mHj8Btay16?si=J36R3fvvSbu6WSDCrx31LQ" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
                         </div>
                     </div>
                 </details>
@@ -2680,9 +2428,9 @@
                     </summary>
                     <div class="infografia-content">
                         <div class="space-y-4">
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 19: Sucesiones (I)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/2gvvqYT8xPP4OYErc5eE9J?si=LpIeaa3PRniE-IjccmLV2g" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 20: Sucesiones (II)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/5GkVFHllI7hOzI0oVDpy1X?si=cKCMf5fkR_eCIjRgFDvnnQ" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
-                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Tema 21: Sucesiones (III)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/4mjQWbnKWMHeZoYpsgzzpA?si=umiiHBZ0QOKqg1IMyUKCvg" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Sucesiones (I)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/2gvvqYT8xPP4OYErc5eE9J?si=LpIeaa3PRniE-IjccmLV2g" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Sucesiones (II)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/5GkVFHllI7hOzI0oVDpy1X?si=cKCMf5fkR_eCIjRgFDvnnQ" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
+                            <div class="topic-card" style="background-color: #fff; border-color: #e5e7eb;"><h4 class="text-xl font-semibold text-primary mb-2 font-heading">Sucesiones (III)</h4><div class="topic-links flex flex-wrap gap-4"><a href="https://open.spotify.com/episode/4mjQWbnKWMHeZoYpsgzzpA?si=umiiHBZ0QOKqg1IMyUKCvg" target="_blank" class="topic-link-button"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg><span>Escuchar Podcast</span></a></div></div>
                         </div>
                     </div>
                 </details>
@@ -2825,10 +2573,10 @@
        
             
             '#mapamental': {
-                title: 'Mapa Mental del Manual',
+                title: 'Mapa Mental de la Asignatura',
                 html: `<div class="prose">
-                          <h2 class="text-3xl font-bold text-secondary mb-4 !mt-0">Mapa Mental del Manual</h2>
-                          <p class="text-secondary">Aquí tienes una estructura conceptual de toda la asignatura. Haz clic en los nodos para expandir y contraer las ramas. Puedes arrastrar el mapa y usar la rueda del ratón para hacer zoom.</p>
+                          <h2 class="text-3xl font-bold text-secondary mb-4 !mt-0">Mapa Mental de la Asignatura</h2>
+                          <p class="text-secondary">Aquí tienes una estructura conceptual adaptada al índice del manual de 2026. Haz clic en los nodos para expandir y contraer las ramas. Puedes arrastrar el mapa y usar la rueda del ratón para hacer zoom.</p>
                        </div>
                        
                        <div id="mapa-mental-container" class="mapa-mental-container mt-6"></div>
@@ -2840,14 +2588,7 @@
             '#bibliografia': {
                 title: 'Recursos',
                 html: `<div class="prose">
-                    <h2 class="text-3xl font-bold text-secondary mb-4">Bibliografía y Recursos</h2>
-                    <p class="text-secondary">El manual básico para la asignatura es:</p>
-                    <div class="not-prose p-4 bg-white rounded-lg shadow border-l-4 border-amber-600">
-                        <h4 class="text-xl font-semibold text-primary font-heading">"El derecho romano como introducción al Derecho"</h4>
-                        <p class="text-secondary">Autores: Antonio Díaz Bautista y Adolfo A. Díaz-Bautista Cremades.</p>
-                        <p class="text-sm text-gray-500 mb-0">Cuarta edición, 2023.</p>
-                    </div>
-                    <h3 class="text-2xl font-semibold text-secondary mt-8 mb-4">Otras obras recomendadas</h3>
+                    <h2 class="text-3xl font-bold text-secondary mb-4">Bibliografía y Recursos</h2><p class="text-secondary">Los manuales de la asignatura son los siguientes:</p><div class="not-prose space-y-4"><div class="p-4 bg-white rounded-lg shadow border-l-4 border-amber-600"><h4 class="text-xl font-semibold text-primary font-heading">Lecciones de Derecho Romano</h4><p class="text-secondary">Diego Marín, 2026.</p></div><div class="p-4 bg-white rounded-lg shadow border-l-4 border-amber-600"><h4 class="text-xl font-semibold text-primary font-heading">Bases del Sistema Jurídico Continental</h4><p class="text-secondary">Tirant lo Blanch, 2026.</p></div></div><h3 class="text-2xl font-semibold text-secondary mt-8 mb-4">Otras obras recomendadas</h3>
                     <ul class="text-secondary space-y-2">
                         <li><span class="font-semibold">Fernández de Buján, A.</span>: Derecho Romano, Dykinson, 2024.</li>
                         <li><span class="font-semibold">Castán Pérez-Gómez, S. e.a.</span>: Derecho privado romano, Reus, 2018.</li>
@@ -2858,18 +2599,7 @@
                         <li><a href="https://www.boe.es/biblioteca_juridica/publicacion.php?id=PUB-DR-2022-266_FUENTES_DEL_DERECHO_ROMANO_ONLINE&tipo=L&modo=1" class="text-amber-700 hover:text-amber-800 font-semibold">Fuentes del Derecho Romano (BOE)</a></li>
                         <li><a href="https://droitromain.univ-grenoble-alpes.fr/" class="text-amber-700 hover:text-amber-800 font-semibold">The Roman Law Library</a></li>
                     </ul>
-                    <h3 class="text-2xl font-semibold text-secondary mt-8 mb-2">Recursos Adicionales</h3>
-                    <ul class="list-disc list-inside space-y-2">
-                        <li><a href="https://webs.um.es/jal/" class="text-amber-700 hover:text-amber-800 font-semibold">CIVILizándonos. Web del profesor Joaquín Ataz López</a></li>
-                        <li><a href="https://derecho-romano.blogspot.com/" class="text-amber-700 hover:text-amber-800 font-semibold">Blog de Derecho Romano</a></li>
-                        <li><a href="https://www.youtube.com/playlist?list=PLhqyfgIdoGr2SrQMeLPg9Bdl4ThnF16a3" class="text-amber-700 hover:text-amber-800 font-semibold">Roma, un Imperio sin Límites con Mary Beard (YouTube)</a></li>
-                        <li><a href="https://www.um.es/web/biblioteca/conoce-biblioteca/biblioteca/puntos-de-servicio/biblioteca-juridica/acceso-a-los-recursos-electr%C3%B3nicos-de-cc-jur%C3%ADdicas-y-sociales" class="text-amber-700 hover:text-amber-800 font-semibold">Recursos electrónicos de CC. Jurídicas y Sociales (UMU)</a></li>
-                        <li><a href="https://www.um.es/web/derecho/conoce-la-facultad/estructura/servicios/biblioteca-digital" class="text-amber-700 hover:text-amber-800 font-semibold">Biblioteca Digital de la Facultad de Derecho (UMU)</a></li>
-                        <li><a href="mailto:adiaz-bautista@um.es" class="text-amber-700 hover:text-amber-800 font-semibold">Tutorías con el profesor (adiaz-bautista@um.es)</a></li>
-                        <li><a href="https://open.spotify.com/playlist/6nKuBgwSXebcuw6Ekkn8xg?si=HEMGtXLiSoy9LGeyjSMT1w" class="text-amber-700 hover:text-amber-800 font-semibold">Escuchar la lista de reproducción de la asignatura en Spotify</a></li>
-                       <li><a href="http://www.iocandicausa.com/" class="text-amber-700 hover:text-amber-800 font-semibold">Iocandi causa (blog del profesor Jose D. Rodríguez Martín</a></li>
- 
-                    </ul>
+                    <h3 class="text-2xl font-semibold text-secondary mt-8 mb-2">Recursos Adicionales</h3><ul class="list-disc list-inside space-y-2"><li><span class="font-semibold">Manuales de la asignatura:</span> <em>Lecciones de Derecho Romano</em> (Diego Marín, 2026) y <em>Bases del Sistema Jurídico Continental</em> (Tirant lo Blanch, 2026).</li><li><a href="https://diaz-bautista.netlify.app/" target="_blank" rel="noopener noreferrer" class="text-amber-700 hover:text-amber-800 font-semibold">Web del profesor Adolfo A. Díaz-Bautista Cremades</a></li><li><a href="mailto:adiaz-bautista@um.es" class="text-amber-700 hover:text-amber-800 font-semibold">Contacto: adiaz-bautista@um.es</a></li><li><a href="https://open.spotify.com/playlist/6nKuBgwSXebcuw6Ekkn8xg?si=HEMGtXLiSoy9LGeyjSMT1w" target="_blank" rel="noopener noreferrer" class="text-amber-700 hover:text-amber-800 font-semibold">Escuchar la lista de reproducción de la asignatura en Spotify</a></li><li><a href="https://www.um.es/web/biblioteca/conoce-biblioteca/biblioteca/puntos-de-servicio/biblioteca-juridica/acceso-a-los-recursos-electr%C3%B3nicos-de-cc-jur%C3%ADdicas-y-sociales" target="_blank" rel="noopener noreferrer" class="text-amber-700 hover:text-amber-800 font-semibold">Recursos electrónicos de CC. Jurídicas y Sociales UMU</a></li></ul>
                     </div>`
             }
         };
@@ -3112,6 +2842,48 @@
         }
 
 
+        
+        function initExampleChips() {
+            document.querySelectorAll('.example-chips').forEach(group => {
+                const targetId = group.getAttribute('data-target-input');
+                const input = document.getElementById(targetId);
+                if (!input) return;
+                group.querySelectorAll('.example-chip').forEach(chip => {
+                    chip.addEventListener('click', () => {
+                        input.value = chip.textContent.trim();
+                        input.focus();
+                    });
+                });
+            });
+        }
+
+        async function checkServerStatus(statusElementId) {
+            const el = document.getElementById(statusElementId);
+            if (!el) return;
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 7000);
+                const response = await fetch(API_BASE_URL + '/api/buscar-pagina', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ termino: 'posesión' }),
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                if (response.ok) {
+                    el.textContent = 'Servidor disponible';
+                    el.classList.add('status-online');
+                    el.classList.remove('status-offline');
+                } else {
+                    el.textContent = 'Servidor no disponible';
+                    el.classList.add('status-offline');
+                }
+            } catch (e) {
+                el.textContent = 'Servidor no disponible';
+                el.classList.add('status-offline');
+            }
+        }
+
         function initUlpianoPage() {
             const queryInput = document.getElementById('queryInput');
             const submitQueryBtn = document.getElementById('submitQueryBtn');
@@ -3120,6 +2892,9 @@
             const submitBtnText = document.getElementById('submit-btn-text');
             const submitBtnLoader = document.getElementById('submit-btn-loader');
             
+            initExampleChips();
+            checkServerStatus('ulpiano-status');
+
             submitQueryBtn.addEventListener('click', async () => {
                 const userQuery = queryInput.value.trim();
                 queryResult.classList.remove('hidden');
@@ -3172,6 +2947,9 @@
             const solveBtnLoader = document.getElementById('solve-btn-loader');
             
             let currentCaseText = '';
+
+            initExampleChips();
+            checkServerStatus('caselab-status');
 
             generateBtn.addEventListener('click', async () => {
                 const termino = caseInput.value.trim();
