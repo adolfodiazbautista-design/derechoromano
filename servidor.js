@@ -67,21 +67,52 @@ function normalizarTexto(texto) {
 }
 
 // --- CONFIGURACIÓN ---
-app.use(cors());
+app.use(cors({
+    origin: [
+        'https://derechoromano.netlify.app',
+        'http://localhost:3000' // solo para desarrollo local
+    ],
+    methods: ['POST', 'GET'],
+    allowedHeaders: ['Content-Type']
+}));
 app.use(express.json({ limit: "1mb" }));
 app.use(helmet({
-    contentSecurityPolicy: false,
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: [
+                "'self'",
+                "'unsafe-inline'",           // necesario para Tailwind CDN y scripts inline
+                "https://cdn.tailwindcss.com",
+                "https://ajax.googleapis.com",
+                "https://fonts.googleapis.com"
+            ],
+            styleSrc: [
+                "'self'",
+                "'unsafe-inline'",
+                "https://fonts.googleapis.com"
+            ],
+            fontSrc: ["'self'", "https://fonts.gstatic.com"],
+            connectSrc: [
+                "'self'",
+                "https://derechoromano-ecma.onrender.com",
+                "https://generativelanguage.googleapis.com"
+            ],
+            imgSrc: ["'self'", "data:"],
+            mediaSrc: ["'self'"]
+        }
+    }
 }));
 app.set('trust proxy', 1);
 
 app.use(express.static(__dirname));
 
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100, 
+    windowMs: 15 * 60 * 1000, // 15 minutos
+    max: 40, // máximo 40 peticiones por ventana (suficiente para uso académico normal)
     standardHeaders: true,
     legacyHeaders: false,
-    message: { error: 'RATE_LIMIT_EXCEEDED', message: 'Demasiadas peticiones.' }
+    message: { error: 'RATE_LIMIT_EXCEEDED', message: 'Demasiadas peticiones. Por favor, espera unos minutos.' }
 });
 app.use('/api/', limiter);
 
