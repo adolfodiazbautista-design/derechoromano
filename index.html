@@ -11,15 +11,18 @@
     <meta property="og:title" content="Guía Interactiva de Derecho Romano">
     <meta property="og:description" content="Recursos didácticos de Derecho Romano con IA - Universidad de Murcia">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://derechoromano.netlify.app">
+    <meta property="og:url" content="https://derechoromano.netlify.app/">
+    <meta property="og:image" content="https://derechoromano.netlify.app/og-image.png">
+    <meta property="og:locale" content="es_ES">
+
+    <!-- Tailwind CSS (movido aquí para evitar FOUC) -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Lato:wght@400;700&family=Inter:wght@400;500;600;700;900&display=swap"
-      rel="stylesheet"
-      media="print" 
-      onload="this.media='all'">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Fuentes: preload correcto, sin truco media=print -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Lato:wght@400;700&family=Inter:wght@400;500;600;700;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Lato:wght@400;700&family=Inter:wght@400;500;600;700;900&display=swap">
     
     
     <style>
@@ -27,7 +30,7 @@
     font-family: 'Lato', sans-serif; 
     color: #334155; 
     background-color: #fcfcfb; 
-    zoom: 1.25; /* <--- ESTO AUMENTA TODO UN 25% */
+    font-size: 112.5%; /* 18px base — equivalente visual al antiguo zoom:1.25, compatible con todos los navegadores */
 }
         h1, h2, h3, .font-heading { font-family: 'Cormorant Garamond', serif; }
         .text-primary { color: #334155; } .text-secondary { color: #475569; }
@@ -36,27 +39,22 @@
         .sidebar-link { position: relative; transition: background-color 0.2s ease-in-out; padding-left: 1.5rem; }
         .sidebar-link::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%) scaleX(0); height: 70%; width: 4px; background-color: #64748b; border-radius: 2px; transition: transform 0.2s ease-in-out; transform-origin: left; }
         .sidebar-link:hover::before, .sidebar-link-active::before { transform: translateY(-50%) scaleX(1); }
-        .sidebar-link-active { background-color: #334155; color: #cbd5e1; }
+        .sidebar-link-active { background-color: #334155; color: #f1f5f9; }
         #content-area .prose { max-width: 900px; margin-left: auto; margin-right: auto; }
         .topic-card { background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05); transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out; }
         .topic-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07); }
         .topic-links { border-top: 1px solid #f3f4f6; padding-top: 1rem; margin-top: 1rem; }
         .topic-link-button { display: inline-flex; align-items: center; gap: 0.5rem; background-color: #f3f4f6; color: #4b5563; font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 500; padding: 0.5rem 1rem; border-radius: 9999px; text-decoration: none; transition: background-color 0.2s, color 0.2s; }
         .topic-link-button:hover { background-color: #d6d3d1; color: #1f2937; }
-        details.infografia-container { border: 1px solid #e5e7eb; border-radius: 0.75rem; margin-top: 1.5rem; background-color: #ffffff; }
-        details.infografia-container summary { cursor: pointer; padding: 1rem 1.5rem; font-family: 'Inter', sans-serif; font-weight: 600; color: #334155; display: flex; justify-content: space-between; align-items: center; transition: background-color 0.2s; }
-        details.infografia-container summary:hover { background-color: #f1f5f9; }
-        details.infografia-container summary::-webkit-details-marker { display: none; }
-        .infografia-arrow { transition: transform 0.2s; }
-        details[open] .infografia-arrow { transform: rotate(180deg); }
-        .infografia-content { padding: 1.5rem; border-top: 1px solid #e5e7eb; background-color: #fcfcfb; }
+        /* -- Estilos de infografías: ver bloque unificado más abajo -- */
         .error-box { background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; padding: 1rem; margin-top: 0.5rem; }
         .error-box p { color: #991b1b; margin: 0; }
         
         /* Estilos del Mapa Mental (Estilo Imagen) */
         .mapa-mental-container {
             width: 100%;
-            height: 90vh;
+            height: 70vh;
+            min-height: 400px;
             overflow: hidden;
             background-color: #ffffff;
             border-radius: 0.75rem;
@@ -377,18 +375,7 @@
 .subtle-helper { font-size:0.95rem; color:#64748b; margin-top:0.5rem; }
 
 
-/* Variante sin exceso de ámbar, aplicada sobre indexRES2 */
-body { background-color: #fcfcfb !important; color: #334155 !important; }
-.text-primary { color: #334155 !important; }
-.sidebar-link-active { background-color: #334155 !important; color: #e2e8f0 !important; }
-.sidebar-link::before { background-color: #94a3b8 !important; }
-details.infografia-container summary { background-color: #ffffff !important; border: 1px solid #e2e8f0 !important; color: #334155 !important; }
-details.infografia-container summary:hover { background-color: #f8fafc !important; }
-details.infografia-container[open] summary { background-color: #f1f5f9 !important; border-bottom-color: transparent !important; }
-details.infografia-container .infografia-content { background-color: #ffffff !important; border: 1px solid #e2e8f0 !important; border-top: none !important; }
-.infografia-arrow { color: #64748b !important; }
-.esquema-guion-v9 h3, .flashcard-problema h4, .flashcard-solucion h5 { color: #334155 !important; }
-.topic-card { box-shadow: 0 3px 10px -3px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.04) !important; }
+/* Fin de estilos */
 
 </style>  
     
@@ -3175,8 +3162,7 @@ document.addEventListener('click', function(event) {
     }
 });
 </script>
-<script src="https://cdn.tailwindcss.com"></script>
-    
+    <!-- D3.js para el mapa mental -->
     <script src="https://ajax.googleapis.com/ajax/libs/d3js/7.8.5/d3.min.js"></script>
 </body>
 </html>
