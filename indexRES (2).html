@@ -11,18 +11,15 @@
     <meta property="og:title" content="Guía Interactiva de Derecho Romano">
     <meta property="og:description" content="Recursos didácticos de Derecho Romano con IA - Universidad de Murcia">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://derechoromano.netlify.app/">
-    <meta property="og:image" content="https://derechoromano.netlify.app/og-image.png">
-    <meta property="og:locale" content="es_ES">
-
-    <!-- Tailwind CSS (movido aquí para evitar FOUC) -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta property="og:url" content="https://derechoromano.netlify.app">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Fuentes: preload correcto, sin truco media=print -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Lato:wght@400;700&family=Inter:wght@400;500;600;700;900&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Lato:wght@400;700&family=Inter:wght@400;500;600;700;900&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Lato:wght@400;700&family=Inter:wght@400;500;600;700;900&display=swap"
+      rel="stylesheet"
+      media="print" 
+      onload="this.media='all'">
     
     
     <style>
@@ -30,7 +27,7 @@
     font-family: 'Lato', sans-serif; 
     color: #334155; 
     background-color: #fcfcfb; 
-    font-size: 112.5%; /* 18px base — equivalente visual al antiguo zoom:1.25, compatible con todos los navegadores */
+    zoom: 1.25; /* <--- ESTO AUMENTA TODO UN 25% */
 }
         h1, h2, h3, .font-heading { font-family: 'Cormorant Garamond', serif; }
         .text-primary { color: #334155; } .text-secondary { color: #475569; }
@@ -39,22 +36,27 @@
         .sidebar-link { position: relative; transition: background-color 0.2s ease-in-out; padding-left: 1.5rem; }
         .sidebar-link::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%) scaleX(0); height: 70%; width: 4px; background-color: #64748b; border-radius: 2px; transition: transform 0.2s ease-in-out; transform-origin: left; }
         .sidebar-link:hover::before, .sidebar-link-active::before { transform: translateY(-50%) scaleX(1); }
-        .sidebar-link-active { background-color: #334155; color: #f1f5f9; }
+        .sidebar-link-active { background-color: #334155; color: #cbd5e1; }
         #content-area .prose { max-width: 900px; margin-left: auto; margin-right: auto; }
         .topic-card { background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05); transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out; }
         .topic-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07); }
         .topic-links { border-top: 1px solid #f3f4f6; padding-top: 1rem; margin-top: 1rem; }
         .topic-link-button { display: inline-flex; align-items: center; gap: 0.5rem; background-color: #f3f4f6; color: #4b5563; font-family: 'Inter', sans-serif; font-size: 0.875rem; font-weight: 500; padding: 0.5rem 1rem; border-radius: 9999px; text-decoration: none; transition: background-color 0.2s, color 0.2s; }
         .topic-link-button:hover { background-color: #d6d3d1; color: #1f2937; }
-        /* -- Estilos de infografías: ver bloque unificado más abajo -- */
+        details.infografia-container { border: 1px solid #e5e7eb; border-radius: 0.75rem; margin-top: 1.5rem; background-color: #ffffff; }
+        details.infografia-container summary { cursor: pointer; padding: 1rem 1.5rem; font-family: 'Inter', sans-serif; font-weight: 600; color: #334155; display: flex; justify-content: space-between; align-items: center; transition: background-color 0.2s; }
+        details.infografia-container summary:hover { background-color: #f1f5f9; }
+        details.infografia-container summary::-webkit-details-marker { display: none; }
+        .infografia-arrow { transition: transform 0.2s; }
+        details[open] .infografia-arrow { transform: rotate(180deg); }
+        .infografia-content { padding: 1.5rem; border-top: 1px solid #e5e7eb; background-color: #fcfcfb; }
         .error-box { background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; padding: 1rem; margin-top: 0.5rem; }
         .error-box p { color: #991b1b; margin: 0; }
         
         /* Estilos del Mapa Mental (Estilo Imagen) */
         .mapa-mental-container {
             width: 100%;
-            height: 70vh;
-            min-height: 400px;
+            height: 90vh;
             overflow: hidden;
             background-color: #ffffff;
             border-radius: 0.75rem;
@@ -375,7 +377,18 @@
 .subtle-helper { font-size:0.95rem; color:#64748b; margin-top:0.5rem; }
 
 
-/* Fin de estilos */
+/* Variante sin exceso de ámbar, aplicada sobre indexRES2 */
+body { background-color: #fcfcfb !important; color: #334155 !important; }
+.text-primary { color: #334155 !important; }
+.sidebar-link-active { background-color: #334155 !important; color: #e2e8f0 !important; }
+.sidebar-link::before { background-color: #94a3b8 !important; }
+details.infografia-container summary { background-color: #ffffff !important; border: 1px solid #e2e8f0 !important; color: #334155 !important; }
+details.infografia-container summary:hover { background-color: #f8fafc !important; }
+details.infografia-container[open] summary { background-color: #f1f5f9 !important; border-bottom-color: transparent !important; }
+details.infografia-container .infografia-content { background-color: #ffffff !important; border: 1px solid #e2e8f0 !important; border-top: none !important; }
+.infografia-arrow { color: #64748b !important; }
+.esquema-guion-v9 h3, .flashcard-problema h4, .flashcard-solucion h5 { color: #334155 !important; }
+.topic-card { box-shadow: 0 3px 10px -3px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.04) !important; }
 
 </style>  
     
@@ -918,11 +931,11 @@
             },
             '#caselab': {
                 title: 'Laboratorio de Casos',
-                html: `<section class="infographic-font bg-white rounded-lg shadow-md p-6"><h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">Laboratorio de Casos Romanos</h2><p class="text-center max-w-4xl mx-auto mb-6">Introduce un concepto de Derecho romano y la herramienta generará un caso breve para analizarlo y, si lo deseas, propondrá después una solución orientativa.</p><div class="example-chips" data-target-input="case-study-input"><button type="button" class="example-chip">usufructo</button><button type="button" class="example-chip">dote</button><button type="button" class="example-chip">compraventa</button><button type="button" class="example-chip">litis contestatio</button></div><div class="text-center text-sm text-gray-500 mb-6 bg-slate-50 border border-slate-200 rounded-lg p-3 max-w-xl mx-auto"><p><strong>Advertencia:</strong> Los casos y soluciones son generados por la IA de Google (Gemini) y no han sido supervisados por el profesor. Úsalos como una herramienta de práctica y no como una fuente autorizada.</p></div><div class="max-w-xl mx-auto"><div class="flex flex-col sm:flex-row gap-2"><input type="text" id="case-study-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5733]" placeholder="Ej: Usufructo" maxlength="100" aria-label="Concepto de derecho romano"><button id="generate-case-btn" class="bg-[#C70039] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#900C3F] transition-colors flex items-center justify-center" aria-busy="false"><span id="btn-text">✨ Generar Caso</span><div id="btn-loader" class="loader hidden" style="width:20px; height:20px; border-width:3px;" aria-hidden="true"></div></button></div><div class="result-panel"><div class="result-panel-header">Caso generado</div><div class="result-panel-body"><div id="case-study-result" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[100px]" role="region" aria-live="polite" aria-atomic="true"><p class="text-gray-500">Aquí aparecerá tu caso de estudio...</p></div><div class="text-center mt-4"><button id="solve-case-btn" class="hidden bg-[#FF5733] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#C70039] transition-colors flex items-center justify-center mx-auto" aria-busy="false"><span id="solve-btn-text">Ver Solución</span><div id="solve-btn-loader" class="loader hidden" style="width:20px; height:20px; border-width:3px;" aria-hidden="true"></div></button></div><div></div></div></div><div id="case-solution-result" class="hidden result-panel"><div class="result-panel-header">Solución orientativa</div><div class="result-panel-body" mt-6 p-4 bg-green-50 rounded-lg border border-green-200" role="region" aria-live="polite" aria-atomic="true"></div></div></section>`
+                html: `<section class="infographic-font bg-white rounded-lg shadow-md p-6"><h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">Laboratorio de Casos Romanos</h2><p class="text-center max-w-4xl mx-auto mb-6">Introduce un concepto de Derecho romano y la herramienta generará un caso breve para analizarlo y, si lo deseas, propondrá después una solución orientativa.</p><div class="status-pill" id="caselab-status">Comprobando conexión con el servidor…</div><div class="tool-notice"><strong>Herramienta experimental.</strong> Los casos y las soluciones son generados automáticamente y deben contrastarse con el manual, las explicaciones de clase y el criterio del profesor.</div><div class="example-chips" data-target-input="case-study-input"><button type="button" class="example-chip">usufructo</button><button type="button" class="example-chip">dote</button><button type="button" class="example-chip">compraventa</button><button type="button" class="example-chip">litis contestatio</button></div><div class="text-center text-sm text-gray-500 mb-6 bg-slate-50 border border-slate-200 rounded-lg p-3 max-w-xl mx-auto"><p><strong>Advertencia:</strong> Los casos y soluciones son generados por la IA de Google (Gemini) y no han sido supervisados por el profesor. Úsalos como una herramienta de práctica y no como una fuente autorizada.</p></div><div class="max-w-xl mx-auto"><div class="flex flex-col sm:flex-row gap-2"><input type="text" id="case-study-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5733]" placeholder="Ej: Usufructo" maxlength="100" aria-label="Concepto de derecho romano"><button id="generate-case-btn" class="bg-[#C70039] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#900C3F] transition-colors flex items-center justify-center" aria-busy="false"><span id="btn-text">✨ Generar Caso</span><div id="btn-loader" class="loader hidden" style="width:20px; height:20px; border-width:3px;" aria-hidden="true"></div></button></div><div class="result-panel"><div class="result-panel-header">Caso generado</div><div class="result-panel-body"><div id="case-study-result" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[100px]" role="region" aria-live="polite" aria-atomic="true"><p class="text-gray-500">Aquí aparecerá tu caso de estudio...</p></div><div class="text-center mt-4"><button id="solve-case-btn" class="hidden bg-[#FF5733] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#C70039] transition-colors flex items-center justify-center mx-auto" aria-busy="false"><span id="solve-btn-text">Ver Solución</span><div id="solve-btn-loader" class="loader hidden" style="width:20px; height:20px; border-width:3px;" aria-hidden="true"></div></button></div><div></div></div></div><div id="case-solution-result" class="hidden result-panel"><div class="result-panel-header">Solución orientativa</div><div class="result-panel-body" mt-6 p-4 bg-green-50 rounded-lg border border-green-200" role="region" aria-live="polite" aria-atomic="true"></div></div></section>`
             },
             '#ulpiano': {
                 title: 'Consulta a UlpianoIA',
-                html: `<section class="infographic-font bg-white rounded-lg shadow-md p-6" style="color: #333;"><h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">Consulta a UlpianoIA</h2><p class="text-center max-w-4xl mx-auto mb-6">Plantea una duda breve sobre una institución de Derecho romano y obtendrás una respuesta orientativa conectada con el manual y con referencias de actualización.</p><div class="example-chips" data-target-input="queryInput"><button type="button" class="example-chip">posesión</button><button type="button" class="example-chip">servidumbre</button><button type="button" class="example-chip">stipulatio</button><button type="button" class="example-chip">herencia yacente</button></div><div class="text-center text-sm text-gray-500 mb-6 bg-slate-50 border border-slate-200 rounded-lg p-3 max-w-xl mx-auto"><p><strong>Advertencia:</strong> Las respuestas de Ulpiano son generadas por la IA de Google (Gemini) y no han sido supervisadas por el profesor. Úsalas como una herramienta de apoyo y no como una fuente autorizada para tus exámenes.</p></div><div class="max-w-xl mx-auto"><div class="flex flex-col sm:flex-row gap-2"><textarea id="queryInput" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5733]" placeholder="Escribe tu pregunta aquí..." maxlength="500" aria-label="Tu pregunta sobre Derecho Romano"></textarea><button id="submitQueryBtn" class="bg-[#C70039] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#900C3F] transition-colors flex items-center justify-center" aria-busy="false"><span id="submit-btn-text">✨ Enviar consulta</span><div id="submit-btn-loader" class="loader hidden" style="border-top-color: #fff; width:20px; height:20px; border-width:3px;" aria-hidden="true"></div></button></div><div id="queryResult" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 hidden" role="region" aria-live="polite" aria-atomic="true"><h3 class="text-xl font-semibold mb-2 text-[#900C3F]">Respuesta de UlpianoIA:</h3><div id="queryResultText"></div></div></div></div></div></section>`
+                html: `<section class="infographic-font bg-white rounded-lg shadow-md p-6" style="color: #333;"><h2 class="text-3xl font-bold text-center text-[#900C3F] mb-4">Consulta a UlpianoIA</h2><p class="text-center max-w-4xl mx-auto mb-6">Plantea una duda breve sobre una institución de Derecho romano y obtendrás una respuesta orientativa conectada con el manual y con referencias de actualización.</p><div class="status-pill" id="ulpiano-status">Comprobando conexión con el servidor…</div><div class="tool-notice"><strong>Herramienta experimental.</strong> La respuesta es de apoyo al estudio y no sustituye la explicación de clase ni constituye una fuente oficial para el examen.</div><div class="example-chips" data-target-input="queryInput"><button type="button" class="example-chip">posesión</button><button type="button" class="example-chip">servidumbre</button><button type="button" class="example-chip">stipulatio</button><button type="button" class="example-chip">herencia yacente</button></div><div class="text-center text-sm text-gray-500 mb-6 bg-slate-50 border border-slate-200 rounded-lg p-3 max-w-xl mx-auto"><p><strong>Advertencia:</strong> Las respuestas de Ulpiano son generadas por la IA de Google (Gemini) y no han sido supervisadas por el profesor. Úsalas como una herramienta de apoyo y no como una fuente autorizada para tus exámenes.</p></div><div class="max-w-xl mx-auto"><div class="flex flex-col sm:flex-row gap-2"><textarea id="queryInput" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5733]" placeholder="Escribe tu pregunta aquí..." maxlength="500" aria-label="Tu pregunta sobre Derecho Romano"></textarea><button id="submitQueryBtn" class="bg-[#C70039] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#900C3F] transition-colors flex items-center justify-center" aria-busy="false"><span id="submit-btn-text">✨ Enviar consulta</span><div id="submit-btn-loader" class="loader hidden" style="border-top-color: #fff; width:20px; height:20px; border-width:3px;" aria-hidden="true"></div></button></div><div id="queryResult" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 hidden" role="region" aria-live="polite" aria-atomic="true"><h3 class="text-xl font-semibold mb-2 text-[#900C3F]">Respuesta de UlpianoIA:</h3><div id="queryResultText"></div></div></div></div></div></section>`
             },
 '#bloque1': {
                 title: 'Bloque I: Fundamentos e Historia',
@@ -3162,7 +3175,8 @@ document.addEventListener('click', function(event) {
     }
 });
 </script>
-    <!-- D3.js para el mapa mental -->
+<script src="https://cdn.tailwindcss.com"></script>
+    
     <script src="https://ajax.googleapis.com/ajax/libs/d3js/7.8.5/d3.min.js"></script>
 </body>
 </html>
