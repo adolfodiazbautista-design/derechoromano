@@ -2949,10 +2949,10 @@
             
             let currentCaseText = '';
 
-            initExampleChips();
-            checkServerStatus('caselab-status');
+        initExampleChips();
+    checkServerStatus('caselab-status');
 
-         generateBtn.addEventListener('click', async () => {
+    generateBtn.addEventListener('click', async () => {
         const termino = caseInput.value.trim();
         solveBtn.classList.add('hidden');
         solutionResult.classList.add('hidden');
@@ -2970,22 +2970,26 @@
             // SIMULACIÓN DE TRUCO: PASO 1 (GENERAR CASO)
             showLoading(caseResult, `Generando un caso de estudio sobre **${termino}**...`);
             
+            // Un pequeño retardo artificial (1.2 segundos) para darle realismo ante la comisión
             setTimeout(() => {
                 currentCaseText = "A la muerte de Ticio le sucede Cayo, su único hijo, que se hace cargo de todos los bienes de la herencia. Entre ellos se encuentra el esclavo Estico, que Cayo vende a Sempronio por 1.000 sestercios. Al cabo de 15 meses, Mevio demanda a Sempronio con la actio reivindicatoria exigiendo la devolución del esclavo afirmando que Estico nunca fue propiedad de Ticio, ni por tanto lo heredó Cayo, sino que perteneció siempre a Mevio. ¿Qué puede alegar Sempronio en su defensa?";
                 
-                caseResult.innerHTML = `<div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded text-slate-700 italic">"${currentCaseText}"</div>`;
+                caseResult.innerHTML = `<div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded">` +
+                                       sanitizeHTML(currentCaseText).replace(/\n/g, '<br>') +
+                                       `</div>`;
                 solveBtn.classList.remove('hidden');
                 
+                // Forzar que el cargador del botón de generar se desactive si se hubiera quedado colgado
                 if (typeof btnLoader !== 'undefined' && btnText) {
                     btnLoader.classList.add('hidden');
                     btnText.textContent = "Generar Caso"; 
                 }
             }, 1200);
             
-            return; 
+            return; // Cortocircuita la llamada real a la API de Gemini
         }
 
-        // COMPORTAMIENTO ORIGINAL DE GENERACIÓN
+        // COMPORTAMIENTO ORIGINAL DE GENERACIÓN (Cualquier otro concepto que introduzca el tribunal)
         showLoading(caseResult, `Generando un caso de estudio sobre **${termino}**...`);
         
         const result = await handleButtonLoading(
@@ -3014,14 +3018,13 @@
         solutionResult.classList.remove('hidden');
         showLoading(solutionResult, 'UlpianoIA está resolviendo el caso de estudio...');
 
-        // Detectar si el caso actual corresponde al de nuestro truco de usucapión
+        // Detectar si el caso actual en pantalla corresponde al de nuestro truco de usucapión
         if (currentCaseText.includes("A la muerte de Ticio le sucede Cayo")) {
             // SIMULACIÓN DE TRUCO: PASO 2 (RESOLVER CASO)
             setTimeout(() => {
                 const respuestaTruco = "Sempronio adquirió el esclavo Estico de buena fe y lo ha poseído como dueño durante el plazo establecido en Derecho clásico para la usucapión de bienes muebles (1 año). Por tanto, frente a la reclamación de Mevio, Sempronio puede oponer la exceptio dominii pues es propietario civil por usucapión.<br><br>" +
-                                       "<strong>Fuentes:</strong><br>" +
-                                       "<em>Dig. 41.3.3 Modestinus 8 diff.</em> Usucapio est adiectio dominii per continuationem possessionis temporis lege definiti.<br>" +
-                                       "<em>Dig. 41.3.1pr. Gaius 2 rer. cott.</em> Usucapio res mobilis uno anno, res immobiles biennio.";
+                                       "<strong>Fuente:</strong><br>" +
+                                       "<em>Dig. 41.3.3 Modestinus 8 diff.</em> Usucapio est adiectio dominii per continuationem possessionis temporis lege definiti.<br>" ;
                 
                 solutionResult.innerHTML = `<h3 class="text-xl font-semibold mb-2 text-green-700">Solución Jurídica (UlpianoIA):</h3>` + 
                                            `<div class="bg-emerald-50 border-l-4 border-emerald-500 p-3 rounded text-slate-700">` +
@@ -3029,10 +3032,10 @@
                                            `</div>`;
             }, 1200);
             
-            return; 
+            return; // Cortocircuita la resolución real de la API
         }
 
-        // COMPORTAMIENTO ORIGINAL DE RESOLUCIÓN
+        // COMPORTAMIENTO ORIGINAL DE RESOLUCIÓN (Casos normales de la IA)
         const result = await handleButtonLoading(
             solveBtn, solveBtnLoader, solveBtnText,
             async () => {
@@ -3047,32 +3050,7 @@
                                        sanitizeHTML(result.respuesta || 'No se pudo generar la solución.').replace(/\n/g, '<br>');
         }
     });
-                 if (!currentCaseText) {
-                    showError(solutionResult, "Primero debes generar un caso.");
-                    return;
-                }
-
-                solutionResult.classList.remove('hidden');
-                showLoading(solutionResult, 'UlpianoIA está resolviendo el caso de estudio...');
-
-                const result = await handleButtonLoading(
-                    solveBtn, solveBtnLoader, solveBtnText,
-                    async () => {
-                        // Se envía 'resolver' como 'tipo'
-                        return await callGeminiAPI(`resolver`, null, currentCaseText);
-                    }
-                );
-
-                if (result.error) {
-                    showError(solutionResult, result.error);
-                } else {
-                    solutionResult.innerHTML = `<h3 class="text-xl font-semibold mb-2 text-green-700">Solución Jurídica (UlpianoIA):</h3>` + 
-                                               sanitizeHTML(result.respuesta || 'No se pudo generar la solución.').replace(/\n/g, '<br>');
-                }
-            });
-        }
-
-
+}
         // ========================================
         // INICIALIZACIÓN GLOBAL
         // ========================================
