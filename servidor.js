@@ -67,14 +67,13 @@ function normalizarTexto(texto) {
 }
 
 // --- CONFIGURACIÓN ---
+// SOLUCIÓN CORS: Permite acceso a cualquier dominio (*). La más efectiva para evitar bloqueos.
 app.use(cors({
-    origin: [
-        'https://derechoromano.netlify.app',
-        'http://localhost:3000' // solo para desarrollo local
-    ],
-    methods: ['POST', 'GET'],
+    origin: '*', 
+    methods: ['POST', 'GET', 'OPTIONS'], // Añadido OPTIONS para las peticiones preflight
     allowedHeaders: ['Content-Type']
 }));
+
 app.use(express.json({ limit: "1mb" }));
 app.use(helmet({
     contentSecurityPolicy: {
@@ -82,7 +81,7 @@ app.use(helmet({
             defaultSrc: ["'self'"],
             scriptSrc: [
                 "'self'",
-                "'unsafe-inline'",           // necesario para Tailwind CDN y scripts inline
+                "'unsafe-inline'",           
                 "https://cdn.tailwindcss.com",
                 "https://ajax.googleapis.com",
                 "https://fonts.googleapis.com"
