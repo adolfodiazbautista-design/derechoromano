@@ -405,6 +405,7 @@
                 <li><a href="#bloque7" class="sidebar-link block p-2 rounded-md">Bloque VII: Sucesiones</a></li>
                 <li><a href="#caselab" class="sidebar-link block p-2 rounded-md">Laboratorio de Casos</a></li>
                 <li><a href="#ulpiano" class="sidebar-link block p-2 rounded-md">Consulta a UlpianoIA</a></li>
+                <li><a href="#mapamental" class="sidebar-link block p-2 rounded-md">🗺️ Mapa Mental de la Asignatura</a></li>
                 <li><a href="#bibliografia" class="sidebar-link block p-2 rounded-md">Recursos</a></li>
             </ul>
         </nav>
@@ -2585,7 +2586,7 @@
 
             // *** ERROR CORREGIDO: Se ha eliminado una '}' extra que había aquí ***
 
-            '#bibliografia': {
+         '#bibliografia': {
                 title: 'Recursos',
                 html: `<div class="prose">
                     <h2 class="text-3xl font-bold text-secondary mb-4">Bibliografía y Recursos</h2><p class="text-secondary">Los manuales de la asignatura son los siguientes:</p><div class="not-prose space-y-4"><div class="p-4 bg-white rounded-lg shadow border-l-4 border-amber-600"><h4 class="text-xl font-semibold text-primary font-heading">Lecciones de Derecho Romano</h4><p class="text-secondary">Diego Marín, 2026.</p></div><div class="p-4 bg-white rounded-lg shadow border-l-4 border-amber-600"><h4 class="text-xl font-semibold text-primary font-heading">Bases del Sistema Jurídico Continental</h4><p class="text-secondary">Tirant lo Blanch, 2026.</p></div></div><h3 class="text-2xl font-semibold text-secondary mt-8 mb-4">Otras obras recomendadas</h3>
@@ -2594,7 +2595,28 @@
                         <li><span class="font-semibold">Castán Pérez-Gómez, S. e.a.</span>: Derecho privado romano, Reus, 2018.</li>
                         <li><span class="font-semibold">Panero Gutiérrez, R.</span>: Derecho Romano, Tirant, 2021.</li>
                     </ul>
-                    <h3 class="text-2xl font-semibold text-secondary mt-8 mb-4">Webs de interés</h3>
+                    
+                    <h3 class="text-2xl font-semibold text-secondary mt-8 mb-4">Enlaces de interés</h3>
+                    <div class="not-prose space-y-3 max-w-xl mb-6">
+                        <a href="https://skiller.education/la-voz-del-experto-el-genial-laboratorio-de-casos-romanos-impulsado-con-inteligencia-artificial-desde-murcia/?srsltid=AfmBOop0r9R6BWB2xYpCZm7el8BD4jMxKar8gC3xbGIcA8FRB6uhvaHw" 
+                           target="_blank" 
+                           rel="noopener noreferrer" 
+                           class="flex items-center gap-3 p-3 bg-purple-50 rounded-xl hover:bg-purple-100 transition-colors border border-purple-100 group">
+                            <div class="p-2 bg-purple-600 text-white rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-semibold text-purple-900 group-hover:text-purple-700 transition-colors">Reseña del Laboratorio con IA</h4>
+                                <p class="text-xs text-purple-600">Análisis exhaustivo por Diego Fierro (Letrado de la Adm. de Justicia) en Skiller Academy</p>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-purple-400 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </a>
+                    </div>
+
                     <ul class="list-disc list-inside space-y-2">
                         <li><a href="https://www.boe.es/biblioteca_juridica/publicacion.php?id=PUB-DR-2022-266_FUENTES_DEL_DERECHO_ROMANO_ONLINE&tipo=L&modo=1" class="text-amber-700 hover:text-amber-800 font-semibold">Fuentes del Derecho Romano (BOE)</a></li>
                         <li><a href="https://droitromain.univ-grenoble-alpes.fr/" class="text-amber-700 hover:text-amber-800 font-semibold">The Roman Law Library</a></li>
@@ -3155,4 +3177,99 @@ const openModal_familia = () => {
 };
 
 const closeModal_familia = () => {
-    const modalContainer_familia = document.getElementById('modal-contain
+    const modalContainer_familia = document.getElementById('modal-container-familia');
+    const modalOverlay_familia = document.getElementById('modal-overlay-familia');
+    const modalContent_familia = document.getElementById('modal-content-familia');
+
+    modalContent_familia.classList.add('scale-95', 'opacity-0');
+    modalContent_familia.classList.remove('scale-100', 'opacity-100');
+    modalOverlay_familia.classList.add('opacity-0');
+    setTimeout(() => {
+        modalContainer_familia.classList.add('hidden');
+    }, 300);
+};
+
+// Esta función AHORA LLAMA A TU SERVIDOR RENDER
+async function handleCalculate_familia() {
+    const person1Input_familia = document.getElementById('person-1-familia');
+    const person2Input_familia = document.getElementById('person-2-familia');
+
+    openModal_familia(); 
+
+    if (!person2Input_familia || !person1Input_familia) return; 
+    
+    const person1 = person1Input_familia.value.trim();
+    const person2 = person2Input_familia.value.trim();
+
+    if (!person2) {
+        showModalError_familia("Por favor, introduce la 'Persona 2' para calcular.");
+        return;
+    }
+
+    try {
+        // Usamos la función 'callApiAndHandleErrors' que ya tienes en tu web
+        const data = await callApiAndHandleErrors('consulta-parentesco', {
+            person1: person1,
+            person2: person2
+        });
+
+        if (data.error) {
+             throw new Error(data.error);
+        }
+        
+        // El servidor nos devuelve el JSON (linea, grado, explicacion)
+        displayResults_familia(data);
+
+    } catch (error) {
+        console.error("Error al calcular:", error);
+        showModalError_familia(error.message || "Ocurrió un error desconocido.");
+    }
+}
+
+function displayResults_familia(data) {
+    const modalSpinner_familia = document.getElementById('modal-spinner-familia');
+    const modalOutput_familia = document.getElementById('modal-output-familia');
+    
+    modalOutput_familia.innerHTML = `
+        <ul class="space-y-3 text-lg text-slate-700">
+            <li class="flex items-start">
+                <strong class="w-24 inline-block flex-shrink-0 text-purple-700">Línea:</strong>
+                <span>${data.linea}</span>
+            </li>
+            <li class="flex items-start">
+                <strong class="w-24 inline-block flex-shrink-0 text-purple-700">Grado:</strong>
+                <span>${data.grado}</span>
+            </li>
+            <li class="flex items-start">
+                <strong class="w-24 inline-block flex-shrink-0 text-purple-700">Cómputo:</strong>
+                <span>${data.explicacion}</span>
+            </li>
+        </ul>`;
+    modalSpinner_familia.classList.add('hidden');
+    modalSpinner_familia.classList.remove('flex');
+    modalOutput_familia.classList.remove('hidden');
+}
+
+function showModalError_familia(message) {
+    const modalSpinner_familia = document.getElementById('modal-spinner-familia');
+    const modalError_familia = document.getElementById('modal-error-familia');
+    const modalErrorText_familia = document.getElementById('modal-error-text-familia');
+    
+    modalSpinner_familia.classList.add('hidden');
+    modalSpinner_familia.classList.remove('flex');
+    if (modalErrorText_familia) modalErrorText_familia.textContent = message;
+    if (modalError_familia) modalError_familia.classList.remove('hidden');
+}
+
+// Listener para cerrar el modal de familia al hacer clic fuera
+document.addEventListener('click', function(event) {
+    const modalContainer_familia = document.getElementById('modal-container-familia');
+    if (event.target === modalContainer_familia) {
+        closeModal_familia();
+    }
+});
+</script>
+    <!-- D3.js para el mapa mental -->
+    <script src="https://ajax.googleapis.com/ajax/libs/d3js/7.8.5/d3.min.js"></script>
+</body>
+</html>
