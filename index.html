@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Guía Interactiva de Derecho Romano | Versión Definitiva</title>
+    <title>Guía Interactiva de Derecho Romano | Universidad de Murcia</title>
     <meta name="description" content="Guía interactiva de Derecho Romano para estudiantes de la Universidad de Murcia, con un diseño moderno, herramientas de IA, infografías detalladas y casos prácticos.">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 
@@ -14,6 +14,12 @@
     <meta property="og:url" content="https://derechoromano.netlify.app/">
     <meta property="og:image" content="https://derechoromano.netlify.app/og-image.png">
     <meta property="og:locale" content="es_ES">
+
+    <link rel="canonical" href="https://derechoromano.netlify.app/">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Guía Interactiva de Derecho Romano">
+    <meta name="twitter:description" content="Recursos didácticos de Derecho Romano con IA - Universidad de Murcia">
+    <meta name="twitter:image" content="https://derechoromano.netlify.app/og-image.png">
 
     <!-- Tailwind CSS (movido aquí para evitar FOUC) -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -137,9 +143,9 @@
             font-family: 'Inter', sans-serif;
             font-weight: 600;
             font-size: 1.125rem; /* text-lg */
-            color: #334155; /* primary (amber-800) */
+            color: #334155; /* primary (slate-700) */
             background-color: #ffffff; /* Fondo suave para la cabecera */
-            border: 1px solid #e2e8f0; /* Borde ámbar claro */
+            border: 1px solid #e2e8f0; /* Borde slate claro */
             border-radius: 0.75rem;
             margin-top: 1.5rem;
             box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -384,6 +390,8 @@
 </head>
 <body class="flex min-h-screen">
 
+    <a href="#content-area" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-white focus:text-slate-800 focus:px-4 focus:py-2 focus:rounded-md focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-slate-400">Saltar al contenido principal</a>
+
     <header class="md:hidden p-4 bg-slate-800 text-white flex items-center justify-between shadow-lg z-30 fixed top-0 left-0 right-0">
         <h1 class="font-heading text-2xl font-bold text-slate-300">Derecho Romano</h1>
         <button id="menu-button" class="text-white focus:outline-none focus:ring-2 focus:ring-slate-400" aria-label="Abrir menú" aria-expanded="false">
@@ -416,7 +424,7 @@
 
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden" aria-hidden="true"></div>
 
-    <main id="content-area" class="flex-1 p-6 sm:p-8 overflow-y-auto pt-20 md:pt-8" role="main"></main>
+    <main id="content-area" class="flex-1 p-6 sm:p-8 overflow-y-auto pt-20 md:pt-8" role="main" tabindex="-1"></main>
 
     <div id="video-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 hidden z-50" role="dialog" aria-modal="true" aria-labelledby="video-modal-title">
         <div class="bg-slate-800 rounded-lg shadow-2xl p-4 max-w-4xl w-full relative">
@@ -474,7 +482,7 @@
         async function callApiAndHandleErrors(endpoint, payload) {
             try {
                 const controller = new AbortController();
-                // Timeout de 90 segundos
+                // Timeout de 500 segundos (margen amplio por el "cold start" del backend en Render)
                 const timeoutId = setTimeout(() => controller.abort(), 500000); 
 
                 const response = await fetch(`${API_BASE_URL}/api/${endpoint}`, {
@@ -914,7 +922,7 @@
         const contentMap = {
             '#home': {
                 title: 'Presentación',
-                html: `<div class="prose"><div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 items-center"><div><h2 class="text-3xl font-bold text-secondary mb-4 !mt-0">Bienvenida al curso de Derecho Romano</h2><p class="text-secondary">Esta asignatura es vuestra primera toma de contacto con el razonamiento jurídico. El objetivo principal es que aprendáis a identificar problemas, a encontrar la norma o principio aplicable y a argumentar una solución.</p><p class="text-secondary mb-6">Este enfoque será la base de vuestra evaluación y de vuestra formación como juristas.</p><details class="infografia-container not-prose mb-8"><summary><span>Ver presentación de la asignatura</span><svg class="w-6 h-6 infografia-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path></svg></summary><div class="infografia-content"><div class="bg-white rounded-lg border border-slate-200 p-5 text-slate-700 space-y-2"><p><strong>Derecho Romano</strong> · 6 ECTS · primer cuatrimestre del Grado en Derecho.</p><p><strong>Profesor:</strong> Adolfo A. Díaz-Bautista Cremades (<a href="https://diaz-bautista.netlify.app/" target="_blank" rel="noopener noreferrer" class="text-amber-700 hover:text-amber-800 font-semibold">web personal</a>).</p><p><strong>Contacto:</strong> <a href="mailto:adiaz-bautista@um.es" class="text-amber-700 hover:text-amber-800 font-semibold">adiaz-bautista@um.es</a> / 868883103.</p><p><strong>Manuales:</strong> <em>Lecciones de Derecho Romano</em> (Diego Marín, 2026) y <em>Bases del Sistema Jurídico Continental</em> (Tirant lo Blanch, 2026).</p><p><strong>Evaluación:</strong> 80% examen oral, 20% casos prácticos.</p></div></div></details></div><div class="not-prose mt-6 md:mt-0"><button id="open-video-modal-btn" class="relative w-full max-w-md mx-auto rounded-lg overflow-hidden group focus:outline-none focus:ring-4 focus:ring-slate-400 shadow-xl" aria-label="Ver video de presentación"><img src="video_preview.jpg" alt="Vista previa del vídeo sobre Derecho Romano" class="w-full h-auto"><div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center"><svg class="w-16 h-16 text-white opacity-80 group-hover:opacity-100 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg></div></button></div></div><h3 class="text-2xl font-semibold text-secondary mt-12 mb-2">Metodología y Recursos</h3><p class="text-secondary">Para facilitar vuestro aprendizaje, hemos preparado una serie de guiones y recursos. Es fundamental que los uséis como un mapa de estudio antes de cada clase junto con el manual, completándolos con las explicaciones del profesor.</p></div>`
+                html: `<div class="prose"><div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 items-center"><div><h2 class="text-3xl font-bold text-secondary mb-4 !mt-0">Bienvenida al curso de Derecho Romano</h2><p class="text-secondary">Esta asignatura es vuestra primera toma de contacto con el razonamiento jurídico. El objetivo principal es que aprendáis a identificar problemas, a encontrar la norma o principio aplicable y a argumentar una solución.</p><p class="text-secondary mb-6">Este enfoque será la base de vuestra evaluación y de vuestra formación como juristas.</p><details class="infografia-container not-prose mb-8"><summary><span>Ver presentación de la asignatura</span><svg class="w-6 h-6 infografia-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path></svg></summary><div class="infografia-content"><div class="bg-white rounded-lg border border-slate-200 p-5 text-slate-700 space-y-2"><p><strong>Derecho Romano</strong> · 6 ECTS · primer cuatrimestre del Grado en Derecho.</p><p><strong>Profesor:</strong> Adolfo A. Díaz-Bautista Cremades (<a href="https://diaz-bautista.netlify.app/" target="_blank" rel="noopener noreferrer" class="text-slate-700 hover:text-slate-900 font-semibold">web personal</a>).</p><p><strong>Contacto:</strong> <a href="mailto:adiaz-bautista@um.es" class="text-slate-700 hover:text-slate-900 font-semibold">adiaz-bautista@um.es</a> / 868883103.</p><p><strong>Manuales:</strong> <em>Lecciones de Derecho Romano</em> (Diego Marín, 2026) y <em>Bases del Sistema Jurídico Continental</em> (Tirant lo Blanch, 2026).</p><p><strong>Evaluación:</strong> 80% examen oral, 20% casos prácticos.</p></div></div></details></div><div class="not-prose mt-6 md:mt-0"><button id="open-video-modal-btn" class="relative w-full max-w-md mx-auto rounded-lg overflow-hidden group focus:outline-none focus:ring-4 focus:ring-slate-400 shadow-xl" aria-label="Ver video de presentación"><img src="video_preview.jpg" alt="Vista previa del vídeo sobre Derecho Romano" class="w-full h-auto"><div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center"><svg class="w-16 h-16 text-white opacity-80 group-hover:opacity-100 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg></div></button></div></div><h3 class="text-2xl font-semibold text-secondary mt-12 mb-2">Metodología y Recursos</h3><p class="text-secondary">Para facilitar vuestro aprendizaje, hemos preparado una serie de guiones y recursos. Es fundamental que los uséis como un mapa de estudio antes de cada clase junto con el manual, completándolos con las explicaciones del profesor.</p></div>`
             },
             '#caselab': {
                 title: 'Laboratorio de Casos',
@@ -2604,10 +2612,10 @@
                     </div>
 
                     <ul class="list-disc list-inside space-y-2">
-                        <li><a href="https://www.boe.es/biblioteca_juridica/publicacion.php?id=PUB-DR-2022-266_FUENTES_DEL_DERECHO_ROMANO_ONLINE&tipo=L&modo=1" class="text-amber-700 hover:text-amber-800 font-semibold">Fuentes del Derecho Romano (BOE)</a></li>
-                        <li><a href="https://droitromain.univ-grenoble-alpes.fr/" class="text-amber-700 hover:text-amber-800 font-semibold">The Roman Law Library</a></li>
+                        <li><a href="https://www.boe.es/biblioteca_juridica/publicacion.php?id=PUB-DR-2022-266_FUENTES_DEL_DERECHO_ROMANO_ONLINE&tipo=L&modo=1" class="text-slate-700 hover:text-slate-900 font-semibold">Fuentes del Derecho Romano (BOE)</a></li>
+                        <li><a href="https://droitromain.univ-grenoble-alpes.fr/" class="text-slate-700 hover:text-slate-900 font-semibold">The Roman Law Library</a></li>
                     </ul>
-                    <h3 class="text-2xl font-semibold text-secondary mt-8 mb-2">Recursos Adicionales</h3><ul class="list-disc list-inside space-y-2"><li><span class="font-semibold">Manuales de la asignatura:</span> <em>Lecciones de Derecho Romano</em> (Diego Marín, 2026) y <em>Bases del Sistema Jurídico Continental</em> (Tirant lo Blanch, 2026).</li><li><a href="https://diaz-bautista.netlify.app/" target="_blank" rel="noopener noreferrer" class="text-amber-700 hover:text-amber-800 font-semibold">Web del profesor Adolfo A. Díaz-Bautista Cremades</a></li><li><a href="mailto:adiaz-bautista@um.es" class="text-amber-700 hover:text-amber-800 font-semibold">Contacto: adiaz-bautista@um.es</a></li><li><a href="https://open.spotify.com/playlist/2L4okwq0Wnlz17EiwLKaf7?si=-_-TY3tfS1a13oW4WGzORA" target="_blank" rel="noopener noreferrer" class="text-amber-700 hover:text-amber-800 font-semibold">Escuchar la lista de reproducción de la asignatura en Spotify</a></li><li><a href="https://www.um.es/web/biblioteca/conoce-biblioteca/biblioteca/puntos-de-servicio/biblioteca-juridica/acceso-a-los-recursos-electr%C3%B3nicos-de-cc-jur%C3%ADdicas-y-sociales" target="_blank" rel="noopener noreferrer" class="text-amber-700 hover:text-amber-800 font-semibold">Recursos electrónicos de CC. Jurídicas y Sociales UMU</a></li></ul>
+                    <h3 class="text-2xl font-semibold text-secondary mt-8 mb-2">Recursos Adicionales</h3><ul class="list-disc list-inside space-y-2"><li><span class="font-semibold">Manuales de la asignatura:</span> <em>Lecciones de Derecho Romano</em> (Diego Marín, 2026) y <em>Bases del Sistema Jurídico Continental</em> (Tirant lo Blanch, 2026).</li><li><a href="https://diaz-bautista.netlify.app/" target="_blank" rel="noopener noreferrer" class="text-slate-700 hover:text-slate-900 font-semibold">Web del profesor Adolfo A. Díaz-Bautista Cremades</a></li><li><a href="mailto:adiaz-bautista@um.es" class="text-slate-700 hover:text-slate-900 font-semibold">Contacto: adiaz-bautista@um.es</a></li><li><a href="https://open.spotify.com/playlist/2L4okwq0Wnlz17EiwLKaf7?si=-_-TY3tfS1a13oW4WGzORA" target="_blank" rel="noopener noreferrer" class="text-slate-700 hover:text-slate-900 font-semibold">Escuchar la lista de reproducción de la asignatura en Spotify</a></li><li><a href="https://www.um.es/web/biblioteca/conoce-biblioteca/biblioteca/puntos-de-servicio/biblioteca-juridica/acceso-a-los-recursos-electr%C3%B3nicos-de-cc-jur%C3%ADdicas-y-sociales" target="_blank" rel="noopener noreferrer" class="text-slate-700 hover:text-slate-900 font-semibold">Recursos electrónicos de CC. Jurídicas y Sociales UMU</a></li></ul>
                     </div>`
             }
         };
@@ -3220,15 +3228,15 @@ function displayResults_familia(data) {
         <ul class="space-y-3 text-lg text-slate-700">
             <li class="flex items-start">
                 <strong class="w-24 inline-block flex-shrink-0 text-purple-700">Línea:</strong>
-                <span>${data.linea}</span>
+                <span>${sanitizeHTML(data.linea)}</span>
             </li>
             <li class="flex items-start">
                 <strong class="w-24 inline-block flex-shrink-0 text-purple-700">Grado:</strong>
-                <span>${data.grado}</span>
+                <span>${sanitizeHTML(data.grado)}</span>
             </li>
             <li class="flex items-start">
                 <strong class="w-24 inline-block flex-shrink-0 text-purple-700">Cómputo:</strong>
-                <span>${data.explicacion}</span>
+                <span>${sanitizeHTML(data.explicacion)}</span>
             </li>
         </ul>`;
     modalSpinner_familia.classList.add('hidden');
