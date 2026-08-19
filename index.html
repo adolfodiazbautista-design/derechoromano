@@ -445,6 +445,12 @@
         // ========================================
         
         const API_BASE_URL = 'https://derechoromano-ecma.onrender.com';       
+
+        // Aviso silencioso al backend en cuanto carga la página, para
+        // empezar a "despertarlo" (si estaba dormido por inactividad)
+        // antes de que el alumno llegue a usar cualquier herramienta de IA.
+        // No bloquea nada ni muestra errores: si falla, simplemente se ignora.
+        fetch(API_BASE_URL, { mode: 'no-cors' }).catch(() => {});
         function sanitizeHTML(text) {
             if (!text) return '';
             const div = document.createElement('div');
@@ -479,7 +485,7 @@
         // COMUNICACIÓN CON EL SERVIDOR
         // ========================================
         
-        async function callApiAndHandleErrors(endpoint, payload) {
+        async function callApiAndHandleErrors(endpoint, payload, isRetry = false) {
             try {
                 const controller = new AbortController();
                 // Timeout de 500 segundos (margen amplio por el "cold start" del backend en Render)
@@ -506,6 +512,13 @@
             } catch (error) {
                 if (error.name === 'AbortError') {
                     return { error: "La solicitud ha tardado demasiado tiempo. Por favor, inténtalo de nuevo." };
+                }
+                // Fallo de conexión (típico si el servidor estaba "dormido" por
+                // inactividad y aún no ha terminado de arrancar). Se reintenta
+                // una única vez, en silencio, antes de mostrar error al alumno.
+                if (!isRetry) {
+                    await new Promise(resolve => setTimeout(resolve, 4000));
+                    return await callApiAndHandleErrors(endpoint, payload, true);
                 }
                 return { error: "No se ha podido establecer conexión con el servidor." }; 
             }
