@@ -406,6 +406,7 @@ app.post('/api/consulta-parentesco', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
+    console.log(`[PING] Petición recibida en / a las ${new Date().toISOString()} - Método: ${req.method}`);
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
