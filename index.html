@@ -449,8 +449,41 @@
 @media (max-width: 767px) {
     #content-area { padding-bottom: 170px !important; }
     #ulpiano-chat-avatar-hero img { height: 120px; }
-    #ulpiano-chat-panel.is-chatting #ulpiano-chat-avatar-hero img { height: 70px; }
-    #ulpiano-chat-panel { bottom: 16px; right: 16px; width: calc(100vw - 32px); }
+    #ulpiano-chat-panel:not(.is-chatting) { bottom: 16px; right: 16px; width: calc(100vw - 32px); }
+
+    #ulpiano-chat-panel.is-chatting {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        max-width: 100%;
+        background: rgba(15, 23, 42, 0.55);
+        justify-content: flex-end;
+        padding: 0;
+        z-index: 50;
+    }
+    #ulpiano-chat-panel.is-chatting #ulpiano-chat-avatar-hero img {
+        height: 56px;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+    }
+    #ulpiano-chat-panel.is-chatting #ulpiano-chat-expandable {
+        background: #fff;
+        width: 100%;
+        border-radius: 16px 16px 0 0;
+        padding: 14px 14px calc(14px + env(safe-area-inset-bottom));
+        max-height: 78vh;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+    }
+    #ulpiano-chat-panel.is-chatting #ulpiano-chat-messages {
+        max-height: none;
+        flex: 1;
+        order: 2;
+        margin-top: 10px;
+    }
+    #ulpiano-chat-panel.is-chatting #ulpiano-chat-form { order: 1; }
 }
 #ulpiano-chat-form { display: flex; gap: 8px; width: 100%; margin-top: 10px; }
 #ulpiano-chat-input { flex: 1; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1.05rem; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
@@ -463,6 +496,45 @@
 .ulpiano-msg.thinking { background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.12); color: #64748b; align-self: flex-start; font-style: italic; }
 
 /* Fin de estilos */
+/* Fondo oscurecido cuando Ulpiano está conversando */
+#ulpiano-chat-panel.is-chatting::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: rgba(15, 23, 42, 0.58);
+  pointer-events: auto;
+}
+
+/* El panel permanece por encima del fondo */
+#ulpiano-chat-panel.is-chatting {
+  z-index: 100;
+}
+
+/* En móvil, el chat ocupa la pantalla sin aplastar el contenido */
+@media (max-width: 767px) {
+  #ulpiano-chat-panel.is-chatting .ulpiano-chat-expandable {
+    max-height: 82vh;
+  }
+
+  #ulpiano-chat-panel.is-chatting .ulpiano-chat-messages {
+    min-height: 0;
+    max-height: 58vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #ulpiano-chat-panel.is-chatting .ulpiano-chat-form {
+    flex-shrink: 0;
+  }
+
+  #ulpiano-chat-panel.is-chatting .ulpiano-chat-input {
+    min-height: 46px;
+    max-height: 110px;
+    resize: vertical;
+    font-size: 16px;
+  }
+}
 
 </style>  
     
@@ -3279,6 +3351,16 @@
                     input.focus();
                 }
             });
+
+            if (panel) {
+                panel.addEventListener('click', (e) => {
+                    if (e.target === panel && panel.classList.contains('is-chatting')) {
+                        expandable.classList.add('is-hidden');
+                        panel.classList.remove('is-chatting');
+                        avatarBtn.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            }
 
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
