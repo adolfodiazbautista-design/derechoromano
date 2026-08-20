@@ -535,7 +535,99 @@
     font-size: 16px;
   }
 }
+/* Botón compacto de Ulpiano */
+#ulpiano-chat-panel:not(.is-chatting) {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 45;
+  width: auto;
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  background: transparent;
+}
 
+#ulpiano-chat-avatar-hero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: auto;
+  min-height: 46px;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 9999px;
+  background: #173b63 !important;
+  color: #ffffff !important;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  font-family: Inter, Arial, sans-serif !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  line-height: 1.15;
+  white-space: nowrap;
+  transition: background-color 0.2s ease,
+              box-shadow 0.2s ease,
+              transform 0.2s ease;
+}
+
+#ulpiano-chat-avatar-hero img {
+  display: none !important;
+}
+
+#ulpiano-chat-avatar-hero:hover,
+#ulpiano-chat-avatar-hero:focus-visible {
+  background: #0f2c4b !important;
+  color: #ffffff !important;
+  box-shadow: 0 9px 24px rgba(0, 0, 0, 0.28);
+  transform: translateY(-2px);
+}
+
+#ulpiano-chat-avatar-hero:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 3px;
+}
+
+/* PDF independiente y visible cuando el JavaScript lo activa */
+#pdf-download-btn {
+  z-index: 46 !important;
+}
+
+/* Fondo oscuro al abrir el chat */
+#ulpiano-chat-panel.is-chatting::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: rgba(15, 23, 42, 0.58);
+}
+
+/* El botón se oculta mientras está abierta la conversación */
+#ulpiano-chat-panel.is-chatting #ulpiano-chat-avatar-hero {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+  #ulpiano-chat-panel:not(.is-chatting) {
+    right: 14px;
+    bottom: 14px;
+    width: auto;
+  }
+
+  #ulpiano-chat-avatar-hero {
+    min-height: 46px;
+    padding: 12px 16px;
+    font-size: 0.9rem !important;
+  }
+
+  #pdf-download-btn {
+    left: 14px;
+    bottom: 14px;
+    z-index: 46 !important;
+  }
+}
 </style>  
     
      
@@ -586,9 +678,13 @@
 
     <div id="ulpiano-chat-panel" role="dialog" aria-modal="false" aria-labelledby="ulpiano-chat-title">
         <span id="ulpiano-chat-title" class="sr-only">Chat con Ulpiano</span>
-        <button id="ulpiano-chat-avatar-hero" aria-label="Abrir u ocultar el chat con Ulpiano" aria-expanded="false">
-            <img src="ulpiano-avatar.png" alt="Ulpiano, jurisconsulto romano">
-        </button>
+       <button
+  id="ulpiano-chat-avatar-hero"
+  type="button"
+  aria-label="Abrir o cerrar el chat con Ulpiano"
+  aria-expanded="false">
+  Consulta a Ulpiano
+</button>
         <div id="ulpiano-chat-expandable" class="is-hidden">
         <form id="ulpiano-chat-form">
             <input type="text" id="ulpiano-chat-input" placeholder="Escribe tu pregunta..." maxlength="500" aria-label="Tu pregunta para Ulpiano" autocomplete="off">
