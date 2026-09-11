@@ -850,31 +850,82 @@
 // ========================================
         // DICCIONARIO Y FUNCIÓN DE GLOSARIO AUTOMÁTICO
         // ========================================
+        // ========================================
+        // DICCIONARIO Y FUNCIÓN DE GLOSARIO AUTOMÁTICO
+        // ========================================
         const glosarioTerminos = {
-            "auctoritas": "Saber socialmente reconocido. Poder atribuido al Senado y prestigio de los jurisconsultos.",
-            "boni mores": "Costumbres de los antepasados que constituyen importantes reglas sociales y de conducta para los romanos.",
-            "capitis deminutio": "Variación de la capacidad (máxima: libertad; media: ciudadanía; mínima: estatus familiar).",
-            "affectio maritalis": "Voluntad continua de ser marido y mujer. Su fin provoca el divorcio.",
-            "intentio": "Parte de la fórmula que contiene la base fáctica de la pretensión del actor.",
-            "condemnatio": "Parte que contiene la pretensión del actor y autoriza al juez a condenar o absolver.",
-            "traditio": "Entrega material para transmitir la propiedad de las res nec mancipi.",
-            "mancipatio": "Ceremonia solemne para transmitir la propiedad de las res mancipi y formalizar ciertos negocios.",
-            "usucapio": "Adquisición de la propiedad por la posesión continuada en el tiempo cumpliendo ciertos requisitos."
+            // Bloque I: Ideas y Conceptos Generales
+            "auctoritas": "Saber socialmente reconocido. Poder atribuido al Senado y prestigio de los jurisconsultos.[cite: 2]",
+            "boni mores": "Costumbres de los antepasados que constituyen importantes reglas sociales y de conducta para los romanos.[cite: 2]",
+            "fas": "Orden general del universo. Conjunto de reglas universales e inmutables de orden físico y ético que rigen la actuación de los dioses y de los hombres.[cite: 2]",
+            "ius": "El Derecho en su acepción más amplia.[cite: 2]",
+            "potestas": "Poder socialmente reconocido. Facultad de mando de los magistrados (especialmente cónsules).[cite: 2]",
+            "senadoconsulto": "Decisión adoptada por el Senado sobre cuestiones jurídicas.[cite: 2]",
+
+            // Bloque II: Sujetos, Persona y Familia
+            "alieni iuris": "Personas bajo la potestad de un pater familias. Carecían de capacidad jurídica patrimonial.[cite: 2]",
+            "capacidad de obrar": "Posibilidad de realizar actos jurídicos válidos (En Roma la ostentaban los púberes).[cite: 2]",
+            "capacidad jurídica": "Aptitud para ser titular de derechos y obligaciones. En Roma exigía ser libre, ciudadano y sui iuris.[cite: 2]",
+            "capitis deminutio": "Variación de la capacidad (máxima: libertad; media: ciudadanía; mínima: estatus familiar).[cite: 2]",
+            "sui iuris": "Ciudadano que no depende de potestad ajena (pater familias).[cite: 2]",
+            "affectio maritalis": "Voluntad continua de ser marido y mujer. Su fin provoca el divorcio.[cite: 2]",
+            "agnación": "Parentesco civil por sumisión a una misma potestad.[cite: 2]",
+            "cognación": "Parentesco basado en vínculos de sangre.[cite: 2]",
+            "dote": "Bienes entregados al marido para sobrellevar las cargas del matrimonio.[cite: 2]",
+            "manus": "Poder del marido sobre la mujer.[cite: 2]",
+            "patria potestas": "Poder del ascendiente varón sobre sus descendientes.[cite: 2]",
+
+            // Bloque III: Negocio Jurídico
+            "condición": "Hecho futuro e incierto del que depende el negocio.[cite: 2]",
+            "dolo": "Engaño malicioso para inducir a otro a consentir un negocio.[cite: 2]",
+            "metus": "Intimidación o amenaza para obtener el consentimiento.[cite: 2]",
+            "simulación": "Discordancia intencionada entre la voluntad interna y la declarada (absoluta o relativa/disimulación).[cite: 2]",
+            "término": "Hecho futuro pero cierto del que depende la eficacia de un negocio (ej. una fecha).[cite: 2]",
+
+            // Bloque IV: El Proceso
+            "condemnatio": "Parte que contiene la pretensión del actor y autoriza al juez a condenar o absolver.[cite: 2]",
+            "exceptio": "Cláusula que recoge la base fáctica de la defensa del demandado frente a la intentio.[cite: 2]",
+            "in iure cessio": "Allanamiento en la fase inicial (in iure) del proceso. Modo solemne de transmisión de la propiedad o de otros derechos reales.[cite: 2]",
+            "intentio": "Parte de la fórmula que contiene la base fáctica de la pretensión del actor.[cite: 2]",
+            "litis contestatio": "Momento central que fija el litigio y consume la acción.[cite: 2]",
+
+            // Bloque V: Derechos Reales
+            "interdictos": "Órdenes del Pretor para proteger la posesión de forma rápida.[cite: 2]",
+            "mancipatio": "Ceremonia solemne para transmitir la propiedad de las res mancipi y formalizar ciertos negocios.[cite: 2]",
+            "traditio": "Entrega material para transmitir la propiedad de las res nec mancipi.[cite: 2]",
+            "usucapio": "Adquisición de la propiedad por la posesión continuada en el tiempo cumpliendo ciertos requisitos.[cite: 2]",
+            "usufructo": "Derecho a usar y disfrutar una cosa ajena sin alterar su sustancia.[cite: 2]",
+
+            // Bloque VI: Obligaciones y Contratos
+            "obligatio": "Vínculo jurídico que nos constriñe a cumplir una prestación.[cite: 2]",
+            "stipulatio": "Contrato verbal formal mediante pregunta y respuesta.[cite: 2]",
+            "emptio venditio": "Cambio de cosa por precio.[cite: 2]",
+
+            // Bloque VII: Sucesiones
+            "delación": "Ofrecimiento de la herencia.[cite: 2]",
+            "fideicomiso": "Encargo basado en la buena fe para entregar bienes o prestar servicios a un tercero.[cite: 2]",
+            "hereditas": "Sucesión universal del Derecho Civil.[cite: 2]",
+            "legado": "Disposición particular sobre bienes concretos en favor de un legatario.[cite: 2]",
+            "testamento": "Negocio unilateral, personalísimo y solemne por el que se dispone del patrimonio tras la muerte.[cite: 2]"
         };
 
-        function aplicarGlosario() {
+      function aplicarGlosario() {
             const areaContenido = document.getElementById('content-area');
             if (!areaContenido) return;
 
-            // Buscamos solo el texto visible para no romper la estructura de la web
             const walker = document.createTreeWalker(areaContenido, NodeFilter.SHOW_TEXT, null, false);
             const nodosTexto = [];
             while (walker.nextNode()) {
                 nodosTexto.push(walker.currentNode);
             }
 
+            // Ordenamos los términos del más largo al más corto para evitar que 
+            // palabras cortas rompan términos compuestos (ej. "ius" y "alieni iuris")
+            const terminos = Object.keys(glosarioTerminos).sort((a, b) => b.length - a.length);
+            const regexGlobal = new RegExp(`\\b(${terminos.join('|')})\\b`, 'gi');
+
             nodosTexto.forEach(nodo => {
-                // Evitamos aplicar esto dentro de botones, enlaces o código
+                // Evitamos aplicar esto dentro de botones, enlaces, scripts o tooltips ya creados
                 if (nodo.parentElement.tagName === 'SCRIPT' || 
                     nodo.parentElement.tagName === 'STYLE' || 
                     nodo.parentElement.tagName === 'A' || 
@@ -883,21 +934,27 @@
                     return;
                 }
 
-                let texto = nodo.nodeValue;
-                let modificado = false;
-
-                Object.keys(glosarioTerminos).forEach(termino => {
-                    // Busca la palabra exacta, ignorando si está en mayúscula o minúscula
-                    const regex = new RegExp(`\\b(${termino})\\b`, 'gi');
-                    if (regex.test(texto)) {
-                        texto = texto.replace(regex, `<span class="glosario-tooltip" data-tooltip="${glosarioTerminos[termino]}">$1</span>`);
-                        modificado = true;
+                const textoOriginal = nodo.nodeValue;
+                
+                // Reemplazamos todos los términos en una sola pasada para no romper el HTML
+                const nuevoHTML = textoOriginal.replace(regexGlobal, (coincidencia) => {
+                    const clave = coincidencia.toLowerCase();
+                    const definicionBruta = glosarioTerminos[clave];
+                    
+                    if (definicionBruta) {
+                        // Borramos la etiqueta[cite: 2] y convertimos las comillas para no romper el código
+                        const definicionLimpia = definicionBruta.replace('\\', '').replace('[cite: 2]', '').trim();
+                        const definicionEscapada = definicionLimpia.replace(/"/g, '&quot;');
+                        
+                        return `<span class="glosario-tooltip" data-tooltip="${definicionEscapada}">${coincidencia}</span>`;
                     }
+                    return coincidencia;
                 });
 
-                if (modificado) {
+                // Si el texto ha cambiado, actualizamos la web
+                if (nuevoHTML !== textoOriginal) {
                     const spanTemporal = document.createElement('span');
-                    spanTemporal.innerHTML = texto;
+                    spanTemporal.innerHTML = nuevoHTML;
                     while (spanTemporal.firstChild) {
                         nodo.parentNode.insertBefore(spanTemporal.firstChild, nodo);
                     }
@@ -905,7 +962,6 @@
                 }
             });
         }
-
        // ========================================
         // DATOS DEL MAPA MENTAL (ACTUALIZADO SEGÚN GUIONES)
         // ========================================
