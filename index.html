@@ -495,6 +495,47 @@
 .ulpiano-msg.user { background: #C70039; color: #fff; align-self: flex-end; }
 .ulpiano-msg.thinking { background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.12); color: #64748b; align-self: flex-start; font-style: italic; }
 
+/* --- Estilos para los bocadillos del Glosario --- */
+.glosario-tooltip {
+    position: relative;
+    cursor: help;
+    border-bottom: 1px dotted #900C3F;
+    color: #900C3F;
+    font-weight: 600;
+}
+
+.glosario-tooltip:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #1e293b;
+    color: #f8fafc;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+    font-family: 'Lato', sans-serif;
+    font-weight: normal;
+    white-space: normal;
+    width: max-content;
+    max-width: 280px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.glosario-tooltip:hover::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #1e293b;
+    z-index: 1000;
+    pointer-events: none;
+}
 /* Fin de estilos */
 /* Fondo oscurecido cuando Ulpiano está conversando */
 #ulpiano-chat-panel.is-chatting::before {
@@ -806,6 +847,64 @@
         const sidebar = document.getElementById('sidebar');
         const menuButton = document.getElementById('menu-button');
         const sidebarOverlay = document.getElementById('sidebar-overlay');
+// ========================================
+        // DICCIONARIO Y FUNCIÓN DE GLOSARIO AUTOMÁTICO
+        // ========================================
+        const glosarioTerminos = {
+            "auctoritas": "Saber socialmente reconocido. Poder atribuido al Senado y prestigio de los jurisconsultos.",
+            "boni mores": "Costumbres de los antepasados que constituyen importantes reglas sociales y de conducta para los romanos.",
+            "capitis deminutio": "Variación de la capacidad (máxima: libertad; media: ciudadanía; mínima: estatus familiar).",
+            "affectio maritalis": "Voluntad continua de ser marido y mujer. Su fin provoca el divorcio.",
+            "intentio": "Parte de la fórmula que contiene la base fáctica de la pretensión del actor.",
+            "condemnatio": "Parte que contiene la pretensión del actor y autoriza al juez a condenar o absolver.",
+            "traditio": "Entrega material para transmitir la propiedad de las res nec mancipi.",
+            "mancipatio": "Ceremonia solemne para transmitir la propiedad de las res mancipi y formalizar ciertos negocios.",
+            "usucapio": "Adquisición de la propiedad por la posesión continuada en el tiempo cumpliendo ciertos requisitos."
+        };
+
+        function aplicarGlosario() {
+            const areaContenido = document.getElementById('content-area');
+            if (!areaContenido) return;
+
+            // Buscamos solo el texto visible para no romper la estructura de la web
+            const walker = document.createTreeWalker(areaContenido, NodeFilter.SHOW_TEXT, null, false);
+            const nodosTexto = [];
+            while (walker.nextNode()) {
+                nodosTexto.push(walker.currentNode);
+            }
+
+            nodosTexto.forEach(nodo => {
+                // Evitamos aplicar esto dentro de botones, enlaces o código
+                if (nodo.parentElement.tagName === 'SCRIPT' || 
+                    nodo.parentElement.tagName === 'STYLE' || 
+                    nodo.parentElement.tagName === 'A' || 
+                    nodo.parentElement.tagName === 'BUTTON' ||
+                    nodo.parentElement.classList.contains('glosario-tooltip')) {
+                    return;
+                }
+
+                let texto = nodo.nodeValue;
+                let modificado = false;
+
+                Object.keys(glosarioTerminos).forEach(termino => {
+                    // Busca la palabra exacta, ignorando si está en mayúscula o minúscula
+                    const regex = new RegExp(`\\b(${termino})\\b`, 'gi');
+                    if (regex.test(texto)) {
+                        texto = texto.replace(regex, `<span class="glosario-tooltip" data-tooltip="${glosarioTerminos[termino]}">$1</span>`);
+                        modificado = true;
+                    }
+                });
+
+                if (modificado) {
+                    const spanTemporal = document.createElement('span');
+                    spanTemporal.innerHTML = texto;
+                    while (spanTemporal.firstChild) {
+                        nodo.parentNode.insertBefore(spanTemporal.firstChild, nodo);
+                    }
+                    nodo.parentNode.removeChild(nodo);
+                }
+            });
+        }
 
        // ========================================
         // DATOS DEL MAPA MENTAL (ACTUALIZADO SEGÚN GUIONES)
@@ -2911,6 +3010,8 @@
             const page = contentMap[hash] || contentMap['#home'];
             document.title = `${page.title} | Guía Interactiva de Derecho Romano`;
             contentArea.innerHTML = page.html;
+           
+            aplicarGlosario(); // <-- Esta es la línea nueva que activa el glosario
             
             document.querySelectorAll('.sidebar-link').forEach(link => {
                 link.classList.remove('sidebar-link-active');
